@@ -5,6 +5,17 @@ import redisManager from './redisManager.js';
 import OpenAI from 'openai';
 import crypto from 'crypto';
 import { CACHE_CONFIG } from './cacheConfig.js';
+import {
+    cacheHitsTotal,
+    cacheMissesTotal,
+    cacheHitRate,
+    cacheSimilarityScore,
+    cacheResponseTime,
+    cacheSize,
+    cacheCostSavings,
+    trackCacheOperation,
+    updateCacheHitRate
+} from './metrics.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -76,6 +87,8 @@ class SemanticCache {
 
     // Search for similar cached prompts with topic awareness
     async findSimilarCachedResponse(prompt, topic = 'general') {
+        const start = Date.now();
+        
         try {
             // Include topic in embedding generation for better context
             const contextualPrompt = `Topic: ${topic}. ${prompt}`;
@@ -103,7 +116,21 @@ class SemanticCache {
                 const similarity = 1 - parseFloat(bestMatch.value.score); // Convert distance to similarity
 
                 if (similarity >= config.SIMILARITY_THRESHOLD) {
+                    const duration = (Date.now() - start) / 1000;
+                    
                     console.log(`🎯 Cache HIT! Similarity: ${(similarity * 100).toFixed(1)}%`);
+                    
+                    // Track metrics
+                    const metadata = bestMatch.value.metadata ? JSON.parse(bestMatch.value.metadata) : {};
+                    const agentId = metadata.agentId || 'unknown';
+                    
+                    // Estimate cost saved (approximate GPT-4o-mini cost)
+                    const estimatedTokens = Math.ceil(prompt.length / 4);
+                    const costSaved = (estimatedTokens * 0.15 + estimatedTokens * 0.60) / 1000000;
+                    
+                    trackCacheOperation(true, similarity, agentId, topic, costSaved);
+                    cacheSimilarityScore.observe(similarity);
+                    cacheResponseTime.observe({ hit: 'true' }, duration);
                     
                     // Update hit metrics
                     await this.updateMetrics(true, similarity);
@@ -117,12 +144,21 @@ class SemanticCache {
                 }
             }
 
+            const duration = (Date.now() - start) / 1000;
             console.log('❌ Cache MISS - No similar prompts found');
+            
+            trackCacheOperation(false, 0, 'unknown', topic, 0);
+            cacheResponseTime.observe({ hit: 'false' }, duration);
+            
             await this.updateMetrics(false, 0);
             return null;
 
         } catch (error) {
+            const duration = (Date.now() - start) / 1000;
             console.error('Error searching cache:', error);
+            
+            cacheResponseTime.observe({ hit: 'false' }, duration);
+            
             await this.updateMetrics(false, 0);
             return null;
         }
@@ -217,6 +253,10 @@ class SemanticCache {
             });
 
             console.log(`📊 Cache metrics updated: ${metrics.cache_hits}/${metrics.total_requests} (${(metrics.hit_ratio * 100).toFixed(1)}%)`);
+
+            // Update Prometheus metrics
+            await updateCacheHitRate(metrics.total_requests, metrics.cache_hits);
+            cacheHitRate.set(metrics.hit_ratio * 100); // Convert to percentage
 
         } catch (error) {
             console.error('Error updating cache metrics:', error);
