@@ -1,0 +1,52 @@
+# Node modules
+node_modules/
+stancestream-frontend/node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+
+# Build artifacts
+stancestream-frontend/dist/
+*.tgz
+
+# Documentation (not needed in production)
+*.md
+!README.md
+
+# Archives
+archive/
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
