@@ -3,6 +3,7 @@
 import 'dotenv/config';
 import redisManager from './redisManager.js';
 import { generateMessageCore, determineEmotionalState, findPotentialAllies, topicToStanceKey } from './messageGenerationCore.js';
+import { debateStanceShifts } from './metrics.js';
 
 // Import fact-checking and sentiment analysis
 async function findClosestFact(messageText) {
@@ -239,7 +240,12 @@ export async function updateStanceBasedOnDebate(agentId, debateId, topic) {
         } catch (tsError) {
             console.log(`⚠️ TimeSeries add failed: ${tsError.message}`);
         }
-        
+
+        // Track stance shift metrics (only count meaningful shifts > 0.05)
+        if (Math.abs(stanceShift) > 0.05) {
+            debateStanceShifts.inc({ agent_id: agentId, topic: stanceKey });
+        }
+
         return { oldStance: currentStance, newStance, shift: stanceShift };
         
     } catch (error) {

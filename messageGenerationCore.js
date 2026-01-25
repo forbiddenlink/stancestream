@@ -3,6 +3,7 @@ import 'dotenv/config';
 import OpenAI from 'openai';
 import redisManager from './redisManager.js';
 import { getCachedResponse, cacheNewResponse } from './semanticCache.js';
+import { trackOpenAICall } from './metrics.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -120,16 +121,18 @@ export async function generateMessageCore({
         }
         
         // Generate new response
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                { role: 'system', content: prompt },
-                { role: 'user', content: `Continue the debate on "${topic}" considering the recent discussion.` }
-            ],
-            temperature,
-            max_tokens: maxTokens
+        const completion = await trackOpenAICall('gpt-4', async () => {
+            return await openai.chat.completions.create({
+                model: 'gpt-4',
+                messages: [
+                    { role: 'system', content: prompt },
+                    { role: 'user', content: `Continue the debate on "${topic}" considering the recent discussion.` }
+                ],
+                temperature,
+                max_tokens: maxTokens
+            });
         });
-        
+
         const message = completion.choices[0].message.content.trim();
         
         // Cache new response

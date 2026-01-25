@@ -21,6 +21,21 @@ import advancedFactChecker, { checkFactAdvanced, getFactCheckAnalytics } from '.
 import platformMetricsEngine, { startContestMetrics, getLiveContestMetrics } from './platformMetricsEngine.js';
 import { PlatformMetricsDashboard } from './platformLiveMetrics.js';
 import testEndpoints from './src/routes/test-endpoints.js';
+import enhancedEndpoints from './src/routes/enhanced-endpoints.js';
+
+// New imports for improvements
+import { validateEnvironment } from './src/config/environment.js';
+import { 
+    getMetricsHandler, 
+    trackHttpRequest,
+    activeDebatesGauge,
+    websocketConnectionsActive,
+    websocketMessagesTotal
+} from './metrics.js';
+import { sanitizeRequest, validateDebateStart } from './src/middleware/validation.js';
+
+// Validate environment before starting
+const env = validateEnvironment();
 
 const app = express();
 const server = createServer(app);
@@ -40,6 +55,16 @@ app.use(helmet({
 
 app.use(compression());
 app.use(morgan('combined'));
+
+// Metrics tracking middleware
+app.use((req, res, next) => {
+    const end = trackHttpRequest(req);
+    res.on('finish', () => end(res));
+    next();
+});
+
+// Input sanitization
+app.use(sanitizeRequest);
 
 // Rate limiting for API protection - PRODUCTION-HARDENED
 const apiRateLimit = rateLimit({
@@ -110,6 +135,9 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Mount enhanced endpoints (metrics, detailed health checks, etc.)
+app.use('/', enhancedEndpoints);
 
 // Mount test endpoints router with its own rate limit and error handling
 app.use('/api/test', 
@@ -267,24 +295,29 @@ const debateMetrics = {
 wss.on('connection', (ws) => {
     console.log('🔌 Client connected to WebSocket');
     connections.add(ws);
+    websocketConnectionsActive.inc();
 
     ws.on('close', () => {
         console.log('🔌 Client disconnected from WebSocket');
         connections.delete(ws);
+        websocketConnectionsActive.dec();
     });
 
     ws.on('error', (error) => {
         console.error('WebSocket error:', error);
         connections.delete(ws);
+        websocketConnectionsActive.dec();
     });
 });
 
 // Broadcast to all connected clients
 function broadcast(data) {
     const message = JSON.stringify(data);
+    const messageType = data.type || 'unknown';
     connections.forEach(ws => {
         if (ws.readyState === ws.OPEN) {
             ws.send(message);
+            websocketMessagesTotal.inc({ type: messageType });
         }
     });
 }
@@ -521,6 +554,7 @@ app.post('/api/debate/start', async (req, res) => {
             messageCount: 0,
             factChecks: 0
         });
+        activeDebatesGauge.set(activeDebates.size);
 
         // Broadcast debate start
         broadcast({
@@ -539,6 +573,7 @@ app.post('/api/debate/start', async (req, res) => {
         runDebateRounds(uniqueDebateId, sanitizedAgents, sanitizedTopic).finally(() => {
             // Remove from active debates when finished
             activeDebates.delete(uniqueDebateId);
+            activeDebatesGauge.set(activeDebates.size);
             runningDebateProcesses.delete(uniqueDebateId);
             currentAgentIndexPerDebate.delete(uniqueDebateId);
             lastSpeakerPerDebate.delete(uniqueDebateId);
@@ -589,7 +624,8 @@ app.post('/api/debate/:id/stop', async (req, res) => {
 
         // Remove from active debates
         activeDebates.delete(id);
-        
+        activeDebatesGauge.set(activeDebates.size);
+
         console.log(`✅ Debate ${id} removed from active debates. Remaining: ${activeDebates.size}`);
 
         // Broadcast debate stop
@@ -709,6 +745,9 @@ app.get('/api/agent/:id/stance/:debateId/:topic', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+// Prometheus metrics endpoint - for monitoring/observability
+app.get('/metrics', getMetricsHandler());
 
 // Enhanced Health check with Redis connectivity
 app.get('/api/health', async (req, res) => {
@@ -890,13 +929,15 @@ app.post('/api/debates/start-multiple', async (req, res) => {
                 messageCount: 0,
                 factChecks: 0
             });
+            activeDebatesGauge.set(activeDebates.size);
 
             // Start the debate (non-blocking)
             const debateProcess = { cancelled: false };
             runningDebateProcesses.set(debateId, debateProcess);
-            
+
             runDebateRounds(debateId, agents, topic).finally(() => {
                 activeDebates.delete(debateId);
+                activeDebatesGauge.set(activeDebates.size);
                 runningDebateProcesses.delete(debateId);
                 currentAgentIndexPerDebate.delete(debateId);
                 lastSpeakerPerDebate.delete(debateId);

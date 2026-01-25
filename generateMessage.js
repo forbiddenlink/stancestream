@@ -3,6 +3,10 @@ import redisManager from './redisManager.js';
 import { generateMessageCore, topicToStanceKey } from './messageGenerationCore.js';
 import { getCachedResponse, cacheNewResponse } from './semanticCache.js';
 import OpenAI from 'openai';
+import {
+    trackOpenAICall,
+    debateMessagesTotal
+} from './metrics.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -94,6 +98,9 @@ Avoid repeating previous arguments. Express your distinctive viewpoint as a ${pr
         }
 
         console.log(`${agentId}: ${message}`);
+
+        // Track metrics
+        debateMessagesTotal.inc({ agent_id: agentId, debate_id: debateId });
 
         // Save to full debate stream and agent's memory stream
         await redisManager.execute(async (client) => {
@@ -213,13 +220,15 @@ Seed: ${randomSeed}
         } else {
             // Generate AI message (cache miss)
             console.log('🤖 Generating new AI response...');
-            const chatResponse = await openai.chat.completions.create({
-                model: 'gpt-4',
-                messages: [
-                    { role: 'system', content: prompt },
-                    { role: 'user', content: `What's your perspective on "${topic}"? Keep it brief and in character. ${randomCue}` },
-                ],
-                temperature: 0.8,
+            const chatResponse = await trackOpenAICall('gpt-4', async () => {
+                return await openai.chat.completions.create({
+                    model: 'gpt-4',
+                    messages: [
+                        { role: 'system', content: prompt },
+                        { role: 'user', content: `What's your perspective on "${topic}"? Keep it brief and in character. ${randomCue}` },
+                    ],
+                    temperature: 0.8,
+                });
             });
 
             message = chatResponse.choices[0].message.content.trim();
@@ -232,6 +241,9 @@ Seed: ${randomSeed}
                 timestamp: new Date().toISOString(),
             });
         }
+
+        // Track metrics
+        debateMessagesTotal.inc({ agent_id: agentId, debate_id: debateId });
 
         return {
             message,
@@ -306,14 +318,16 @@ ${recentMessages}
 
 Respond as ${profile.name} with your unique perspective on this topic. Stay true to your political positions and personality.`;
 
-        const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt }
-            ],
-            max_tokens: 300,
-            temperature: 0.8
+        const completion = await trackOpenAICall('gpt-4', async () => {
+            return await openai.chat.completions.create({
+                model: 'gpt-4',
+                messages: [
+                    { role: 'system', content: systemPrompt },
+                    { role: 'user', content: userPrompt }
+                ],
+                max_tokens: 300,
+                temperature: 0.8
+            });
         });
 
         const response = completion.choices[0].message.content;
