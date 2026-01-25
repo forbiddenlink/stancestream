@@ -1,241 +1,199 @@
 /**
  * Environment Configuration and Validation
- * Handles validation of required environment variables and configuration settings
+ * Validates all required environment variables on startup
  */
 
-// Required environment variables with validation rules
-const requiredEnvVars = {
-    REDIS_URL: {
-        validate: (value) => value.startsWith('redis://'),
-        message: 'REDIS_URL must start with redis://'
-    },
-    OPENAI_API_KEY: {
-        validate: (value) => !value || value.startsWith('sk-'), // Allow empty in development
-        message: 'OPENAI_API_KEY must be a valid OpenAI key starting with sk-'
-    },
-    NODE_ENV: {
-        validate: (value) => ['development', 'production', 'test'].includes(value),
-        message: 'NODE_ENV must be development, production, or test',
-        optional: true // Mark as optional to use default
-    }
-};
+import { z } from 'zod';
 
-// Optional environment variables with default values
-const optionalEnvVars = {
-    PORT: {
-        default: 3001,
-        validate: (value) => !isNaN(value) && parseInt(value) > 0,
-        message: 'PORT must be a positive number'
-    },
-    LOG_LEVEL: {
-        default: 'info',
-        validate: (value) => ['error', 'warn', 'info', 'debug'].includes(value),
-        message: 'LOG_LEVEL must be error, warn, info, or debug'
-    },
-    RATE_LIMIT_WINDOW: {
-        default: 60000, // 1 minute
-        validate: (value) => !isNaN(value) && parseInt(value) > 0,
-        message: 'RATE_LIMIT_WINDOW must be a positive number'
-    },
-    RATE_LIMIT_MAX: {
-        default: 200,
-        validate: (value) => !isNaN(value) && parseInt(value) > 0,
-        message: 'RATE_LIMIT_MAX must be a positive number'
-    }
-};
-
-// Redis-specific configuration validation
-const redisConfig = {
-    validateConnection: async (client) => {
-        try {
-            await client.ping();
-            const info = await client.info();
-            
-            // In development mode, just warn about missing modules
-            const nodeEnv = process.env.NODE_ENV || 'development';
-            if (nodeEnv === 'development') {
-                return { 
-                    success: true,
-                    warnings: ['Redis modules will be checked when vectorsearch.js and setupCacheIndex.js are run']
-                };
-            }
-            
-            // In production, check for required Redis modules
-            const requiredModules = ['JSON', 'search', 'timeseries'];
-            const loadedModules = info
-                .split('\n')
-                .filter(line => line.startsWith('module:name='))
-                .map(line => line.split('=')[1]);
-            
-            const missingModules = requiredModules.filter(
-                module => !loadedModules.includes(module)
-            );
-
-            if (missingModules.length > 0 && nodeEnv === 'production') {
-                throw new Error(
-                    `Required Redis modules missing: ${missingModules.join(', ')}`
-                );
-            }
-
-            return { 
-                success: true,
-                warnings: missingModules.length > 0 ? [`Some Redis modules not detected: ${missingModules.join(', ')}`] : []
-            };
-        } catch (error) {
-            // In development, convert errors to warnings
-            if (process.env.NODE_ENV !== 'production') {
-                return {
-                    success: true,
-                    warnings: [`Redis validation warning: ${error.message}`]
-                };
-            }
-            throw new Error(`Redis connection validation failed: ${error.message}`);
-        }
-    }
-};
-
-// OpenAI configuration validation
-const openAIConfig = {
-    validateConnection: async (openai) => {
-        try {
-            // Test API key with a minimal request
-            await openai.embeddings.create({
-                model: 'text-embedding-ada-002',
-                input: 'test',
-            });
-            return { success: true };
-        } catch (error) {
-            throw new Error(`OpenAI API validation failed: ${error.message}`);
-        }
-    }
-};
+// Define the schema for environment variables
+const envSchema = z.object({
+    // Redis Configuration
+    REDIS_URL: z.string().url('REDIS_URL must be a valid URL'),
+    
+    // OpenAI Configuration
+    OPENAI_API_KEY: z.string()
+        .min(20, 'OPENAI_API_KEY must be at least 20 characters')
+        .startsWith('sk-', 'OPENAI_API_KEY must start with sk-'),
+    
+    // Server Configuration
+    PORT: z.string()
+        .regex(/^\d+$/, 'PORT must be a number')
+        .transform(Number)
+        .default('3001'),
+    
+    NODE_ENV: z.enum(['development', 'production', 'test'])
+        .default('development'),
+    
+    // Logging Configuration
+    LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug', 'trace'])
+        .default('info'),
+    
+    // Rate Limiting
+    API_RATE_LIMIT: z.string()
+        .regex(/^\d+$/, 'API_RATE_LIMIT must be a number')
+        .transform(Number)
+        .default('60'),
+    
+    // Redis Pool Configuration
+    REDIS_POOL_SIZE: z.string()
+        .regex(/^\d+$/)
+        .transform(Number)
+        .default('3')
+        .optional(),
+    
+    // Cache Configuration
+    CACHE_SIMILARITY_THRESHOLD: z.string()
+        .regex(/^0\.\d+$/)
+        .transform(Number)
+        .default('0.85')
+        .optional(),
+    
+    CACHE_TTL: z.string()
+        .regex(/^\d+$/)
+        .transform(Number)
+        .default('3600')
+        .optional()
+});
 
 /**
- * Validate all required environment variables
- * @returns {Object} Validated environment configuration
- * @throws {Error} If any required variables are missing or invalid
+ * Validate environment variables
+ * @throws {Error} If validation fails
+ * @returns {Object} Validated and parsed environment configuration
  */
-function validateEnvironment() {
-    const config = {};
-    const errors = [];
-
-    // Set NODE_ENV default first
-    process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
-    // Validate required variables
-    for (const [key, rules] of Object.entries(requiredEnvVars)) {
-        let value = process.env[key];
-
-        // Skip NODE_ENV validation if it's using the default value
-        if (key === 'NODE_ENV' && value === 'development') {
-            config[key] = value;
-            continue;
+export function validateEnvironment() {
+    try {
+        const validated = envSchema.parse(process.env);
+        
+        console.log('✅ Environment validation successful');
+        console.log(`📊 Configuration:`);
+        console.log(`   - Environment: ${validated.NODE_ENV}`);
+        console.log(`   - Port: ${validated.PORT}`);
+        console.log(`   - Log Level: ${validated.LOG_LEVEL}`);
+        console.log(`   - Rate Limit: ${validated.API_RATE_LIMIT} req/min`);
+        console.log(`   - Redis Pool Size: ${validated.REDIS_POOL_SIZE || 3}`);
+        
+        return validated;
+    } catch (error) {
+        console.error('❌ Environment validation failed:');
+        console.error('');
+        
+        if (error instanceof z.ZodError) {
+            error.errors.forEach((err) => {
+                const field = err.path.join('.');
+                console.error(`   ${field}: ${err.message}`);
+            });
+        } else {
+            console.error(error.message);
         }
         
-        if (!value) {
-            // Only add error if it's not NODE_ENV (which has a default)
-            if (key !== 'NODE_ENV') {
-                errors.push(`Missing required environment variable: ${key}`);
-            }
-            continue;
-        }
+        console.error('');
+        console.error('Please check your .env file and ensure all required variables are set correctly.');
+        console.error('');
         
-        if (!rules.validate(value)) {
-            errors.push(rules.message);
-            continue;
-        }
-        
-        config[key] = value;
+        process.exit(1);
     }
-
-    // Set and validate optional variables
-    for (const [key, rules] of Object.entries(optionalEnvVars)) {
-        const value = process.env[key] || rules.default;
-        
-        if (!rules.validate(value)) {
-            errors.push(rules.message);
-            continue;
-        }
-        
-        config[key] = value;
-    }
-
-    if (errors.length > 0) {
-        throw new Error(
-            'Environment validation failed:\n' + errors.join('\n')
-        );
-    }
-
-    return config;
 }
 
 /**
- * Full system configuration validation
- * @param {Object} services Service instances to validate
- * @returns {Promise<Object>} Validation results
+ * Get environment-specific configuration
+ * @param {string} env - Environment name (development, production, test)
+ * @returns {Object} Environment-specific configuration
  */
-async function validateSystem(services = {}) {
-    const results = {
-        environment: { success: false, error: null },
-        redis: { success: false, error: null },
-        openai: { success: false, error: null }
+export function getEnvironmentConfig(env = process.env.NODE_ENV || 'development') {
+    const configs = {
+        development: {
+            redis: {
+                commandTimeout: 5000,
+                reconnectDelay: 1000,
+                maxRetries: 3
+            },
+            cache: {
+                ttl: 3600,
+                similarityThreshold: 0.85,
+                maxSize: 1000
+            },
+            logging: {
+                level: 'debug',
+                prettyPrint: true
+            },
+            server: {
+                corsOrigins: ['http://localhost:5173', 'http://localhost:5174']
+            }
+        },
+        production: {
+            redis: {
+                commandTimeout: 10000,
+                reconnectDelay: 2000,
+                maxRetries: 5
+            },
+            cache: {
+                ttl: 86400,
+                similarityThreshold: 0.90, // Stricter in production
+                maxSize: 5000
+            },
+            logging: {
+                level: 'info',
+                prettyPrint: false
+            },
+            server: {
+                corsOrigins: [
+                    'https://stancestream.vercel.app',
+                    'https://stancestream.onrender.com'
+                ]
+            }
+        },
+        test: {
+            redis: {
+                commandTimeout: 3000,
+                reconnectDelay: 500,
+                maxRetries: 1
+            },
+            cache: {
+                ttl: 60,
+                similarityThreshold: 0.80,
+                maxSize: 100
+            },
+            logging: {
+                level: 'error',
+                prettyPrint: false
+            },
+            server: {
+                corsOrigins: ['http://localhost:5173']
+            }
+        }
     };
 
-    try {
-        // Validate environment variables
-        const config = validateEnvironment();
-        results.environment.success = true;
-        results.config = config;
-    } catch (error) {
-        results.environment.error = error.message;
-        throw error; // Stop if environment validation fails
-    }
-
-    // Validate Redis if client provided
-    if (services.redisClient) {
-        try {
-            await redisConfig.validateConnection(services.redisClient);
-            results.redis.success = true;
-        } catch (error) {
-            results.redis.error = error.message;
-            throw error; // Redis is required, so stop if validation fails
-        }
-    }
-
-    // Validate OpenAI if client provided
-    if (services.openai) {
-        try {
-            await openAIConfig.validateConnection(services.openai);
-            results.openai.success = true;
-        } catch (error) {
-            results.openai.error = error.message;
-            throw error; // OpenAI is required, so stop if validation fails
-        }
-    }
-
-    return results;
+    return configs[env] || configs.development;
 }
 
-// Development helper to check configuration
-async function checkConfiguration(services = {}) {
-    console.log('🔍 Checking system configuration...');
-    
-    try {
-        const results = await validateSystem(services);
-        console.log('✅ Configuration validation successful:', results);
-        return results;
-    } catch (error) {
-        console.error('❌ Configuration validation failed:', error.message);
-        throw error;
-    }
+/**
+ * Check if running in production
+ * @returns {boolean}
+ */
+export function isProduction() {
+    return process.env.NODE_ENV === 'production';
 }
 
-export {
+/**
+ * Check if running in development
+ * @returns {boolean}
+ */
+export function isDevelopment() {
+    return process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
+}
+
+/**
+ * Check if running in test mode
+ * @returns {boolean}
+ */
+export function isTest() {
+    return process.env.NODE_ENV === 'test';
+}
+
+export default {
     validateEnvironment,
-    validateSystem,
-    checkConfiguration,
-    requiredEnvVars,
-    optionalEnvVars,
-    redisConfig,
-    openAIConfig
+    getEnvironmentConfig,
+    isProduction,
+    isDevelopment,
+    isTest
 };
