@@ -1,0 +1,72 @@
+# Artillery Load Testing Configuration
+config:
+  target: 'http://localhost:3001'
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up"
+    - duration: 60
+      arrivalRate: 20
+      name: "Sustained load"
+    - duration: 30
+      arrivalRate: 50
+      name: "Peak load"
+    - duration: 30
+      arrivalRate: 10
+      name: "Cool down"
+  defaults:
+    headers:
+      Content-Type: "application/json"
+
+scenarios:
+  - name: "Health Check"
+    weight: 30
+    flow:
+      - get:
+          url: "/api/health"
+      - think: 1
+
+  - name: "Detailed Health Check"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/health/detailed"
+      - think: 2
+
+  - name: "Get Agent Profile"
+    weight: 20
+    flow:
+      - get:
+          url: "/api/agent/senatorbot/profile"
+      - think: 1
+
+  - name: "Cache Status"
+    weight: 15
+    flow:
+      - get:
+          url: "/api/cache/status"
+      - think: 2
+
+  - name: "System Info"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/system/info"
+      - think: 1
+
+  - name: "Start Debate"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/debate/start"
+          json:
+            topic: "Climate change policy"
+            agents: ["senatorbot", "reformerbot"]
+            duration: 180
+      - think: 3
+      - get:
+          url: "/api/debate/{{ debateId }}/messages"
+          capture:
+            - json: "$.debateId"
+              as: "debateId"
+      - think: 2
