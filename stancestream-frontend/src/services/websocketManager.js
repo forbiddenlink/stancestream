@@ -1,7 +1,7 @@
 // Centralized WebSocket Connection Manager
 // Prevents multiple WebSocket connections and provides unified event handling
 
-class WebSocketManager {
+export class WebSocketManager {
     constructor() {
         this.socket = null;
         this.listeners = new Map();
