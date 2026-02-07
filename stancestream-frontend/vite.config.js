@@ -13,11 +13,20 @@ export default defineConfig({
   ],
   build: {
     target: 'esnext',
-    minify: 'esbuild',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        passes: 2,
+        drop_console: true,
+        drop_debugger: true
+      },
+      format: {
+        comments: false
+      }
+    },
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
           'charts': ['recharts'],
           'ui-components': ['lucide-react'],
           'redis-components': ['./src/components/RedisMatrixModal.jsx', './src/components/LivePerformanceOverlay.jsx']
@@ -28,7 +37,8 @@ export default defineConfig({
     sourcemap: false
   },
   esbuild: {
-    legalComments: 'none'
+    legalComments: 'none',
+    drop: ['console', 'debugger']
   },
   server: {
     host: '127.0.0.1',

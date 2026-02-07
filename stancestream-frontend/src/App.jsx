@@ -20,13 +20,13 @@ const RedisMatrixModal = lazy(() => import('./components/RedisMatrixModal'));
 const IntroModule = lazy(() => import('./components/IntroModule'));
 import ErrorBoundary from './components/ErrorBoundary';
 import Icon from './components/Icon';
-import { ViewModeSelector, ToastProvider, useNotification, Container, Stack, Grid } from './components/ui';
+import { ViewModeSelector, ToastProvider, Container, Stack, Grid } from './components/ui';
 import wsManager from './services/websocketManager';
 import api from './services/api';
 
 export default function App() {
   const [debateMessages, setDebateMessages] = useState([]);
-  const [agents, setAgents] = useState({});
+  const [_agents, setAgents] = useState({});
   const [factChecks, setFactChecks] = useState([]);
   const [connectionHealth, setConnectionHealth] = useState('checking');
   const [viewMode, setViewMode] = useState('standard'); // 'standard', 'multi-debate', 'analytics', 'business', or 'showcase'
@@ -34,7 +34,7 @@ export default function App() {
   const [activeDebates, setActiveDebates] = useState(new Map()); // Track multiple debates
   const [currentDebateId, setCurrentDebateId] = useState(null); // Track current single debate
   const [stanceData, setStanceData] = useState([]); // Track stance evolution for chart
-  const [currentStances, setCurrentStances] = useState({ senatorbot: 0, reformerbot: 0 }); // Track current stance values
+  const [_currentStances, setCurrentStances] = useState({ senatorbot: 0, reformerbot: 0 }); // Track current stance values
   const [showMatrixModal, setShowMatrixModal] = useState(false); // Matrix modal state
   const [showIntro, setShowIntro] = useState(false); // Intro module state
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
@@ -111,7 +111,7 @@ export default function App() {
     const { type, ...messageData } = data;
 
     switch (type) {
-      case 'new_message':
+      case 'new_message': {
         const newMessage = {
           id: Date.now(),
           sender: messageData.agentName,
@@ -193,6 +193,7 @@ export default function App() {
           }]);
         }
         break;
+      }
 
       case 'debate_started':
         // Track the new debate with proper topic info
@@ -343,7 +344,7 @@ export default function App() {
           }));
           break;
 
-        case 'debate:stance_update':
+        case 'debate:stance_update': {
           // Handle real-time stance evolution for election-night style chart
           console.log('📊 Received stance update:', messageData); // Debug log
 
@@ -385,6 +386,7 @@ export default function App() {
 
           console.log(`📊 Stance update: SenatorBot(${messageData.senatorbot.toFixed(2)}), ReformerBot(${messageData.reformerbot.toFixed(2)}) - Turn ${messageData.turn}`);
           break;
+        }
 
         case 'key_moment_created':
           // Handle new key moment creation
