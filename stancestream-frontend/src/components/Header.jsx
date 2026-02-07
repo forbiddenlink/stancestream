@@ -48,7 +48,10 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                                 STANCESTREAM
                             </h1>
                             <p className="text-gray-400 text-xs sm:text-sm lg:text-base font-medium font-mono">
-                                REDIS AI CHALLENGE 2025
+                                LIVE AI DEBATE INTELLIGENCE PLATFORM
+                            </p>
+                            <p className="text-gray-500 text-[10px] sm:text-xs font-medium font-mono">
+                                By StanceStream Editorial Team • <time dateTime="2026-02-07">Updated February 7, 2026</time>
                             </p>
                         </div>
                     </Flex>
