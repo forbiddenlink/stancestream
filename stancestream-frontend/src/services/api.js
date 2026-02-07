@@ -1,16 +1,23 @@
-import { buildApiUrl } from '../utils/url';
+import { buildApiUrl } from '../utils/url.js';
 
 // Request timeout configuration
 const REQUEST_TIMEOUT = 10000; // 10 seconds
 
 // Helper function to create timeout promise
 const withTimeout = (promise, timeoutMs = REQUEST_TIMEOUT) => {
+    let timeoutId;
+    const timeoutPromise = new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('Request timeout')), timeoutMs);
+    });
+
     return Promise.race([
         promise,
-        new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
-        )
-    ]);
+        timeoutPromise
+    ]).finally(() => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+    });
 };
 
 // Helper function for retry logic
@@ -29,20 +36,36 @@ const withRetry = async (fn, maxRetries = 2, delay = 1000) => {
     }
 };
 
-class StanceStreamAPI {
+export class StanceStreamAPI {
+    constructor({ fetchImpl, abortSignalImpl } = {}) {
+        this.fetchImpl = fetchImpl || fetch;
+        this.abortSignalImpl = abortSignalImpl || AbortSignal;
+    }
+
+    createTimeoutSignal(timeout) {
+        return this.abortSignalImpl?.timeout ? this.abortSignalImpl.timeout(timeout) : undefined;
+    }
+
     async get(endpoint, options = {}) {
-        const { timeout = REQUEST_TIMEOUT, retry = true } = options;
+        const {
+            timeout = REQUEST_TIMEOUT,
+            retry = true,
+            maxRetries = 2,
+            retryDelay = 1000
+        } = options;
         
         const makeRequest = () => {
-            const response = fetch(buildApiUrl(endpoint), {
-                signal: AbortSignal.timeout(timeout)
+            const response = this.fetchImpl(buildApiUrl(endpoint), {
+                signal: this.createTimeoutSignal(timeout)
             });
             
             return withTimeout(response, timeout);
         };
 
         try {
-            const response = retry ? await withRetry(makeRequest) : await makeRequest();
+            const response = retry
+                ? await withRetry(makeRequest, maxRetries, retryDelay)
+                : await makeRequest();
             
             if (!response.ok) {
                 throw new Error(`API Error: ${response.status} ${response.statusText}`);
@@ -59,23 +82,30 @@ class StanceStreamAPI {
     }
 
     async post(endpoint, data, options = {}) {
-        const { timeout = REQUEST_TIMEOUT, retry = false } = options; // POST usually shouldn't retry by default
+        const {
+            timeout = REQUEST_TIMEOUT,
+            retry = false,
+            maxRetries = 2,
+            retryDelay = 1000
+        } = options; // POST usually shouldn't retry by default
         
         const makeRequest = () => {
-            const response = fetch(buildApiUrl(endpoint), {
+            const response = this.fetchImpl(buildApiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
-                signal: AbortSignal.timeout(timeout)
+                signal: this.createTimeoutSignal(timeout)
             });
             
             return withTimeout(response, timeout);
         };
 
         try {
-            const response = retry ? await withRetry(makeRequest) : await makeRequest();
+            const response = retry
+                ? await withRetry(makeRequest, maxRetries, retryDelay)
+                : await makeRequest();
             
             if (!response.ok) {
                 throw new Error(`API Error: ${response.status} ${response.statusText}`);
