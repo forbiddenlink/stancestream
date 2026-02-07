@@ -11,103 +11,155 @@ class WebSocketManager {
         this.isConnecting = false;
         this.url = null;
         this.connectionPromise = null;
+        this.reconnectTimer = null;
+        this.shouldReconnect = true;
+    }
+
+    clearReconnectTimer() {
+        if (this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+    }
+
+    closeCurrentSocket(code = 1000, reason = 'Reconnect') {
+        if (!this.socket) {
+            return;
+        }
+
+        try {
+            this.socket.onopen = null;
+            this.socket.onmessage = null;
+            this.socket.onclose = null;
+            this.socket.onerror = null;
+
+            if (
+                this.socket.readyState === WebSocket.OPEN ||
+                this.socket.readyState === WebSocket.CONNECTING
+            ) {
+                this.socket.close(code, reason);
+            }
+        } catch (error) {
+            console.error('Failed to close WebSocket cleanly:', error);
+        } finally {
+            this.socket = null;
+        }
     }
 
     // Connect to WebSocket with automatic retry logic
     connect(url) {
         // If already connected to the correct URL, return existing connection
         if (this.socket?.readyState === WebSocket.OPEN && this.url === url) {
-            console.log('🔗 WebSocket already connected to correct URL');
-            return Promise.resolve();
+            console.log('WebSocket already connected to target URL');
+            return Promise.resolve(true);
         }
 
         // If a connection attempt is in progress, return the existing promise
         if (this.isConnecting && this.url === url && this.connectionPromise) {
-            console.log('🔄 WebSocket connection in progress');
+            console.log('WebSocket connection already in progress');
             return this.connectionPromise;
         }
 
-        // Clean up any existing connection before starting a new one
-        if (this.socket) {
-            console.log('🧹 Cleaning up existing WebSocket connection');
-            this.disconnect();
-        }
+        this.shouldReconnect = true;
+        this.clearReconnectTimer();
+        this.closeCurrentSocket(1000, 'Replace connection');
 
         this.url = url;
         this.isConnecting = true;
 
-        this.connectionPromise = new Promise((resolve, reject) => {
+        this.connectionPromise = new Promise((resolve) => {
+            let settled = false;
+
+            const settle = (result) => {
+                if (!settled) {
+                    settled = true;
+                    resolve(result);
+                }
+            };
+
             try {
                 this.socket = new WebSocket(url);
 
                 this.socket.onopen = () => {
-                    console.log('🚀 WebSocket connected successfully');
+                    console.log('WebSocket connected');
                     this.connectionAttempts = 0;
                     this.isConnecting = false;
+                    this.connectionPromise = null;
                     this.notifyListeners('connected', { status: 'connected' });
-                    resolve();
+                    settle(true);
                 };
 
                 this.socket.onmessage = (event) => {
                     try {
                         const data = JSON.parse(event.data);
                         this.notifyListeners('message', data);
-                        
+
                         // Route to specific event types
                         if (data.type) {
                             this.notifyListeners(data.type, data);
                         }
                     } catch (error) {
-                        console.error('❌ Failed to parse WebSocket message:', error);
+                        console.error('Failed to parse WebSocket message:', error);
                         this.notifyListeners('error', { error: 'Failed to parse message' });
                     }
                 };
 
                 this.socket.onclose = (event) => {
-                    console.log('🔌 WebSocket disconnected:', event.code, event.reason);
+                    console.log('WebSocket disconnected:', event.code, event.reason);
+                    this.socket = null;
                     this.isConnecting = false;
                     this.connectionPromise = null;
+                    settle(false);
                     this.notifyListeners('disconnected', { code: event.code, reason: event.reason });
-                    
-                    // Attempt reconnection if not intentional
-                    if (!event.wasClean && this.connectionAttempts < this.maxReconnectAttempts) {
+
+                    const isIntentionalClose = event.code === 1000 || !this.shouldReconnect;
+                    if (!isIntentionalClose && this.connectionAttempts < this.maxReconnectAttempts) {
                         this.scheduleReconnect();
                     }
                 };
 
                 this.socket.onerror = (error) => {
-                    console.error('❌ WebSocket error:', error);
+                    console.error('WebSocket error:', error);
                     this.isConnecting = false;
                     this.connectionPromise = null;
                     this.notifyListeners('error', { error: 'Connection error' });
-                    reject(error);
+                    settle(false);
                 };
-
             } catch (error) {
-                console.error('❌ Failed to create WebSocket connection:', error);
+                console.error('Failed to create WebSocket connection:', error);
                 this.isConnecting = false;
                 this.connectionPromise = null;
-                reject(error);
+                settle(false);
             }
         });
+
+        return this.connectionPromise;
     }
 
     // Schedule reconnection attempt
     scheduleReconnect() {
-        if (this.isConnecting) {
+        if (!this.shouldReconnect || this.isConnecting || this.reconnectTimer) {
             return; // Don't schedule reconnect if already connecting
         }
 
         this.connectionAttempts++;
+        if (this.connectionAttempts > this.maxReconnectAttempts) {
+            console.warn('Maximum WebSocket reconnect attempts reached');
+            return;
+        }
+
         const delay = Math.min(
             this.reconnectDelay * Math.pow(2, this.connectionAttempts - 1),
             30000 // Max 30 second delay
         );
-        
-        console.log(`🔄 Scheduling reconnection attempt ${this.connectionAttempts}/${this.maxReconnectAttempts} in ${delay}ms`);
-        
-        setTimeout(() => {
-            if (this.url && this.connectionAttempts <= this.maxReconnectAttempts) {
+
+        console.log(
+            `Scheduling WebSocket reconnect ${this.connectionAttempts}/${this.maxReconnectAttempts} in ${delay}ms`
+        );
+
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+            if (this.url && this.shouldReconnect) {
                 this.connect(this.url);
             }
         }, delay);
@@ -120,11 +172,11 @@ class WebSocketManager {
                 this.socket.send(JSON.stringify(data));
                 return true;
             } catch (error) {
-                console.error('❌ Failed to send WebSocket message:', error);
+                console.error('Failed to send WebSocket message:', error);
                 return false;
             }
         } else {
-            console.warn('⚠️ WebSocket not connected, cannot send message');
+            console.warn('WebSocket not connected, cannot send message');
             return false;
         }
     }
@@ -159,7 +211,7 @@ class WebSocketManager {
                 try {
                     callback(data);
                 } catch (error) {
-                    console.error(`❌ Error in WebSocket event listener for ${event}:`, error);
+                    console.error(`Error in WebSocket listener for ${event}:`, error);
                 }
             });
         }
@@ -184,13 +236,19 @@ class WebSocketManager {
     }
 
     // Gracefully disconnect
-    disconnect() {
+    disconnect({ clearListeners = false } = {}) {
+        this.shouldReconnect = false;
+        this.clearReconnectTimer();
+
         if (this.socket) {
-            console.log('🔌 Disconnecting WebSocket...');
-            this.socket.close(1000, 'Client disconnect');
-            this.socket = null;
+            console.log('Disconnecting WebSocket');
+            this.closeCurrentSocket(1000, 'Client disconnect');
         }
-        this.listeners.clear();
+
+        if (clearListeners) {
+            this.listeners.clear();
+        }
+
         this.connectionAttempts = 0;
         this.isConnecting = false;
         this.connectionPromise = null;

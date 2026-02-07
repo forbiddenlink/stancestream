@@ -1,6 +1,4 @@
-// src/App.jsx
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL); // Log env variable
-import { useState, useEffect, Suspense, lazy } from 'react';
+import { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import DebatePanel from './components/DebatePanel';
 import FactChecker from './components/FactChecker';
@@ -23,6 +21,7 @@ import Icon from './components/Icon';
 import { ViewModeSelector, ToastProvider, Container, Stack, Grid } from './components/ui';
 import wsManager from './services/websocketManager';
 import api from './services/api';
+import { getWebSocketUrl } from './utils/url';
 
 export default function App() {
   const [debateMessages, setDebateMessages] = useState([]);
@@ -38,13 +37,11 @@ export default function App() {
   const [showMatrixModal, setShowMatrixModal] = useState(false); // Matrix modal state
   const [showIntro, setShowIntro] = useState(false); // Intro module state
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+  const webSocketMessageHandlerRef = useRef(() => {});
 
   // WebSocket connection using centralized manager
   useEffect(() => {
-    // Use deployed backend URL for WebSocket (with wss:// for HTTPS)
-    const wsUrl = import.meta.env.VITE_API_URL 
-      ? `wss://${new URL(import.meta.env.VITE_API_URL).host}`
-      : `ws://${window.location.hostname}:3001`;
+    const wsUrl = getWebSocketUrl();
 
     const handleIncomingMessage = (data) => {
       const message = typeof data === 'string' ? JSON.parse(data) : data;
@@ -58,7 +55,7 @@ export default function App() {
       }
 
       // Process other messages for app state
-      handleWebSocketMessage(message);
+      webSocketMessageHandlerRef.current(message);
     };
 
     // Set up event listeners
@@ -87,6 +84,7 @@ export default function App() {
     // Cleanup on unmount
     return () => {
       cleanup.forEach(fn => fn());
+      wsManager.disconnect({ clearListeners: false });
     };
   }, []);
 
@@ -409,6 +407,7 @@ export default function App() {
           break;
       }
   };
+  webSocketMessageHandlerRef.current = handleWebSocketMessage;
 
   // Check backend health on mount
   useEffect(() => {

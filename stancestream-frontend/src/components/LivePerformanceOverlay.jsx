@@ -2,6 +2,7 @@
 // Enhanced to showcase StanceStream's Semantic Caching Business Value
 import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
+import { buildApiUrl } from '../utils/url';
 
 export default function LivePerformanceOverlay({ position = 'top-right', size = 'normal', className = '' }) {
     const [metrics, setMetrics] = useState({
@@ -64,18 +65,16 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
     // Fetch live metrics from API with enhanced business data
     const fetchMetrics = async () => {
         try {
-            const baseUrl = import.meta.env.VITE_API_URL;
-            
             // Fetch cache metrics with business value
-            const cacheResponse = await fetch(`${baseUrl}/api/cache/metrics`);
+            const cacheResponse = await fetch(buildApiUrl('/cache/metrics'));
             const cacheData = await cacheResponse.json();
             
             // Fetch performance metrics
-            const perfResponse = await fetch(`${baseUrl}/api/analytics/performance`);
+            const perfResponse = await fetch(buildApiUrl('/analytics/performance'));
             const perfData = await perfResponse.json();
             
             // Fetch platform metrics
-            const platformResponse = await fetch(`${baseUrl}/api/contest/live-metrics`);
+            const platformResponse = await fetch(buildApiUrl('/contest/live-metrics'));
             const platformData = await platformResponse.json();
 
             // Update metrics with real data
@@ -159,7 +158,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
         // Add click handler for demo button
         const handleDemoClick = () => {
             console.log('Demo cache hit button clicked'); // Debug logging
-            fetch(`${import.meta.env.VITE_API_URL}/api/demo/cache-hit`, {
+            fetch(buildApiUrl('/demo/cache-hit'), {
                 method: 'POST',
             })
             .then(response => {

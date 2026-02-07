@@ -1,5 +1,4 @@
-// Base URL from environment variable
-const API_BASE_URL = import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : '/api';
+import { buildApiUrl } from '../utils/url';
 
 // Request timeout configuration
 const REQUEST_TIMEOUT = 10000; // 10 seconds
@@ -35,7 +34,7 @@ class StanceStreamAPI {
         const { timeout = REQUEST_TIMEOUT, retry = true } = options;
         
         const makeRequest = () => {
-            const response = fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = fetch(buildApiUrl(endpoint), {
                 signal: AbortSignal.timeout(timeout)
             });
             
@@ -63,7 +62,7 @@ class StanceStreamAPI {
         const { timeout = REQUEST_TIMEOUT, retry = false } = options; // POST usually shouldn't retry by default
         
         const makeRequest = () => {
-            const response = fetch(`${API_BASE_URL}${endpoint}`, {
+            const response = fetch(buildApiUrl(endpoint), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
