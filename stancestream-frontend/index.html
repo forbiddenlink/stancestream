@@ -13,6 +13,7 @@
       name="keywords"
       content="AI debate platform, live debate analytics, fact checking, stance tracking, policy discussion"
     />
+    <meta name="author" content="StanceStream Editorial Team" />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://stancestream.vercel.app/" />
 
@@ -33,6 +34,28 @@
       content="Live AI debate analysis with fact-checking, stance tracking, and operational metrics."
     />
     <meta name="twitter:image" content="https://stancestream.vercel.app/vite.svg" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://stancestream.vercel.app/#organization",
+            "name": "StanceStream",
+            "url": "https://stancestream.vercel.app/"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://stancestream.vercel.app/#website",
+            "url": "https://stancestream.vercel.app/",
+            "name": "StanceStream",
+            "publisher": {
+              "@id": "https://stancestream.vercel.app/#organization"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root">
@@ -65,9 +88,9 @@
           <p>
             If you are evaluating AI-assisted debate workflows, StanceStream provides a unified interface for
             orchestrating debates, observing stance evolution, and reviewing outcomes. Learn more in the
-            <a href="/about/"> About page</a>, reach the team through
-            <a href="/contact/"> Contact</a>, and review data handling in the
-            <a href="/privacy-policy/"> Privacy Policy</a>.
+            <a href="/about"> About page</a>, reach the team through
+            <a href="/contact"> Contact</a>, and review data handling in the
+            <a href="/privacy-policy"> Privacy Policy</a>.
           </p>
           <p>
             Teams use this platform to pressure-test assumptions, identify blind spots in policy narratives, and produce
@@ -88,14 +111,14 @@
         </article>
       </main>
       <footer style="padding: 1rem; border-top: 1px solid #d1d5db; font-family: Arial, sans-serif;">
-        <a href="/about/">About</a> |
-        <a href="/contact/">Contact</a> |
-        <a href="/privacy-policy/">Privacy Policy</a>
+        <a href="/about">About</a> |
+        <a href="/contact">Contact</a> |
+        <a href="/privacy-policy">Privacy Policy</a>
       </footer>
     </div>
     <noscript>
-      StanceStream requires JavaScript for live debate streaming. You can still read static pages at /about/, /contact/,
-      and /privacy-policy/.
+      StanceStream requires JavaScript for live debate streaming. You can still read static pages at /about, /contact,
+      and /privacy-policy.
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>

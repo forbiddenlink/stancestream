@@ -7,19 +7,19 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://stancestream.vercel.app/about/</loc>
+    <loc>https://stancestream.vercel.app/about</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://stancestream.vercel.app/contact/</loc>
+    <loc>https://stancestream.vercel.app/contact</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://stancestream.vercel.app/privacy-policy/</loc>
+    <loc>https://stancestream.vercel.app/privacy-policy</loc>
     <lastmod>2026-02-07</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

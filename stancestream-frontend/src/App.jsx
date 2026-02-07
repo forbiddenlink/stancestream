@@ -797,13 +797,13 @@ export default function App() {
         <footer className="relative z-10 border-t border-green-500/30 bg-gray-900/95 px-4 py-4 text-sm text-green-200">
           <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4">
             <div className="flex flex-wrap items-center gap-4">
-              <a className="hover:text-green-100 underline" href="/about/">
+              <a className="hover:text-green-100 underline" href="/about">
                 About
               </a>
-              <a className="hover:text-green-100 underline" href="/contact/">
+              <a className="hover:text-green-100 underline" href="/contact">
                 Contact
               </a>
-              <a className="hover:text-green-100 underline" href="/privacy-policy/">
+              <a className="hover:text-green-100 underline" href="/privacy-policy">
                 Privacy Policy
               </a>
               <a

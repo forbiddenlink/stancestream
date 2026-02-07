@@ -25,7 +25,10 @@ export default defineConfig({
       }
     },
     chunkSizeWarningLimit: 1000,
-    sourcemap: true
+    sourcemap: false
+  },
+  esbuild: {
+    legalComments: 'none'
   },
   server: {
     host: '127.0.0.1',
