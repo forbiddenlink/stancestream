@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://stancestream.vercel.app/sitemap.xml

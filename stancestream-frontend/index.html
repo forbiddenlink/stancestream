@@ -4,10 +4,99 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React</title>
+    <title>StanceStream | Live AI Debate Intelligence</title>
+    <meta
+      name="description"
+      content="StanceStream is a live AI debate platform with real-time argument streaming, fact-checking, stance evolution analytics, and production monitoring."
+    />
+    <meta
+      name="keywords"
+      content="AI debate platform, live debate analytics, fact checking, stance tracking, policy discussion"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://stancestream.vercel.app/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="StanceStream" />
+    <meta property="og:title" content="StanceStream | Live AI Debate Intelligence" />
+    <meta
+      property="og:description"
+      content="Follow live AI-powered policy debates with real-time fact checks, stance evolution, and performance insights."
+    />
+    <meta property="og:url" content="https://stancestream.vercel.app/" />
+    <meta property="og:image" content="https://stancestream.vercel.app/vite.svg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="StanceStream | Live AI Debate Intelligence" />
+    <meta
+      name="twitter:description"
+      content="Live AI debate analysis with fact-checking, stance tracking, and operational metrics."
+    />
+    <meta name="twitter:image" content="https://stancestream.vercel.app/vite.svg" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <header style="padding: 1rem; border-bottom: 1px solid #d1d5db;">
+        <h1 style="margin: 0; font-family: Arial, sans-serif;">StanceStream</h1>
+        <p style="margin: 0.5rem 0 0; font-family: Arial, sans-serif;">
+          Live AI Debate Intelligence Platform
+        </p>
+      </header>
+      <main style="max-width: 960px; margin: 0 auto; padding: 1rem; font-family: Arial, sans-serif;">
+        <article>
+          <h2>Real-time policy debates powered by AI</h2>
+          <p>
+            StanceStream runs structured debates between distinct AI personas so teams can quickly explore opposing
+            perspectives on policy, governance, and social-impact topics. During each session, the platform streams
+            messages in real time and visualizes position changes as the discussion evolves.
+          </p>
+          <p>
+            The system includes integrated fact-checking to flag claims, evaluate confidence, and capture supporting
+            evidence paths. This helps teams move from raw argument generation toward accountable reasoning and faster
+            editorial review. Analysts can monitor conversation quality, topic coverage, and consistency while
+            maintaining a clear timeline of each debate.
+          </p>
+          <p>
+            For operations and product teams, StanceStream surfaces practical telemetry such as active sessions,
+            message throughput, and cache behavior. These live metrics make it easier to diagnose bottlenecks and
+            verify production behavior without switching tools. The platform is designed for iterative experimentation,
+            from single-thread debates to multi-session scenarios.
+          </p>
+          <p>
+            If you are evaluating AI-assisted debate workflows, StanceStream provides a unified interface for
+            orchestrating debates, observing stance evolution, and reviewing outcomes. Learn more in the
+            <a href="/about/"> About page</a>, reach the team through
+            <a href="/contact/"> Contact</a>, and review data handling in the
+            <a href="/privacy-policy/"> Privacy Policy</a>.
+          </p>
+          <p>
+            Teams use this platform to pressure-test assumptions, identify blind spots in policy narratives, and produce
+            cleaner briefing outputs. The goal is practical: help people make better decisions with transparent, inspectable
+            AI dialogue. StanceStream is not a replacement for human judgment. It is a structured environment for collecting,
+            comparing, and auditing machine-generated perspectives.
+          </p>
+          <p>
+            In production deployments, we prioritize observability and resilience. Real-time dashboards expose operational
+            health signals and debate-level activity so owners can detect drift quickly. This enables teams to iterate on
+            prompts, moderation strategy, and model behavior with direct feedback loops rather than guesswork.
+          </p>
+          <p>
+            External references:
+            <a href="https://redis.io" rel="noopener noreferrer">Redis</a>,
+            <a href="https://vercel.com/docs" rel="noopener noreferrer">Vercel Docs</a>.
+          </p>
+        </article>
+      </main>
+      <footer style="padding: 1rem; border-top: 1px solid #d1d5db; font-family: Arial, sans-serif;">
+        <a href="/about/">About</a> |
+        <a href="/contact/">Contact</a> |
+        <a href="/privacy-policy/">Privacy Policy</a>
+      </footer>
+    </div>
+    <noscript>
+      StanceStream requires JavaScript for live debate streaming. You can still read static pages at /about/, /contact/,
+      and /privacy-policy/.
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
