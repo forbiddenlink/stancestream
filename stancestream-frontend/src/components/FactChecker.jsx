@@ -29,17 +29,17 @@ const FactChecker = ({ factChecks = [] }) => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10">
-            <div className="flex-shrink-0 bg-gray-900/95 px-4 py-3 border-b border-green-500/30 rounded-t-xl">
+        <div className="h-full flex flex-col bg-surface-base border border-green-500/20 rounded-xl shadow-elevated">
+            <div className="flex-shrink-0 bg-surface-elevated px-4 py-3 border-b border-green-500/20 rounded-t-xl">
                 <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-xl bg-green-500/20 border border-green-500/30 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center shadow-glow">
                         <Icon name="shield-check" size={20} className="text-green-400" />
                     </div>
                     <div className="flex-1">
                         <h3 className="text-lg font-semibold text-green-400 font-mono tracking-wide">FACT CHECKER</h3>
                         <p className="text-gray-400 text-sm font-mono">REAL-TIME VERIFICATION</p>
                     </div>
-                    <div className="bg-black/80 border border-green-500/30 px-2 py-1 rounded-md">
+                    <div className="bg-surface-card border border-green-500/20 px-2 py-1 rounded-xl">
                         <span className="text-green-400 text-sm font-mono">
                             {factChecks.length} CHECKS
                         </span>
@@ -47,10 +47,10 @@ const FactChecker = ({ factChecks = [] }) => {
                 </div>
             </div>
 
-            <div className="flex-1 overflow-hidden p-4 bg-black/80">
+            <div className="flex-1 overflow-hidden p-4 bg-surface-base">
                 {factChecks.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-center">
-                        <div className="w-16 h-16 rounded-2xl bg-black/80 border border-green-500/30 flex items-center justify-center mb-4">
+                        <div className="w-16 h-16 rounded-xl bg-surface-card border border-green-500/20 flex items-center justify-center mb-4 shadow-glow">
                             <Icon name="search" size={24} className="text-green-400" />
                         </div>
                         <h4 className="text-green-400 font-medium mb-2 font-mono">READY FOR FACT-CHECKING</h4>
@@ -63,7 +63,7 @@ const FactChecker = ({ factChecks = [] }) => {
                             const config = getFactCheckConfig(check.score);
 
                             return (
-                                <div key={check.id || check.timestamp} className={`bg-black/80 border p-4 rounded-xl ${config.cardClass} hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300`}>
+                                <div key={check.id || check.timestamp} className={`bg-surface-card border p-4 rounded-xl ${config.cardClass} hover:shadow-card-hover transition-all duration-150`}>
                                     <div className="flex items-start space-x-3">
                                         <div className="flex-shrink-0 mt-1">
                                             <Icon name={config.icon} size={18} className="text-green-400" />

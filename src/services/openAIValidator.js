@@ -1,6 +1,12 @@
 // OpenAI API Key Validator and Rate Limit Handler
 import { setTimeout } from 'timers/promises';
-import fetch from 'node-fetch';
+
+const getFetch = () => {
+    if (typeof globalThis.fetch === 'function') {
+        return globalThis.fetch.bind(globalThis);
+    }
+    throw new Error('Fetch API is not available in this runtime');
+};
 
 class OpenAIValidator {
     constructor() {
@@ -64,7 +70,7 @@ class OpenAIValidator {
     async testApiKey(apiKey, retries = 3, delayMs = 1000) {
         for (let attempt = 1; attempt <= retries; attempt++) {
             try {
-                const response = await fetch('https://api.openai.com/v1/models', {
+                const response = await getFetch()('https://api.openai.com/v1/models', {
                     headers: {
                         'Authorization': `Bearer ${apiKey}`,
                         'Content-Type': 'application/json'

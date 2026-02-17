@@ -38,9 +38,9 @@ export const Section = ({
 }) => {
     const backgroundClasses = {
         transparent: '',
-        glass: 'bg-black/20 backdrop-blur-lg border border-green-500/20',
+        glass: 'bg-surface-card/80 backdrop-blur-lg border border-green-500/20',
         gradient: 'bg-gradient-to-br from-green-900/20 to-black/50',
-        dark: 'bg-gray-900/50',
+        dark: 'bg-surface-card/50',
     };
 
     return (
@@ -160,9 +160,9 @@ export const Hero = ({
     ...props
 }) => {
     const backgroundClasses = {
-        gradient: 'bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900',
+        gradient: 'bg-gradient-to-br from-green-900/60 via-black to-green-950/40',
         image: 'bg-cover bg-center bg-no-repeat',
-        dark: 'bg-gray-900',
+        dark: 'bg-surface-base',
         transparent: '',
     };
 
@@ -259,13 +259,13 @@ export const DashboardLayout = ({
             {...props}
         >
             {header && (
-                <header className="bg-black/80 border border-green-500/30 backdrop-blur-sm">
+                <header className="bg-surface-card/80 border border-green-500/20 backdrop-blur-sm">
                     {header}
                 </header>
             )}
             <div className="flex">
                 {sidebar && (
-                    <aside className="w-64 min-h-screen bg-black/80 border border-green-500/30 backdrop-blur-sm">
+                    <aside className="w-64 min-h-screen bg-surface-card/80 border-r border-green-500/20 backdrop-blur-sm">
                         {sidebar}
                     </aside>
                 )}

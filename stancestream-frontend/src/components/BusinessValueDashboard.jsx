@@ -80,7 +80,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
         <div className="space-y-6">
             {/* Executive Summary Header - Matrix Style */}
             {executiveSummary && (
-                <div className="bg-gradient-to-r from-black/95 to-gray-900/95 border border-green-500/30 rounded-xl p-6 shadow-lg shadow-green-500/10">
+                <div className="bg-gradient-to-r from-surface-base/95 to-surface-card/95 border border-green-500/20 rounded-xl p-6 shadow-lg shadow-green-500/10">
                     <div className="flex items-start gap-4">
                         <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center justify-center">
                             <Icon name="trending-up" className="w-6 h-6 text-green-400" />
@@ -108,10 +108,10 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
             {/* Current Performance Metrics */}
             {currentUsage && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg p-6 border-l-4 border-green-500">
+                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-500">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="dollar-sign" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-gray-400 font-mono">MONTHLY SAVINGS</span>
+                            <span className="text-sm text-neutral-400 font-mono">MONTHLY SAVINGS</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             ${currentUsage.monthly_savings}
@@ -121,10 +121,10 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg p-6 border-l-4 border-green-400">
+                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-400">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="zap" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-gray-400 font-mono">CACHE EFFICIENCY</span>
+                            <span className="text-sm text-neutral-400 font-mono">CACHE EFFICIENCY</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             {currentUsage.cache_efficiency}
@@ -134,10 +134,10 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg p-6 border-l-4 border-green-300">
+                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-300">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="cpu" className="w-6 h-6 text-green-300" />
-                            <span className="text-sm text-gray-400 font-mono">TOKENS SAVED</span>
+                            <span className="text-sm text-neutral-400 font-mono">TOKENS SAVED</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             {currentUsage.daily_tokens_saved?.toLocaleString() || '0'}
@@ -147,10 +147,10 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg p-6 border-l-4 border-green-200">
+                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-200">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="activity" className="w-6 h-6 text-green-200" />
-                            <span className="text-sm text-gray-400 font-mono">SYSTEM STATUS</span>
+                            <span className="text-sm text-neutral-400 font-mono">SYSTEM STATUS</span>
                         </div>
                         <div className="text-lg font-bold text-green-300 font-mono">
                             {performance?.system_efficiency || 'Optimizing'}
@@ -164,7 +164,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
             {/* Enterprise Scaling Projections - Matrix Style */}
             {enterpriseProjections && (
-                <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg shadow-green-500/10 p-6">
+                <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
                     <div className="flex items-center gap-3 mb-6">
                         <Icon name="building" className="w-6 h-6 text-green-400" />
                         <h3 className="text-xl font-bold text-green-300 font-mono tracking-wide">ENTERPRISE SCALING PROJECTIONS</h3>
@@ -172,7 +172,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {Object.entries(enterpriseProjections).map(([scale, data]) => (
-                            <div key={scale} className="bg-gray-900/50 border border-green-500/30 rounded-lg p-4">
+                            <div key={scale} className="bg-surface-elevated/50 border border-green-500/20 rounded-xl p-4">
                                 <div className="text-sm font-medium text-green-300 mb-2 font-mono">
                                     {data.description}
                                 </div>
@@ -190,7 +190,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
             {/* Real-time Performance Indicators - Matrix Style */}
             {cacheMetrics?.dashboard && (
-                <div className="bg-black/80 border border-green-500/30 rounded-xl shadow-lg shadow-green-500/10 p-6">
+                <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                             <Icon name="monitor" className="w-6 h-6 text-green-400" />
@@ -204,7 +204,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         {Object.entries(cacheMetrics.dashboard.primary_kpis).map(([key, value]) => (
-                            <div key={key} className="text-center bg-gray-900/50 border border-green-500/30 rounded-lg p-3">
+                            <div key={key} className="text-center bg-surface-elevated/50 border border-green-500/20 rounded-xl p-3">
                                 <div className="text-lg font-bold text-green-300 font-mono">{value}</div>
                                 <div className="text-sm text-green-400 font-mono">{key.toUpperCase()}</div>
                             </div>
@@ -215,7 +215,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
             {/* Business Case Highlight - Matrix Style */}
             {executiveSummary?.business_case && (
-                <div className="bg-gradient-to-r from-black/90 to-gray-900/90 border border-green-500/30 rounded-xl p-6 shadow-lg shadow-green-500/10">
+                <div className="bg-gradient-to-r from-surface-base/90 to-surface-card/90 border border-green-500/20 rounded-xl p-6 shadow-lg shadow-green-500/10">
                     <div className="flex items-start gap-4">
                         <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center justify-center">
                             <Icon name="briefcase" className="w-6 h-6 text-green-400" />
@@ -254,12 +254,12 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
             )}
 
             {/* Last Updated - Matrix Style */}
-            <div className="text-center text-sm text-gray-400 bg-black/80 border border-green-500/30 rounded-lg p-3">
+            <div className="text-center text-sm text-neutral-400 bg-surface-card border border-green-500/20 rounded-xl p-3">
                 <span className="font-mono">LAST UPDATED: {new Date().toLocaleTimeString()}</span>
                 <span className="mx-2 text-green-500">•</span>
                 <button
                     onClick={fetchBusinessMetrics}
-                    className="text-green-400 hover:text-green-300 transition-colors font-mono"
+                    className="text-green-400 hover:text-green-300 transition-colors duration-150 font-mono"
                 >
                     REFRESH
                 </button>

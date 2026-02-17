@@ -11,9 +11,9 @@ export const TabNavigation = ({
     className = ''
 }) => {
     const variants = {
-        default: 'bg-slate-800/50 border border-slate-700/50',
+        default: 'bg-surface-card border border-green-500/20',
         glass: 'glass-panel',
-        minimal: 'border-b border-slate-700/50'
+        minimal: 'border-b border-green-500/20'
     };
 
     return (
@@ -24,10 +24,10 @@ export const TabNavigation = ({
                         key={tab.id}
                         onClick={() => onTabChange(tab.id)}
                         className={`
-                            flex items-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all duration-200
+                            flex items-center space-x-2 px-4 py-3 rounded-lg font-medium transition-all duration-150
                             ${activeTab === tab.id
-                                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                                : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                             }
                             ${tab.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                         `}
@@ -37,7 +37,7 @@ export const TabNavigation = ({
                             <Icon
                                 name={tab.icon}
                                 size={18}
-                                className={activeTab === tab.id ? 'text-white' : 'text-slate-400'}
+                                className={activeTab === tab.id ? 'text-green-400' : 'text-neutral-400'}
                             />
                         )}
                         <span>{tab.label}</span>
@@ -60,18 +60,18 @@ export const Breadcrumb = ({ items, separator = 'chevron-right', className = '' 
             {items.map((item, index) => (
                 <React.Fragment key={index}>
                     {index > 0 && (
-                        <Icon name={separator} size={14} className="text-slate-500" />
+                        <Icon name={separator} size={14} className="text-neutral-500" />
                     )}
                     {item.href ? (
                         <a
                             href={item.href}
-                            className="text-slate-400 hover:text-white transition-colors"
+                            className="text-neutral-400 hover:text-green-400 transition-colors duration-150"
                             onClick={item.onClick}
                         >
                             {item.label}
                         </a>
                     ) : (
-                        <span className={index === items.length - 1 ? 'text-white font-medium' : 'text-slate-400'}>
+                        <span className={index === items.length - 1 ? 'text-green-400 font-medium' : 'text-neutral-400'}>
                             {item.label}
                         </span>
                     )}
@@ -96,10 +96,10 @@ export const SidebarNav = ({
                     <button
                         onClick={() => onItemClick?.(item.id)}
                         className={`
-                            w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-200
+                            w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium transition-all duration-150
                             ${activeItem === item.id
-                                ? 'bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-white border border-green-500/30'
-                                : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                                ? 'bg-green-500/10 text-white border border-green-500/30'
+                                : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                             }
                             ${item.disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                         `}
@@ -110,7 +110,7 @@ export const SidebarNav = ({
                             <Icon
                                 name={item.icon}
                                 size={20}
-                                className={activeItem === item.id ? 'text-green-400' : 'text-slate-400'}
+                                className={activeItem === item.id ? 'text-green-400' : 'text-neutral-400'}
                             />
                         )}
                         {!collapsed && (
@@ -122,7 +122,7 @@ export const SidebarNav = ({
                                     </span>
                                 )}
                                 {item.hasSubmenu && (
-                                    <Icon name="chevron-down" size={16} className="text-slate-400" />
+                                    <Icon name="chevron-down" size={16} className="text-neutral-400" />
                                 )}
                             </>
                         )}
@@ -135,10 +135,10 @@ export const SidebarNav = ({
                                 <button
                                     key={subItem.id}
                                     onClick={() => onItemClick?.(subItem.id)}
-                                    className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200"
+                                    className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-sm text-neutral-400 hover:text-white hover:bg-neutral-800/50 transition-all duration-150"
                                 >
                                     {subItem.icon && (
-                                        <Icon name={subItem.icon} size={16} className="text-slate-500" />
+                                        <Icon name={subItem.icon} size={16} className="text-neutral-500" />
                                     )}
                                     <span>{subItem.label}</span>
                                 </button>
@@ -183,12 +183,12 @@ export const Pagination = ({
             onClick={onClick}
             disabled={disabled}
             className={`
-                w-10 h-10 rounded-lg font-medium transition-all duration-200 flex items-center justify-center
+                w-10 h-10 rounded-lg font-medium transition-all duration-150 flex items-center justify-center
                 ${active
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
                     : disabled
-                        ? 'text-slate-600 cursor-not-allowed'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+                        ? 'text-neutral-600 cursor-not-allowed'
+                        : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
                 }
             `}
         >
@@ -269,12 +269,12 @@ export const StepNavigation = ({
                                 onClick={isClickable ? () => onStepClick(stepNumber) : undefined}
                                 disabled={!isClickable}
                                 className={`
-                                    w-12 h-12 rounded-full flex items-center justify-center font-semibold transition-all duration-200
+                                    w-12 h-12 rounded-full flex items-center justify-center font-semibold transition-all duration-150
                                     ${isActive
-                                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg scale-110'
+                                        ? 'bg-green-500/20 text-green-400 border-2 border-green-500/50 shadow-glow scale-110'
                                         : isCompleted
                                             ? 'bg-green-500 text-white'
-                                            : 'bg-slate-700 text-slate-400'
+                                            : 'bg-neutral-800 text-neutral-400'
                                     }
                                     ${isClickable ? 'cursor-pointer hover:scale-105' : 'cursor-not-allowed'}
                                 `}
@@ -285,13 +285,13 @@ export const StepNavigation = ({
                                     stepNumber
                                 )}
                             </button>
-                            <span className={`mt-2 text-sm font-medium ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                            <span className={`mt-2 text-sm font-medium ${isActive ? 'text-green-400' : 'text-neutral-400'}`}>
                                 {step.label}
                             </span>
                         </div>
 
                         {index < steps.length - 1 && (
-                            <div className={`flex-1 h-0.5 mx-4 ${isCompleted ? 'bg-green-500' : 'bg-slate-700'}`} />
+                            <div className={`flex-1 h-0.5 mx-4 ${isCompleted ? 'bg-green-500' : 'bg-neutral-700'}`} />
                         )}
                     </React.Fragment>
                 );

@@ -13,6 +13,46 @@ module.exports = {
             },
 
             colors: {
+                // Matrix Green - Primary brand color
+                matrix: {
+                    50: '#f0fdf4',
+                    100: '#dcfce7',
+                    200: '#bbf7d0',
+                    300: '#86efac',
+                    400: '#4ade80',
+                    500: '#22c55e',
+                    600: '#16a34a',
+                    700: '#15803d',
+                    800: '#166534',
+                    900: '#14532d',
+                },
+                // Accent - Cyan for interactive highlights
+                accent: {
+                    400: '#22d3ee',
+                    500: '#06b6d4',
+                    600: '#0891b2',
+                },
+                // Neutral grays (replacing slate)
+                neutral: {
+                    50: '#fafafa',
+                    100: '#f5f5f5',
+                    200: '#e5e5e5',
+                    300: '#d4d4d4',
+                    400: '#a3a3a3',
+                    500: '#737373',
+                    600: '#525252',
+                    700: '#404040',
+                    800: '#262626',
+                    900: '#171717',
+                },
+                // Surface levels for cards/panels
+                surface: {
+                    base: '#000000',
+                    card: '#0a0a0a',
+                    elevated: '#111111',
+                    overlay: '#1a1a1a',
+                },
+                // Legacy support (keeping primary for gradual migration)
                 primary: {
                     50: '#eff6ff',
                     100: '#dbeafe',
@@ -26,18 +66,6 @@ module.exports = {
                     900: '#1e3a8a',
                     950: '#172554'
                 },
-                secondary: {
-                    50: '#fdf4ff',
-                    100: '#fae8ff',
-                    200: '#f5d0fe',
-                    300: '#f0abfc',
-                    400: '#e879f9',
-                    500: '#d946ef',
-                    600: '#c026d3',
-                    700: '#a21caf',
-                    800: '#86198f',
-                    900: '#701a75'
-                }
             },
 
             backgroundImage: {
@@ -48,10 +76,29 @@ module.exports = {
             },
 
             boxShadow: {
-                'glow': '0 0 20px rgba(59, 130, 246, 0.3)',
-                'glow-hover': '0 0 30px rgba(59, 130, 246, 0.4)',
-                'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-                'elevated': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+                // Matrix glow system - green based
+                'glow': '0 0 20px rgba(34, 197, 94, 0.3)',
+                'glow-hover': '0 0 30px rgba(34, 197, 94, 0.4)',
+                'glow-strong': '0 0 40px rgba(34, 197, 94, 0.5)',
+                // Card shadows for dark surfaces
+                'card': '0 4px 24px rgba(0, 0, 0, 0.5)',
+                'card-hover': '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(34, 197, 94, 0.2)',
+                'elevated': '0 8px 32px rgba(0, 0, 0, 0.8)',
+                'modal': '0 16px 48px rgba(0, 0, 0, 0.9), 0 0 30px rgba(34, 197, 94, 0.15)',
+                // Status glows
+                'glow-success': '0 0 20px rgba(34, 197, 94, 0.4)',
+                'glow-warning': '0 0 20px rgba(234, 179, 8, 0.4)',
+                'glow-error': '0 0 20px rgba(239, 68, 68, 0.4)',
+                'glow-info': '0 0 20px rgba(6, 182, 212, 0.4)',
+            },
+
+            // Border radius - unified to 12px
+            borderRadius: {
+                'card': '12px',
+                'button': '8px',
+                'input': '8px',
+                'badge': '6px',
+                'modal': '16px',
             },
 
             animation: {

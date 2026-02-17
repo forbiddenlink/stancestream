@@ -65,9 +65,9 @@ const DebatePanel = ({ messages = [] }) => {
     };
 
     return (
-        <div className="h-full flex flex-col bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10 animate-fade-in">
+        <div className="h-full flex flex-col bg-surface-base border border-green-500/20 rounded-xl shadow-elevated animate-fade-in">
             {/* Matrix Header */}
-            <div className="flex-shrink-0 bg-gray-900/95 px-6 py-4 border-b border-green-500/30 rounded-t-xl">
+            <div className="flex-shrink-0 bg-surface-elevated px-6 py-4 border-b border-green-500/20 rounded-t-xl">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="relative">
@@ -84,7 +84,7 @@ const DebatePanel = ({ messages = [] }) => {
 
                     {messages.length > 0 && (
                         <div className="flex items-center space-x-4">
-                            <div className="bg-black/80 border border-green-500/30 px-3 py-1.5 rounded-lg">
+                            <div className="bg-surface-card border border-green-500/20 px-3 py-1.5 rounded-xl">
                                 <div className="flex items-center space-x-2">
                                     <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                     <span className="text-green-400 text-sm font-medium font-mono">
@@ -103,12 +103,12 @@ const DebatePanel = ({ messages = [] }) => {
             {/* Matrix Messages Area */}
             <div
                 ref={messagesContainerRef}
-                className="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6 min-h-0 bg-black/80"
+                className="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6 min-h-0 bg-surface-base"
             >
                 {messages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in">
                         <div className="relative mb-8">
-                            <div className="w-20 h-20 bg-black/80 border border-green-500/30 rounded-2xl flex items-center justify-center">
+                            <div className="w-20 h-20 bg-surface-card border border-green-500/20 rounded-xl flex items-center justify-center">
                                 <Icon name="message-circle" size={40} className="text-green-400" />
                             </div>
                             <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-2xl blur-xl -z-10"></div>
@@ -182,15 +182,15 @@ const DebatePanel = ({ messages = [] }) => {
                                             </div>
                                         )}
 
-                                        <div className={`bg-black/80 border p-4 rounded-2xl ${agentStyle.bgColor} ${isLeft ? 'rounded-tl-md' : 'rounded-tr-md'
-                                            } hover:shadow-lg hover:shadow-green-500/20 transition-all duration-300`}>
+                                        <div className={`bg-surface-card border p-4 rounded-xl ${agentStyle.bgColor} ${isLeft ? 'rounded-tl-sm' : 'rounded-tr-sm'
+                                            } hover:shadow-card-hover transition-all duration-150`}>
                                             <p className="text-green-100 leading-relaxed text-base font-mono">
                                                 {msg.text}
                                             </p>
 
                                             {/* Matrix Fact Check Indicator */}
                                             {msg.factCheck && (
-                                                <div className="mt-3 pt-3 border-t border-green-500/30">
+                                                <div className="mt-3 pt-3 border-t border-green-500/20">
                                                     <div className="flex items-center space-x-2">
                                                         <Icon name="shield-check" size={14} className="text-green-400" />
                                                         <span className="text-green-400 text-xs font-medium font-mono">

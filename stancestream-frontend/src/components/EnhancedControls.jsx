@@ -196,7 +196,7 @@ export default function EnhancedControls({
     };
 
     return (
-        <div className="bg-gradient-to-r from-black/90 to-gray-900/90 backdrop-blur-sm border border-green-500/30 rounded-xl p-4 shadow-lg shadow-green-500/10">
+        <div className="bg-surface-elevated backdrop-blur-sm border border-green-500/20 rounded-xl p-4 shadow-card">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
                 {/* Column 1: Mode & Status */}
@@ -227,7 +227,7 @@ export default function EnhancedControls({
                                 </span>
                                 <button
                                     onClick={onStopCurrentDebate}
-                                    className="px-2 py-1 bg-red-600/20 border border-red-500/30 rounded text-red-300 hover:bg-red-600/30 transition-colors text-sm flex items-center gap-1 font-mono"
+                                    className="px-2 py-1 bg-red-600/20 border border-red-500/30 rounded-xl text-red-300 hover:bg-red-600/30 transition-all duration-150 text-sm flex items-center gap-1 font-mono"
                                 >
                                     <Icon name="stop" size={14} />
                                     STOP
@@ -235,7 +235,7 @@ export default function EnhancedControls({
                                 {debateMessages.length > 0 && (
                                     <button
                                         onClick={onClearConversation}
-                                        className="px-2 py-1 bg-black/60 border border-green-500/30 rounded text-green-300 hover:bg-green-900/20 transition-colors text-sm flex items-center gap-1 font-mono"
+                                        className="px-2 py-1 bg-surface-card border border-green-500/20 rounded-xl text-green-300 hover:bg-green-500/10 transition-all duration-150 text-sm flex items-center gap-1 font-mono"
                                     >
                                         <Icon name="trash" size={14} />
                                         CLEAR
@@ -249,7 +249,7 @@ export default function EnhancedControls({
                                 </span>
                                 <button
                                     onClick={stopAllDebates}
-                                    className="px-2 py-1 bg-red-600/20 border border-red-500/30 rounded text-red-300 hover:bg-red-600/30 transition-colors text-sm flex items-center gap-1 font-mono"
+                                    className="px-2 py-1 bg-red-600/20 border border-red-500/30 rounded-xl text-red-300 hover:bg-red-600/30 transition-all duration-150 text-sm flex items-center gap-1 font-mono"
                                 >
                                     <Icon name="stop" size={14} />
                                     STOP ALL
@@ -304,15 +304,15 @@ export default function EnhancedControls({
                                 value={customTopic}
                                 onChange={(e) => setCustomTopic(e.target.value)}
                                 placeholder="Enter custom debate topic..."
-                                className="flex-1 px-2 py-1 bg-black/80 border border-green-500/30 rounded text-green-300 text-sm placeholder-green-400/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-400 font-mono"
+                                className="flex-1 px-3 py-2 bg-surface-card border border-green-500/20 rounded-xl text-green-300 text-sm placeholder-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/40 font-mono transition-all duration-150"
                                 onKeyPress={(e) => e.key === 'Enter' && addCustomTopic()}
                             />
                             <button
                                 onClick={addCustomTopic}
                                 disabled={!customTopic.trim()}
-                                className={`px-2 py-1 rounded text-xs font-bold transition-colors font-mono tracking-wide ${customTopic.trim()
-                                        ? 'bg-green-600 text-black hover:bg-green-500'
-                                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                className={`px-3 py-2 rounded-xl text-xs font-bold transition-all duration-150 font-mono tracking-wide ${customTopic.trim()
+                                        ? 'bg-green-500/20 border border-green-500/30 text-green-300 hover:bg-green-500/30 hover:border-green-500/50'
+                                        : 'bg-surface-card border border-green-500/10 text-neutral-500 cursor-not-allowed'
                                     }`}
                             >
                                 ADD
@@ -326,10 +326,10 @@ export default function EnhancedControls({
                             <label
                                 key={topic.id}
                                 className={`
-                  flex items-center justify-center p-2 sm:p-3 rounded-lg border cursor-pointer transition-all text-xs sm:text-sm font-mono tracking-wide shadow-lg
+                  flex items-center justify-center p-2 sm:p-3 rounded-xl border cursor-pointer transition-all duration-150 text-xs sm:text-sm font-mono tracking-wide
                   ${selectedTopics.includes(topic.id)
-                                        ? 'bg-green-500/20 border-green-400 text-green-200 shadow-green-500/30'
-                                        : 'bg-black/60 border-green-500/30 text-green-300 hover:border-green-400 hover:bg-green-900/20'
+                                        ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                                        : 'bg-surface-card border-green-500/20 text-green-300 hover:border-green-500/40 hover:bg-green-500/10'
                                     }
                 `}
                             >
@@ -353,7 +353,7 @@ export default function EnhancedControls({
                 {/* Analytics Mode Info Panel */}
                 {viewMode === 'analytics' && (
                 <div className="lg:col-span-2">
-                    <div className="bg-black/60 border border-green-500/30 rounded-lg p-3 shadow-lg">
+                    <div className="bg-surface-card border border-green-500/20 rounded-xl p-3 shadow-card">
                         <h3 className="text-sm font-bold text-green-300 mb-2 font-mono tracking-wide">PERFORMANCE MONITORING</h3>
                         <div className="text-xs text-green-200/80 space-y-1 font-mono">
                             <div>• REAL-TIME REDIS METRICS AND OPERATIONS</div>
@@ -377,10 +377,10 @@ export default function EnhancedControls({
                                 onClick={startDebates}
                                 disabled={selectedTopics.length === 0 || isStarting || (viewMode === 'standard' && isDebating)}
                                 className={`
-                    w-full px-3 py-2 rounded-lg font-bold transition-all text-sm flex items-center justify-center font-mono tracking-wide shadow-lg
+                    w-full px-3 py-2 rounded-xl font-bold transition-all duration-150 text-sm flex items-center justify-center font-mono tracking-wide
                     ${selectedTopics.length > 0 && !isStarting && !(viewMode === 'standard' && isDebating)
-                                        ? 'bg-gradient-to-r from-green-600 to-green-500 text-black hover:from-green-500 hover:to-green-400 shadow-green-500/30'
-                                        : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                        ? 'bg-green-500/20 border border-green-500/30 text-green-300 hover:bg-green-500/30 hover:border-green-500/50 shadow-glow'
+                                        : 'bg-surface-card border border-green-500/10 text-neutral-500 cursor-not-allowed'
                                     }
                   `}
                             >
@@ -407,7 +407,7 @@ export default function EnhancedControls({
                                 )}
                             </button>
                         ) : (
-                            <div className="w-full px-3 py-2 rounded-lg bg-black/60 border border-green-500/30 text-center text-sm text-green-400 flex items-center justify-center gap-2 font-mono tracking-wide">
+                            <div className="w-full px-3 py-2 rounded-xl bg-surface-card border border-green-500/20 text-center text-sm text-green-400 flex items-center justify-center gap-2 font-mono tracking-wide">
                                 <Icon name="analytics" size={16} />
                                 ANALYTICS VIEW ACTIVE
                             </div>
@@ -416,7 +416,7 @@ export default function EnhancedControls({
                         {/* Cache Hit Demo Button - Showcase Semantic Caching Business Value */}
                         <button
                             onClick={triggerCacheHitDemo}
-                            className="w-full px-3 py-2 rounded-lg font-bold transition-all text-sm flex items-center justify-center bg-gradient-to-r from-green-600 to-green-500 text-black hover:from-green-500 hover:to-green-400 border border-green-500/30 shadow-lg shadow-green-500/30 font-mono tracking-wide"
+                            className="w-full px-3 py-2 rounded-xl font-bold transition-all duration-150 text-sm flex items-center justify-center bg-green-500/20 border border-green-500/30 text-green-300 hover:bg-green-500/30 hover:border-green-500/50 shadow-glow font-mono tracking-wide"
                         >
                             <Icon name="zap" size={16} className="mr-2" />
                             DEMO CACHE HIT
@@ -426,11 +426,11 @@ export default function EnhancedControls({
                         {activeDebates.size > 0 && (
                             <div className="mt-2">
                                 <div className="text-xs text-green-400 mb-1 font-mono tracking-wide">ACTIVE:</div>
-                                <div className="space-y-1 max-h-24 overflow-y-auto">
+                                <div className="space-y-1 max-h-24 overflow-y-auto scrollbar-thin">
                                     {Array.from(activeDebates.entries()).slice(0, 4).map(([id, debate]) => (
                                         <div
                                             key={id}
-                                            className="text-xs bg-black/60 px-2 py-1 rounded border border-green-500/30 text-green-300 font-mono"
+                                            className="text-xs bg-surface-card px-2 py-1 rounded-xl border border-green-500/20 text-green-300 font-mono"
                                         >
                                             <div className="font-bold truncate">{debate.topic.toUpperCase()}</div>
                                             <div className="text-green-500">{debate.messageCount || 0} MSGS</div>

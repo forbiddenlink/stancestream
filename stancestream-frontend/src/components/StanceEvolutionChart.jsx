@@ -60,7 +60,7 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
         return (
             <div className="h-full flex flex-col bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10 overflow-hidden">
                 {/* Matrix Header */}
-                <div className="flex-shrink-0 bg-gray-900/95 px-6 py-4 border-b border-green-500/30">
+                <div className="flex-shrink-0 bg-surface-card/95 px-6 py-4 border-b border-green-500/20">
                     <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-green-500/30">
                             <Icon name="trending" className="w-5 h-5 text-black" />
@@ -78,8 +78,8 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
                         <div className="w-12 h-12 bg-black/80 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Icon name="analytics" className="w-6 h-6 text-green-400" />
                         </div>
-                        <p className="text-gray-400 text-sm font-medium font-mono">AWAITING STANCE DATA</p>
-                        <p className="text-gray-500 text-xs mt-1 font-mono">CHART WILL UPDATE AS DEBATE PROGRESSES</p>
+                        <p className="text-neutral-400 text-sm font-medium font-mono">AWAITING STANCE DATA</p>
+                        <p className="text-neutral-500 text-xs mt-1 font-mono">CHART WILL UPDATE AS DEBATE PROGRESSES</p>
                     </div>
                 </div>
             </div>
@@ -89,7 +89,7 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
     return (
         <div className="h-full flex flex-col bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10 overflow-hidden">
             {/* Matrix Header */}
-            <div className="flex-shrink-0 bg-gray-900/95 px-6 py-4 border-b border-green-500/30">
+            <div className="flex-shrink-0 bg-surface-card/95 px-6 py-4 border-b border-green-500/20">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg shadow-green-500/30">
@@ -135,8 +135,8 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
                             )}
                         </div>
                     </div>
-                    <div className="text-xs text-gray-500 font-mono">
-                        <span className="text-gray-400 font-medium">{chartData.length}</span> TURNS
+                    <div className="text-xs text-neutral-500 font-mono">
+                        <span className="text-neutral-400 font-medium">{chartData.length}</span> TURNS
                     </div>
                 </div>
             </div>
@@ -191,9 +191,9 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
             </div>
 
             {/* Matrix Election night style footer */}
-            <div className="flex-shrink-0 px-6 py-3 bg-gray-900/95 border-t border-green-500/30">
+            <div className="flex-shrink-0 px-6 py-3 bg-surface-card/95 border-t border-green-500/20">
                 <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-gray-400">
+                    <span className="text-neutral-400">
                         <Icon name="Activity" className="w-3 h-3 inline mr-1" />
                         REAL-TIME STANCE TRACKING
                     </span>

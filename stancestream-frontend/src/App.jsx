@@ -502,7 +502,7 @@ export default function App() {
         />
 
         {/* Enhanced Controls Bar - Matrix Style */}
-        <div className="flex-shrink-0 border-b border-green-500/30 bg-gradient-to-r from-black/95 to-gray-900/95 backdrop-blur-md overflow-x-hidden relative z-10">
+        <div className="flex-shrink-0 border-b border-green-500/20 bg-surface-elevated backdrop-blur-md overflow-x-hidden relative z-10">
           <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4 py-3">
             <Stack spacing="space-y-4">
               {/* Top Row: Enhanced Controls - Full Width */}
@@ -536,20 +536,20 @@ export default function App() {
                 {/* Left: Enhanced Quick Stats with System Health - Matrix Style */}
                 <div className="flex items-center gap-3 flex-1 w-full lg:w-auto overflow-hidden">
                   <div className="flex items-center gap-3 text-sm">
-                    <div className="text-center px-3 py-2 bg-blue-500/10 rounded-lg border border-blue-500/30 flex-shrink-0">
-                      <div className="text-lg font-bold text-blue-400 font-mono">{activeDebates.size}</div>
-                      <div className="text-xs text-gray-400">Sessions</div>
+                    <div className="text-center px-3 py-2 bg-green-500/10 rounded-xl border border-green-500/20 flex-shrink-0">
+                      <div className="text-lg font-bold text-green-400 font-mono">{activeDebates.size}</div>
+                      <div className="text-xs text-neutral-400">Sessions</div>
                     </div>
-                    <div className="text-center px-3 py-2 bg-green-500/10 rounded-lg border border-green-500/30 flex-shrink-0">
+                    <div className="text-center px-3 py-2 bg-green-500/10 rounded-xl border border-green-500/20 flex-shrink-0">
                       <div className="text-lg font-bold text-green-400 font-mono">{debateMessages.length}</div>
-                      <div className="text-xs text-gray-400">Messages</div>
+                      <div className="text-xs text-neutral-400">Messages</div>
                     </div>
-                    <div className="text-center px-3 py-2 bg-purple-500/10 rounded-lg border border-purple-500/30 flex-shrink-0">
-                      <div className="text-lg font-bold text-purple-400 font-mono">{factChecks.length}</div>
-                      <div className="text-xs text-gray-400">Facts</div>
+                    <div className="text-center px-3 py-2 bg-accent-500/10 rounded-xl border border-accent-500/20 flex-shrink-0">
+                      <div className="text-lg font-bold text-accent-400 font-mono">{factChecks.length}</div>
+                      <div className="text-xs text-neutral-400">Facts</div>
                     </div>
                     {/* System Health Indicator - Matrix Style */}
-                    <div className="flex items-center gap-2 px-3 py-2 bg-gray-900/50 rounded-lg border border-green-500/30 flex-shrink-0">
+                    <div className="flex items-center gap-2 px-3 py-2 bg-surface-card rounded-xl border border-green-500/20 flex-shrink-0">
                       <div className={`w-2 h-2 rounded-full ${connectionStatus === 'Connected' && connectionHealth === 'healthy'
                         ? 'bg-green-400 animate-pulse'
                         : 'bg-red-400'
@@ -566,52 +566,52 @@ export default function App() {
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => setViewMode('standard')}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-all duration-200 hover:scale-105 font-mono ${viewMode === 'standard'
-                          ? 'bg-blue-600/30 border-blue-500/30 text-blue-300 shadow-lg shadow-blue-500/20'
-                          : 'bg-gray-900/50 border-green-500/30 text-green-300 hover:bg-blue-600/20 hover:border-blue-500/30'
+                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'standard'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
                       STANDARD
                     </button>
                     <button
                       onClick={() => setViewMode('multi-debate')}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-all duration-200 hover:scale-105 font-mono ${viewMode === 'multi-debate'
-                          ? 'bg-purple-600/30 border-purple-500/30 text-purple-300 shadow-lg shadow-purple-500/20'
-                          : 'bg-gray-900/50 border-green-500/30 text-green-300 hover:bg-purple-600/20 hover:border-purple-500/30'
+                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'multi-debate'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
                       MULTI-DEBATE
                     </button>
                     <button
                       onClick={() => setViewMode('analytics')}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-all duration-200 hover:scale-105 font-mono ${viewMode === 'analytics'
-                          ? 'bg-green-600/30 border-green-500/30 text-green-300 shadow-lg shadow-green-500/20'
-                          : 'bg-gray-900/50 border-green-500/30 text-green-300 hover:bg-green-600/20 hover:border-green-500/30'
+                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'analytics'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
                       ANALYTICS
                     </button>
                     <button
                       onClick={() => setViewMode('business')}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-all duration-200 hover:scale-105 font-mono ${viewMode === 'business'
-                          ? 'bg-emerald-600/30 border-emerald-500/30 text-emerald-300 shadow-lg shadow-emerald-500/20'
-                          : 'bg-gray-900/50 border-green-500/30 text-green-300 hover:bg-emerald-600/20 hover:border-emerald-500/30'
+                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'business'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
                       BUSINESS
                     </button>
                     <button
                       onClick={() => setViewMode('platform-showcase')}
-                      className={`px-4 py-2 text-sm rounded-lg border transition-all duration-200 hover:scale-105 font-mono ${viewMode === 'platform-showcase'
-                                                  ? 'bg-gradient-to-r from-green-600/30 to-emerald-600/30 border-green-500/30 text-green-300 shadow-lg shadow-green-500/20'
-                        : 'bg-gray-900/50 border-green-500/30 text-green-300 hover:bg-gradient-to-r hover:from-green-600/20 hover:to-emerald-600/20 hover:border-green-500/30'
+                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'platform-showcase'
+                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
                       PLATFORM
                     </button>
                     <button
                       onClick={() => setShowMatrixModal(true)}
-                      className="px-4 py-2 text-sm rounded-lg border bg-gradient-to-r from-black/70 to-green-900/70 border-green-500/30 text-green-300 hover:from-black/90 hover:to-green-900/90 transition-all duration-200 hover:scale-105 shadow-lg shadow-green-500/20 font-mono"
+                      className="px-4 py-2 text-sm rounded-xl border bg-green-500/10 border-green-500/30 text-green-300 hover:bg-green-500/20 hover:border-green-500/50 transition-all duration-150 hover:scale-[1.01] shadow-glow font-mono"
                       title="Redis Operations Matrix - Live visualization of all 4 modules"
                     >
                       <Icon name="activity" className="w-4 h-4 inline mr-1" />
@@ -619,7 +619,7 @@ export default function App() {
                     </button>
                     <button
                       onClick={() => setShowIntro(true)}
-                      className="px-4 py-2 text-sm rounded-lg border bg-gradient-to-r from-blue-700/70 to-purple-900/70 border-blue-500/30 text-blue-300 hover:from-blue-600/90 hover:to-purple-800/90 transition-all duration-200 hover:scale-105 shadow-lg shadow-blue-500/20 font-mono"
+                      className="px-4 py-2 text-sm rounded-xl border bg-accent-500/10 border-accent-500/30 text-accent-300 hover:bg-accent-500/20 hover:border-accent-500/50 transition-all duration-150 hover:scale-[1.01] shadow-glow-info font-mono"
                       title="Platform Introduction & Feature Tour"
                     >
                       <Icon name="help-circle" className="w-4 h-4 inline mr-1" />
@@ -641,7 +641,7 @@ export default function App() {
                 {/* Main content row: 2-column layout with Matrix styling */}
                 <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
                   {/* Left Column: Debate Panel (70% width) - Matrix Style */}
-                  <div className="flex-1 lg:flex-[7] min-w-0 min-h-[500px] bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm">
+                  <div className="flex-1 lg:flex-[7] min-w-0 min-h-[500px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm">
                     <DebatePanel messages={getFilteredMessages()} />
                   </div>
 
@@ -673,7 +673,7 @@ export default function App() {
                 </div>
 
                 {/* Bottom row: Stance Evolution Chart - Matrix Style */}
-                <div className="h-96 flex-shrink-0 mt-6 animate-fade-in-up stagger-3 bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                <div className="h-96 flex-shrink-0 mt-6 animate-fade-in-up stagger-3 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                   <StanceEvolutionChart
                     stanceData={currentDebateId ?
                       stanceData.filter(entry => entry.debateId === currentDebateId) :
@@ -686,14 +686,14 @@ export default function App() {
               /* Multi-Debate Layout - Matrix Style */
               <div className="space-y-6 p-6 pb-32">
                 {/* Top row: Key Moments - Matrix Container */}
-                <div className="min-h-[400px] bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                <div className="min-h-[400px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                   <KeyMomentsPanel viewMode="multi-debate" />
                 </div>
 
                 {/* Middle row: Multi-debate viewer and fact checker - Matrix Containers */}
                 <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
                   {/* Main: Multi-Debate Viewer - Matrix Container */}
-                  <div className="flex-1 lg:flex-[7] min-h-[600px] bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4 animate-slide-in-left">
+                  <div className="flex-1 lg:flex-[7] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-left">
                     <TrueMultiDebateViewer
                       messages={debateMessages}
                       activeDebates={activeDebates}
@@ -702,13 +702,13 @@ export default function App() {
                   </div>
 
                   {/* Side Panel: Fact Checker - Matrix Container */}
-                  <div className="w-full lg:w-[450px] lg:flex-[3] min-h-[600px] bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4 animate-slide-in-right">
+                  <div className="w-full lg:w-[450px] lg:flex-[3] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-right">
                     <FactChecker factChecks={factChecks} />
                   </div>
                 </div>
 
                 {/* Bottom row: Stance Evolution Chart - Matrix Container */}
-                <div className="h-96 bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                <div className="h-96 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                   <StanceEvolutionChart stanceData={stanceData} />
                 </div>
               </div>
@@ -726,41 +726,41 @@ export default function App() {
               /* Analytics Dashboard Layout - Matrix Style */
               <Stack spacing="space-y-6" className="animate-fade-in-up">
                 {/* Top Row: Key Moments Analytics - Matrix Style */}
-                <div className="w-full animate-slide-in-down stagger-1 bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                <div className="w-full animate-slide-in-down stagger-1 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                   <KeyMomentsPanel viewMode="analytics" />
                 </div>
 
                 {/* Middle Row: Performance Dashboard - Matrix Style */}
-                <div className="w-full animate-scale-in stagger-2 bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                <div className="w-full animate-scale-in stagger-2 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                   <EnhancedPerformanceDashboard key={metricsUpdateTrigger} />
                 </div>
 
                 {/* Bottom Row: Quick Actions and Stats - Matrix Grid */}
                 <Grid columns={2} gap="gap-6" className="animate-fade-in-up stagger-3">
                   {/* Quick Actions - Matrix Style */}
-                  <div className="bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                     <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
-                      <Icon name="analytics" size={20} className="text-blue-400" />
+                      <Icon name="analytics" size={20} className="text-green-400" />
                       QUICK ACTIONS
                     </h3>
                     <div className="flex flex-wrap items-center gap-2">
                       <button
                         onClick={() => setViewMode('multi-debate')}
-                        className="px-4 py-2 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg text-sm text-purple-300 transition-colors font-mono"
+                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="multi-debate" size={16} className="mr-1" />
                         MULTI-DEBATE
                       </button>
                       <button
                         onClick={() => setViewMode('standard')}
-                        className="px-4 py-2 bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/30 rounded-lg text-sm text-blue-300 transition-colors font-mono"
+                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="target" size={16} className="mr-1" />
                         STANDARD
                       </button>
                       <button
                         onClick={handleMetricsUpdate}
-                        className="px-4 py-2 bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 rounded-lg text-sm text-green-300 transition-colors font-mono"
+                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="refresh" size={16} className="mr-1" />
                         REFRESH
@@ -769,23 +769,23 @@ export default function App() {
                   </div>
 
                   {/* Live Stats - Matrix Style */}
-                  <div className="bg-gray-900/90 border border-green-500/30 rounded-lg backdrop-blur-sm p-4">
+                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                     <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
                       <Icon name="bar-chart" size={20} className="text-green-400" />
                       LIVE STATISTICS
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-400 font-mono">{activeDebates.size}</div>
-                        <div className="text-xs text-gray-400">Active Debates</div>
+                        <div className="text-2xl font-bold text-green-400 font-mono">{activeDebates.size}</div>
+                        <div className="text-xs text-neutral-400">Active Debates</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-green-400 font-mono">{debateMessages.length}</div>
-                        <div className="text-xs text-gray-400">Total Messages</div>
+                        <div className="text-xs text-neutral-400">Total Messages</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-400 font-mono">{factChecks.length}</div>
-                        <div className="text-xs text-gray-400">Fact Checks</div>
+                        <div className="text-2xl font-bold text-accent-400 font-mono">{factChecks.length}</div>
+                        <div className="text-xs text-neutral-400">Fact Checks</div>
                       </div>
                     </div>
                   </div>
@@ -795,7 +795,7 @@ export default function App() {
           </Container>
         </main>
 
-        <footer className="relative z-10 border-t border-green-500/30 bg-gray-900/95 px-4 py-4 text-sm text-green-200">
+        <footer className="relative z-10 border-t border-green-500/20 bg-surface-elevated px-4 py-4 text-sm text-green-300">
           <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4">
             <div className="flex flex-wrap items-center gap-4">
               <a className="hover:text-green-100 underline" href="/about">

@@ -55,7 +55,8 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   if (err.type === 'validation') {
-    return res.status(400).json({
+    const statusCode = Number.isInteger(err.status) ? err.status : 400;
+    return res.status(statusCode).json({
       success: false,
       error: 'Invalid request data',
       code: 'VALIDATION_ERROR',
@@ -65,7 +66,8 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   if (err.type === 'rate_limit') {
-    return res.status(429).json({
+    const statusCode = Number.isInteger(err.status) ? err.status : 429;
+    return res.status(statusCode).json({
       success: false,
       error: 'Too many requests',
       code: 'RATE_LIMIT_EXCEEDED',

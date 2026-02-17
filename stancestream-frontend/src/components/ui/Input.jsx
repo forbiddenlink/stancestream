@@ -14,14 +14,14 @@ export const Input = ({
     return (
         <div className="space-y-2">
             {label && (
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-neutral-300">
                     {label}
                 </label>
             )}
             <div className="relative">
                 {icon && iconPosition === 'left' && (
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Icon name={icon} size={20} className="text-slate-400" />
+                        <Icon name={icon} size={20} className="text-neutral-400" />
                     </div>
                 )}
                 <input
@@ -33,7 +33,7 @@ export const Input = ({
                 />
                 {icon && iconPosition === 'right' && (
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <Icon name={icon} size={20} className="text-slate-400" />
+                        <Icon name={icon} size={20} className="text-neutral-400" />
                     </div>
                 )}
             </div>
@@ -61,8 +61,8 @@ export const SearchInput = ({
     return (
         <form onSubmit={handleSubmit} className={`relative ${className}`}>
             <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icon name="search" size={20} className="text-slate-400" />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icon name="search" size={20} className="text-neutral-400" />
                 </div>
                 <input
                     type="text"
@@ -88,7 +88,7 @@ export const Textarea = ({
     return (
         <div className="space-y-2">
             {label && (
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-neutral-300">
                     {label}
                 </label>
             )}
@@ -117,7 +117,7 @@ export const Select = ({
     return (
         <div className="space-y-2">
             {label && (
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-neutral-300">
                     {label}
                 </label>
             )}
@@ -139,7 +139,7 @@ export const Select = ({
                     ))}
                 </select>
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Icon name="chevron-down" size={20} className="text-slate-400" />
+                    <Icon name="chevron-down" size={20} className="text-neutral-400" />
                 </div>
             </div>
             {error && (
@@ -162,12 +162,12 @@ export const Toggle = ({
         <div className={`flex items-center justify-between ${className}`}>
             <div className="flex-1 mr-4">
                 {label && (
-                    <label className="block text-sm font-medium text-slate-300">
+                    <label className="block text-sm font-medium text-neutral-300">
                         {label}
                     </label>
                 )}
                 {description && (
-                    <p className="text-sm text-slate-400 mt-1">{description}</p>
+                    <p className="text-sm text-neutral-400 mt-1">{description}</p>
                 )}
             </div>
             <button
@@ -175,12 +175,12 @@ export const Toggle = ({
                 role="switch"
                 aria-checked={checked}
                 onClick={() => onChange?.(!checked)}
-                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-slate-900 ${checked ? 'bg-green-600' : 'bg-slate-600'
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-black ${checked ? 'bg-green-600' : 'bg-neutral-600'
                     }`}
                 {...props}
             >
                 <span
-                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'
+                    className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-150 ease-in-out ${checked ? 'translate-x-5' : 'translate-x-0'
                         }`}
                 />
             </button>
@@ -200,7 +200,7 @@ export const RadioGroup = ({
     return (
         <div className={`space-y-3 ${className}`}>
             {label && (
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-neutral-300">
                     {label}
                 </label>
             )}
@@ -213,9 +213,9 @@ export const RadioGroup = ({
                             value={option.value}
                             checked={value === option.value}
                             onChange={(e) => onChange?.(e.target.value)}
-                            className="w-4 h-4 text-green-600 bg-slate-700 border-slate-600 focus:ring-green-500 focus:ring-2"
+                            className="w-4 h-4 text-green-600 bg-neutral-700 border-neutral-600 focus:ring-green-500 focus:ring-2"
                         />
-                        <span className="text-slate-300">{option.label}</span>
+                        <span className="text-neutral-300">{option.label}</span>
                     </label>
                 ))}
             </div>
@@ -238,15 +238,15 @@ export const Checkbox = ({
                 type="checkbox"
                 checked={checked}
                 onChange={(e) => onChange?.(e.target.checked)}
-                className="w-4 h-4 text-green-600 bg-slate-700 border-slate-600 rounded focus:ring-green-500 focus:ring-2 mt-0.5"
+                className="w-4 h-4 text-green-600 bg-neutral-700 border-neutral-600 rounded focus:ring-green-500 focus:ring-2 mt-0.5"
                 {...props}
             />
             <div className="flex-1">
                 {label && (
-                    <span className="text-sm font-medium text-slate-300">{label}</span>
+                    <span className="text-sm font-medium text-neutral-300">{label}</span>
                 )}
                 {description && (
-                    <p className="text-sm text-slate-400 mt-1">{description}</p>
+                    <p className="text-sm text-neutral-400 mt-1">{description}</p>
                 )}
             </div>
         </label>

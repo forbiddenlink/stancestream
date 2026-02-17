@@ -136,38 +136,59 @@ body {
     scrollbar-color: #00ff41 rgba(0, 0, 0, 0.8);
 }
 
-/* Matrix component styles */
+/* Matrix component styles - Unified Design System */
 @layer components {
+    /* Surface system - 3 levels */
+    .surface-base {
+        @apply bg-surface-base;
+    }
+    
+    .surface-card {
+        @apply bg-surface-card border border-green-500/20 rounded-xl;
+    }
+    
+    .surface-elevated {
+        @apply bg-surface-elevated border border-green-500/30 rounded-xl shadow-card;
+    }
+
+    /* Glass cards - unified */
     .glass-card {
-        @apply bg-gradient-to-br from-gray-900/90 to-black/90 backdrop-blur-sm border border-green-500/30 shadow-xl shadow-green-500/10;
+        @apply bg-surface-card backdrop-blur-sm border border-green-500/20 rounded-xl shadow-card;
     }
 
     .glass-panel {
-        @apply bg-gradient-to-br from-gray-900/90 to-black/90 backdrop-blur-sm border border-green-500/30 shadow-2xl shadow-green-500/10;
+        @apply bg-surface-elevated backdrop-blur-sm border border-green-500/30 rounded-xl shadow-elevated;
     }
 
+    /* Button system - 150ms transitions, consistent states */
     .professional-button {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed;
     }
 
     .button-primary {
-        @apply professional-button bg-gradient-to-r from-green-600/20 to-blue-600/20 hover:from-green-600/30 hover:to-blue-600/30 text-green-300 border border-green-500/30 shadow-lg shadow-green-500/20 hover:shadow-xl hover:shadow-green-500/30 hover:scale-[1.02] active:scale-[0.98];
+        @apply professional-button bg-green-600/20 hover:bg-green-600/30 text-green-300 border border-green-500/30 hover:border-green-500/50 shadow-card hover:shadow-card-hover hover:scale-[1.01] active:scale-[0.98];
     }
 
     .button-secondary {
-        @apply professional-button bg-gray-900/50 hover:bg-gray-900/70 text-green-300 border border-green-500/30 hover:border-green-500/50 hover:scale-[1.02] active:scale-[0.98];
+        @apply professional-button bg-surface-elevated hover:bg-surface-overlay text-green-300 border border-green-500/20 hover:border-green-500/40 hover:scale-[1.01] active:scale-[0.98];
     }
 
     .button-ghost {
-        @apply professional-button hover:bg-green-500/10 text-green-300 hover:scale-[1.02] active:scale-[0.98];
+        @apply professional-button hover:bg-green-500/10 text-green-300 hover:scale-[1.01] active:scale-[0.98];
+    }
+    
+    .button-danger {
+        @apply professional-button bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/30 hover:border-red-500/50 hover:scale-[1.01] active:scale-[0.98];
     }
 
+    /* Input system */
     .input-professional {
-        @apply w-full px-4 py-3 bg-gray-900/50 border border-green-500/30 rounded-lg text-green-300 placeholder-green-500/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 hover:bg-gray-900/70 font-mono;
+        @apply w-full px-4 py-3 bg-surface-card border border-green-500/20 rounded-xl text-green-300 placeholder-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-150 hover:border-green-500/40 font-mono;
     }
 
+    /* Card variants */
     .card-elevated {
-        @apply glass-panel rounded-xl shadow-elevated hover:shadow-glow transition-all duration-300;
+        @apply glass-panel hover:shadow-card-hover transition-all duration-150;
     }
 
     .text-gradient {
@@ -203,7 +224,7 @@ body {
     }
 
     .status-indicator.loading {
-        @apply bg-blue-400 animate-pulse;
+        @apply bg-accent-400 animate-pulse;
     }
 
     .shimmer-effect {
@@ -255,30 +276,30 @@ body {
     @apply focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-black;
 }
 
-/* Professional animation for interactive elements */
+/* Professional animation for interactive elements - 150ms max */
 .interactive-scale {
-    @apply transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98];
+    @apply transition-transform duration-150 hover:scale-[1.01] active:scale-[0.98];
 }
 
 .interactive-glow {
-    @apply transition-all duration-300 hover:shadow-glow;
+    @apply transition-all duration-150 hover:shadow-glow;
 }
 
-/* Matrix optimizations */
+/* Matrix surface system */
 .dark-optimized {
-    @apply bg-black text-green-300;
+    @apply bg-surface-base text-green-300;
 }
 
 .dark-surface {
-    @apply bg-gray-900/95 border-green-500/30;
+    @apply bg-surface-card border border-green-500/20;
 }
 
 .dark-muted {
-    @apply text-gray-400;
+    @apply text-neutral-400;
 }
 
 .dark-accent {
-    @apply text-green-300;
+    @apply text-green-400;
 }
 
 /* Typography scale - Matrix Style */
@@ -299,7 +320,7 @@ body {
 }
 
 .text-caption {
-    @apply text-sm text-gray-400 leading-relaxed font-mono;
+    @apply text-sm text-neutral-400 leading-relaxed font-mono;
 }
 
 /* Professional layouts */
@@ -317,21 +338,21 @@ body {
 
 /* Enhanced visual feedback - Matrix Style */
 .loading-skeleton {
-    @apply bg-gray-700/50 animate-pulse rounded;
+    @apply bg-green-500/10 animate-pulse rounded-xl;
 }
 
 .success-highlight {
-    @apply bg-emerald-500/10 border-emerald-500/30 text-emerald-400;
+    @apply bg-green-500/10 border border-green-500/30 text-green-400;
 }
 
 .warning-highlight {
-    @apply bg-yellow-500/10 border-yellow-500/30 text-yellow-400;
+    @apply bg-yellow-500/10 border border-yellow-500/30 text-yellow-400;
 }
 
 .error-highlight {
-    @apply bg-red-500/10 border-red-500/30 text-red-400;
+    @apply bg-red-500/10 border border-red-500/30 text-red-400;
 }
 
 .info-highlight {
-    @apply bg-blue-500/10 border-blue-500/30 text-blue-400;
+    @apply bg-accent-500/10 border border-accent-500/30 text-accent-400;
 }
