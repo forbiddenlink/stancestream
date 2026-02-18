@@ -41,13 +41,21 @@ const app = express();
 const server = createServer(app);
 
 // Security enhancements - production ready
+// CSP hardened: removed 'unsafe-eval' (XSS risk), API server doesn't need it
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
-            connectSrc: ["'self'", "ws:", "wss:"],
+            scriptSrc: ["'self'"],  // No inline scripts needed for API server
+            styleSrc: ["'self'", "'unsafe-inline'"],  // Keep for potential error pages
+            connectSrc: ["'self'", "ws:", "wss:", "https://api.openai.com"],
+            imgSrc: ["'self'", "data:"],
+            fontSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            frameAncestors: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"],
+            upgradeInsecureRequests: [],
         },
     },
     crossOriginEmbedderPolicy: false
@@ -87,7 +95,50 @@ const generateRateLimit = rateLimit({
 
 app.use('/api/', apiRateLimit);
 
-const wss = new WebSocketServer({ server });
+// Shared origin validation for CORS and WebSocket
+function isAllowedOrigin(origin) {
+    if (!origin) {
+        // Allow requests with no origin (server-to-server, mobile apps)
+        return true;
+    }
+
+    const allowedHosts = ['localhost', '127.0.0.1'];
+    const allowedPorts = ['5173', '5174'];
+    const baseAllowedDomains = new Set([
+        'stancestream.vercel.app',
+        'stancestream.onrender.com'
+    ]);
+
+    // Merge optional env allowlist
+    if (process.env.CORS_ALLOWLIST) {
+        for (const host of process.env.CORS_ALLOWLIST.split(',').map(s => s.trim()).filter(Boolean)) {
+            baseAllowedDomains.add(host);
+        }
+    }
+
+    try {
+        const url = new URL(origin);
+        const isAllowedLocal = allowedHosts.includes(url.hostname) && allowedPorts.includes(url.port);
+        const isVercelPreview = url.protocol === 'https:' && url.hostname.endsWith('.vercel.app');
+        const isBaseAllowed = url.protocol === 'https:' && baseAllowedDomains.has(url.hostname);
+        return isAllowedLocal || isVercelPreview || isBaseAllowed;
+    } catch (err) {
+        return false;
+    }
+}
+
+const wss = new WebSocketServer({
+    server,
+    verifyClient: (info, callback) => {
+        const origin = info.origin || info.req.headers.origin;
+        if (isAllowedOrigin(origin)) {
+            callback(true);
+        } else {
+            console.log(`❌ WebSocket connection rejected from origin: ${origin}`);
+            callback(false, 403, 'Forbidden: Origin not allowed');
+        }
+    }
+});
 
 // Log WebSocket connection attempts
 wss.on('headers', (headers, req) => {
@@ -95,51 +146,14 @@ wss.on('headers', (headers, req) => {
 });
 
 // Enhanced middleware with dynamic CORS for development and production
-// Allows local dev, production domains, and Vercel preview subdomains by default.
-// Optional env override: CORS_ALLOWLIST (comma-separated hostnames, no protocol), e.g. "foo.vercel.app,preview-123.example.com"
+// Uses shared isAllowedOrigin() function for consistency with WebSocket validation
 app.use(cors({
     origin: (origin, callback) => {
-        const allowedHosts = ['localhost', '127.0.0.1'];
-        const allowedPorts = ['5173', '5174'];
-
-        // Base allowlist
-        const baseAllowedDomains = new Set([
-            'stancestream.vercel.app',
-            'stancestream.onrender.com'
-        ]);
-
-        // Merge optional env allowlist
-        if (process.env.CORS_ALLOWLIST) {
-            for (const host of process.env.CORS_ALLOWLIST.split(',').map(s => s.trim()).filter(Boolean)) {
-                baseAllowedDomains.add(host);
-            }
-        }
-
-        if (!origin) {
-            // Allow requests with no origin (like mobile apps or curl requests)
+        if (isAllowedOrigin(origin)) {
             return callback(null, true);
         }
-
-        try {
-            const url = new URL(origin);
-
-            // Check localhost/127.0.0.1 with allowed ports
-            const isAllowedLocal = allowedHosts.includes(url.hostname) && allowedPorts.includes(url.port);
-
-            // Allow any *.vercel.app preview domains and our base domains over HTTPS
-            const isVercelPreview = url.protocol === 'https:' && url.hostname.endsWith('.vercel.app');
-            const isBaseAllowed = url.protocol === 'https:' && baseAllowedDomains.has(url.hostname);
-
-            if (isAllowedLocal || isVercelPreview || isBaseAllowed) {
-                return callback(null, true);
-            }
-
-            console.log(`❌ CORS blocked origin: ${origin}`);
-            return callback(new Error('CORS not allowed'));
-        } catch (err) {
-            console.log(`❌ CORS invalid origin: ${origin}`);
-            return callback(new Error('Invalid origin'));
-        }
+        console.log(`❌ CORS blocked origin: ${origin}`);
+        return callback(new Error('CORS not allowed'));
     },
     credentials: true
 }));
@@ -440,13 +454,12 @@ app.get('/api/sentiment/:debateId/:agentId/history', async (req, res) => {
             points: history.length
         });
     } catch (error) {
-        console.error('❌ Error fetching sentiment history:', error);
-        console.error('❌ Stack trace:', error.stack);
+        console.error('❌ Error fetching sentiment history:', error.message);
         // Return success with empty data instead of 500 error
+        const errorMsg = process.env.NODE_ENV === 'development' ? error.message : 'Service temporarily unavailable';
         res.status(200).json({
             success: true,
-            error: `Sentiment history temporarily unavailable: ${error.message}`,
-            message: error.message,
+            error: `Sentiment history temporarily unavailable: ${errorMsg}`,
             debateId: req.params.debateId,
             agentId: req.params.agentId,
             history: [],

@@ -276,7 +276,7 @@ class RedisPerformanceOptimizer {
             
             // Pre-warm frequently accessed agent profiles
             const agentKeys = await redisManager.execute(async (client) => {
-                return await client.keys('agent:*:profile');
+                return await this.scanKeys(client, 'agent:*:profile');
             });
 
             // Touch keys to keep them in memory using pipeline
@@ -303,7 +303,7 @@ class RedisPerformanceOptimizer {
             // Clean up expired debate data older than 24 hours
             const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
             const debateKeys = await redisManager.execute(async (client) => {
-                return await client.keys('debate:*:messages');
+                return await this.scanKeys(client, 'debate:*:messages');
             });
             
             for (const key of debateKeys) {
@@ -327,7 +327,7 @@ class RedisPerformanceOptimizer {
             
             // Clean up old cache entries
             const cacheKeys = await redisManager.execute(async (client) => {
-                return await client.keys('cache:prompt:*');
+                return await this.scanKeys(client, 'cache:prompt:*');
             });
 
             if (cacheKeys.length > 1000) {
@@ -360,7 +360,7 @@ class RedisPerformanceOptimizer {
             
             for (const [pattern, ttl] of Object.entries(keyPatterns)) {
                 const keys = await redisManager.execute(async (client) => {
-                    return await client.keys(pattern);
+                    return await this.scanKeys(client, pattern);
                 });
                 
                 // Set TTL for keys that don't have one using pipeline
@@ -392,13 +392,17 @@ class RedisPerformanceOptimizer {
             if (metrics.hit_ratio < 60) {
                 // This would involve updating the semantic cache configuration
                 console.log('💡 Consider adjusting semantic similarity threshold to improve hit rate');
-                
+
                 // Clean up very old cache entries to make room for better matches
-                const oldCacheKeys = await this.client.keys('cache:prompt:*');
+                const oldCacheKeys = await redisManager.execute(async (client) => {
+                    return await this.scanKeys(client, 'cache:prompt:*');
+                });
                 if (oldCacheKeys.length > 500) {
                     const keysToClean = oldCacheKeys.slice(0, Math.floor(oldCacheKeys.length * 0.2));
                     if (keysToClean.length > 0) {
-                        await this.client.del(keysToClean);
+                        await redisManager.execute(async (client) => {
+                            return await client.del(keysToClean);
+                        });
                     }
                 }
             }
@@ -412,7 +416,7 @@ class RedisPerformanceOptimizer {
     async optimizeKeyDistribution() {
         try {
             console.log('🔧 Optimizing key distribution...');
-            
+
             // Implement cleanup for test and temporary data
             const temporaryPatterns = [
                 'test-*',
@@ -420,18 +424,22 @@ class RedisPerformanceOptimizer {
                 'debug-*',
                 'sentiment_history:*' // Keep only recent sentiment data
             ];
-            
+
             for (const pattern of temporaryPatterns) {
-                const keys = await this.client.keys(pattern);
+                const keys = await redisManager.execute(async (client) => {
+                    return await this.scanKeys(client, pattern);
+                });
                 if (keys.length > 50) {
                     // Keep only the most recent entries
                     const keysToRemove = keys.slice(0, -20); // Keep last 20
                     if (keysToRemove.length > 0) {
-                        await this.client.del(keysToRemove);
+                        await redisManager.execute(async (client) => {
+                            return await client.del(keysToRemove);
+                        });
                     }
                 }
             }
-            
+
         } catch (error) {
             console.error('❌ Key optimization failed:', error);
         }
@@ -441,19 +449,25 @@ class RedisPerformanceOptimizer {
     async storeOptimizationResults(results) {
         try {
             const optimizationKey = `optimization:results:${Date.now()}`;
-            await this.client.json.set(optimizationKey, '.', results);
-            
+            await redisManager.execute(async (client) => {
+                return await client.json.set(optimizationKey, '.', results);
+            });
+
             // Keep only last 50 optimization results
-            const allOptimizations = await this.client.keys('optimization:results:*');
+            const allOptimizations = await redisManager.execute(async (client) => {
+                return await this.scanKeys(client, 'optimization:results:*');
+            });
             if (allOptimizations.length > 50) {
                 const oldOptimizations = allOptimizations
                     .sort()
                     .slice(0, allOptimizations.length - 50);
                 if (oldOptimizations.length > 0) {
-                    await this.client.del(oldOptimizations);
+                    await redisManager.execute(async (client) => {
+                        return await client.del(oldOptimizations);
+                    });
                 }
             }
-            
+
             // Update optimization history for live dashboard
             this.optimizationHistory.push({
                 timestamp: results.startTime,
@@ -461,22 +475,24 @@ class RedisPerformanceOptimizer {
                 optimizations: results.optimizations.length,
                 bottlenecks: results.bottlenecks.length
             });
-            
+
             // Keep only last 20 entries in memory
             if (this.optimizationHistory.length > 20) {
                 this.optimizationHistory = this.optimizationHistory.slice(-20);
             }
-            
+
             // Store live optimization metrics
-            await this.client.json.set('optimization:live_metrics', '.', {
-                last_optimization: results.endTime,
-                total_optimizations: this.optimizationHistory.length,
-                average_improvement: this.calculateAverageImprovement(),
-                recent_optimizations: this.optimizationHistory,
-                status: 'active',
-                next_optimization: Date.now() + 30000 // 30 seconds
+            await redisManager.execute(async (client) => {
+                return await client.json.set('optimization:live_metrics', '.', {
+                    last_optimization: results.endTime,
+                    total_optimizations: this.optimizationHistory.length,
+                    average_improvement: this.calculateAverageImprovement(),
+                    recent_optimizations: this.optimizationHistory,
+                    status: 'active',
+                    next_optimization: Date.now() + 30000 // 30 seconds
+                });
             });
-            
+
         } catch (error) {
             console.error('❌ Failed to store optimization results:', error);
         }
@@ -512,9 +528,36 @@ class RedisPerformanceOptimizer {
     }
 
     // 🔧 Helper methods
+
+    // Non-blocking SCAN alternative to KEYS command
+    // KEYS blocks Redis for 100-500ms on large datasets; SCAN iterates incrementally
+    async scanKeys(client, pattern, count = 100) {
+        const keys = [];
+        let cursor = '0';
+
+        do {
+            const result = await client.scan(cursor, {
+                MATCH: pattern,
+                COUNT: count
+            });
+            // Handle both array format [cursor, keys] and object format {cursor, keys}
+            if (Array.isArray(result)) {
+                cursor = result[0];
+                keys.push(...result[1]);
+            } else {
+                cursor = result.cursor;
+                keys.push(...result.keys);
+            }
+        } while (cursor !== '0');
+
+        return keys;
+    }
+
     async getCacheMetrics() {
         try {
-            const metrics = await this.client.json.get('cache:metrics');
+            const metrics = await redisManager.execute(async (client) => {
+                return await client.json.get('cache:metrics');
+            });
             return metrics || { hit_ratio: 0, total_requests: 0, cache_hits: 0 };
         } catch (error) {
             return { hit_ratio: 0, total_requests: 0, cache_hits: 0 };
@@ -523,14 +566,15 @@ class RedisPerformanceOptimizer {
 
     async getKeyTypeCounts() {
         try {
+            // Use SCAN instead of KEYS to avoid blocking Redis
             const [agents, debates, stances, facts, cache] = await Promise.all([
-                this.client.keys('agent:*:profile'),
-                this.client.keys('debate:*:messages'),
-                this.client.keys('debate:*:stance:*'),
-                this.client.keys('fact:*'),
-                this.client.keys('cache:prompt:*')
+                redisManager.execute(async (client) => this.scanKeys(client, 'agent:*:profile')),
+                redisManager.execute(async (client) => this.scanKeys(client, 'debate:*:messages')),
+                redisManager.execute(async (client) => this.scanKeys(client, 'debate:*:stance:*')),
+                redisManager.execute(async (client) => this.scanKeys(client, 'fact:*')),
+                redisManager.execute(async (client) => this.scanKeys(client, 'cache:prompt:*'))
             ]);
-            
+
             return {
                 agents: agents.length,
                 debates: debates.length,
@@ -598,8 +642,9 @@ class RedisPerformanceOptimizer {
     // 📊 Get live optimization metrics for dashboard
     async getLiveOptimizationMetrics() {
         try {
-            await this.connect();
-            const metrics = await this.client.json.get('optimization:live_metrics');
+            const metrics = await redisManager.execute(async (client) => {
+                return await client.json.get('optimization:live_metrics');
+            });
             return metrics || {
                 status: 'initializing',
                 total_optimizations: 0,
