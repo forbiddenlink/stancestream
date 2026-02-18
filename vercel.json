@@ -1,0 +1,6 @@
+{
+  "buildCommand": "cd stancestream-frontend && pnpm install && pnpm build",
+  "outputDirectory": "stancestream-frontend/dist",
+  "installCommand": "pnpm install",
+  "framework": "vite"
+}
