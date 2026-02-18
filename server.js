@@ -69,7 +69,7 @@ app.use(sanitizeRequest);
 // Rate limiting for API protection - PRODUCTION-HARDENED
 const apiRateLimit = rateLimit({
     windowMs: 1 * 60 * 1000, // 1 minute
-    max: process.env.API_RATE_LIMIT || 60, // 1 request per second by default
+    max: process.env.API_RATE_LIMIT || 200, // 200 requests per minute for frontend apps
     message: { error: 'Too many requests, please try again later.' },
     standardHeaders: true,
     legacyHeaders: false,

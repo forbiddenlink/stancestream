@@ -5,21 +5,12 @@ import { Button, Modal, ModalHeader, ModalContent, Card, CardHeader, CardContent
 
 const IntroModule = ({ onComplete, showIntro = false }) => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const [hasSeenIntro, setHasSeenIntro] = useState(false);
+  const [isVisible, setIsVisible] = useState(showIntro);
 
-  // Handle both initial render and showIntro prop changes
+  // Sync visibility with showIntro prop
   useEffect(() => {
     setIsVisible(showIntro);
   }, [showIntro]);
-
-  // Check if user has seen intro before
-  useEffect(() => {
-    const seenIntro = localStorage.getItem('stancestream-intro-seen');
-    if (seenIntro === 'true') {
-      setHasSeenIntro(true);
-    }
-  }, []);
 
   const steps = [
     {
@@ -208,27 +199,18 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
   };
 
   const handleComplete = () => {
-    localStorage.setItem('stancestream-intro-seen', 'true');
     setIsVisible(false);
-    setHasSeenIntro(true);
     if (onComplete) {
       onComplete();
     }
   };
 
   const handleSkip = () => {
-    localStorage.setItem('stancestream-intro-seen', 'true');
     setIsVisible(false);
-    setHasSeenIntro(true);
     if (onComplete) {
       onComplete();
     }
   };
-
-  // Don't render if user has seen intro and we're not forcing it
-  if (hasSeenIntro && !showIntro) {
-    return null;
-  }
 
   if (!isVisible) {
     return null;
