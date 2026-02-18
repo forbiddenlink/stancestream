@@ -410,13 +410,19 @@ export default function App() {
   webSocketMessageHandlerRef.current = handleWebSocketMessage;
 
   // Check backend health on mount
+  // Note: WebSocket connection also sets connectionHealth to 'healthy' when connected,
+  // so we only set 'error' if the health check fails AND WebSocket isn't connected
   useEffect(() => {
     const checkHealth = async () => {
       try {
         await api.getHealth();
         setConnectionHealth('healthy');
       } catch (error) {
-        setConnectionHealth('error');
+        // Only set error if WebSocket isn't already connected (avoid race condition)
+        // Check wsManager directly to get current state without dependency issues
+        if (!wsManager.isConnected()) {
+          setConnectionHealth('error');
+        }
         console.error('Backend health check failed:', error);
       }
     };
