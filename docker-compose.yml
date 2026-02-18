@@ -11,7 +11,7 @@ services:
     volumes:
       - redis-data:/data
     environment:
-      - REDIS_ARGS=--appendonly yes --requirepass ${REDIS_PASSWORD:-}
+      - REDIS_ARGS=--appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

@@ -205,14 +205,22 @@ try {
         console.log('✅ Redis basic operations: OK');
         global.redisStatus = 'healthy';
 
-        // Initialize cache system
-        const initializeCache = (await import('./initCache.js')).default;
-        const cacheInitialized = await initializeCache();
-        if (!cacheInitialized) {
-            console.error('❌ Failed to initialize cache system');
-            process.exit(1);
+        // Initialize cache system (graceful failure - cache is optional)
+        try {
+            const initializeCache = (await import('./initCache.js')).default;
+            const cacheInitialized = await initializeCache();
+            if (!cacheInitialized) {
+                console.warn('⚠️ Cache system failed to initialize - running without semantic cache');
+                global.cacheStatus = 'unavailable';
+            } else {
+                console.log('✅ Cache system initialized successfully');
+                global.cacheStatus = 'ready';
+            }
+        } catch (cacheError) {
+            console.warn('⚠️ Cache initialization error (non-blocking):', cacheError.message);
+            console.warn('⚠️ Server will continue without semantic cache functionality');
+            global.cacheStatus = 'unavailable';
         }
-        console.log('✅ Cache system initialized successfully');
     }
     
     console.log('🏁 Server startup health check complete');
