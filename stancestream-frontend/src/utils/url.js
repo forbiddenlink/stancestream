@@ -1,5 +1,8 @@
 const trimTrailingSlash = (value) => value.replace(/\/+$/, '');
 
+// Production backend URL - used as fallback when VITE_API_URL is not set
+const PRODUCTION_API_URL = 'https://stancestream.onrender.com';
+
 // Optional flag: when true, buildApiUrl will use same-origin (i.e., "/api") for HTTP
 // while getWebSocketUrl will continue to use VITE_API_URL for WS connections.
 const HTTP_SAME_ORIGIN = (import.meta?.env?.VITE_HTTP_SAME_ORIGIN || '').toString() === 'true';
@@ -9,7 +12,17 @@ const getRuntimeApiUrl = () => {
         return globalThis.__STANCESTREAM_API_URL__.trim();
     }
 
-    return (import.meta.env?.VITE_API_URL || '').trim();
+    const envUrl = (import.meta.env?.VITE_API_URL || '').trim();
+    if (envUrl) {
+        return envUrl;
+    }
+
+    // In production (HTTPS), use the production backend URL as fallback
+    if (typeof globalThis !== 'undefined' && globalThis.location?.protocol === 'https:') {
+        return PRODUCTION_API_URL;
+    }
+
+    return '';
 };
 
 const getPageProtocol = () => {
