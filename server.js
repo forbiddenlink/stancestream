@@ -95,40 +95,50 @@ wss.on('headers', (headers, req) => {
 });
 
 // Enhanced middleware with dynamic CORS for development and production
+// Allows local dev, production domains, and Vercel preview subdomains by default.
+// Optional env override: CORS_ALLOWLIST (comma-separated hostnames, no protocol), e.g. "foo.vercel.app,preview-123.example.com"
 app.use(cors({
     origin: (origin, callback) => {
         const allowedHosts = ['localhost', '127.0.0.1'];
         const allowedPorts = ['5173', '5174'];
-        const allowedDomains = [
+
+        // Base allowlist
+        const baseAllowedDomains = new Set([
             'stancestream.vercel.app',
             'stancestream.onrender.com'
-        ];
+        ]);
+
+        // Merge optional env allowlist
+        if (process.env.CORS_ALLOWLIST) {
+            for (const host of process.env.CORS_ALLOWLIST.split(',').map(s => s.trim()).filter(Boolean)) {
+                baseAllowedDomains.add(host);
+            }
+        }
 
         if (!origin) {
             // Allow requests with no origin (like mobile apps or curl requests)
-            callback(null, true);
-            return;
+            return callback(null, true);
         }
 
         try {
             const url = new URL(origin);
-            
-            // Check for localhost/127.0.0.1 with allowed ports
-            const isAllowedHost = allowedHosts.includes(url.hostname);
-            const isAllowedPort = allowedPorts.includes(url.port);
-            
-            // Check for allowed production domains (HTTPS only)
-            const isAllowedDomain = allowedDomains.includes(url.hostname) && url.protocol === 'https:';
 
-            if ((isAllowedHost && isAllowedPort) || isAllowedDomain) {
-                callback(null, true);
-            } else {
-                console.log(`❌ CORS blocked origin: ${origin}`);
-                callback(new Error('CORS not allowed'));
+            // Check localhost/127.0.0.1 with allowed ports
+            const isAllowedLocal = allowedHosts.includes(url.hostname) && allowedPorts.includes(url.port);
+
+            // Allow any *.vercel.app preview domains and our base domains over HTTPS
+            const isVercelPreview = url.protocol === 'https:' && url.hostname.endsWith('.vercel.app');
+            const isBaseAllowed = url.protocol === 'https:' && baseAllowedDomains.has(url.hostname);
+
+            if (isAllowedLocal || isVercelPreview || isBaseAllowed) {
+                return callback(null, true);
             }
+
+            console.log(`❌ CORS blocked origin: ${origin}`);
+            return callback(new Error('CORS not allowed'));
         } catch (err) {
             console.log(`❌ CORS invalid origin: ${origin}`);
-            callback(new Error('Invalid origin'));
+            return callback(new Error('Invalid origin'));
         }
     },
     credentials: true
@@ -1051,7 +1061,7 @@ app.post('/api/facts/add', async (req, res) => {
 // Get Redis performance stats - ENHANCED WITH ADVANCED METRICS
 app.get('/api/stats/redis', async (req, res) => {
     try {
-        console.log('📊 Advanced Redis stats requested');refu
+        console.log('📊 Advanced Redis stats requested');
         // Use enhanced metrics collector
         const metricsCollector = new RedisMetricsCollector();
         const advancedMetrics = await metricsCollector.getBenchmarkMetrics();
