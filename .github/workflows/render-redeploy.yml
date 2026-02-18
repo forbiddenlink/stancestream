@@ -1,0 +1,27 @@
+name: Render Redeploy
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+
+jobs:
+  render-redeploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deploy Hook (if configured)
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "${RENDER_DEPLOY_HOOK_URL}" ]; then
+            echo "No RENDER_DEPLOY_HOOK_URL secret configured. Skipping."
+            exit 0
+          fi
+          echo "Triggering Render deploy via hook..."
+          # Use POST with no body; Render accepts a simple POST
+          http_code=$(curl -sS -o /dev/null -w "%{http_code}" -X POST "$RENDER_DEPLOY_HOOK_URL")
+          if [ "$http_code" != "200" ] && [ "$http_code" != "204" ]; then
+            echo "Render hook returned HTTP $http_code" >&2
+            exit 1
+          fi
+          echo "Render deploy hook triggered (HTTP $http_code)."
