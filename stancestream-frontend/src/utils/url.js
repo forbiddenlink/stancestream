@@ -1,5 +1,9 @@
 const trimTrailingSlash = (value) => value.replace(/\/+$/, '');
 
+// Optional flag: when true, buildApiUrl will use same-origin (i.e., "/api") for HTTP
+// while getWebSocketUrl will continue to use VITE_API_URL for WS connections.
+const HTTP_SAME_ORIGIN = (import.meta?.env?.VITE_HTTP_SAME_ORIGIN || '').toString() === 'true';
+
 const getRuntimeApiUrl = () => {
     if (typeof globalThis !== 'undefined' && typeof globalThis.__STANCESTREAM_API_URL__ === 'string') {
         return globalThis.__STANCESTREAM_API_URL__.trim();
@@ -24,8 +28,13 @@ export const getApiOrigin = () => {
 
 export const buildApiUrl = (path = '') => {
     const endpoint = path.startsWith('/') ? path : `/${path}`;
-    const origin = getApiOrigin();
 
+    // If same-origin mode is enabled, always call "/api" on the current origin
+    if (HTTP_SAME_ORIGIN) {
+        return `/api${endpoint}`;
+    }
+
+    const origin = getApiOrigin();
     if (!origin) {
         return `/api${endpoint}`;
     }
