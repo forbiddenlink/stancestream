@@ -48,19 +48,14 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
         const timeoutId = setTimeout(() => {
             fetchKeyMoments();
         }, 100); // Small delay to batch rapid changes
-        
+
         return () => clearTimeout(timeoutId);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [debateId, viewMode]);
 
-    // Auto-refresh every 45 seconds (reduced frequency)
-    useEffect(() => {
-        // Automatic polling disabled to reduce server load
-        // const interval = setInterval(fetchKeyMoments, 60000);
-        // return () => clearInterval(interval);
-        
-        // Only fetch on manual refresh or when debate changes
-        return () => {}; // No cleanup needed
-    }, [debateId, viewMode]);
+    // Auto-refresh disabled to reduce server load
+    // Only fetch on manual refresh or when debate changes
+    // Dependencies intentionally empty - polling is disabled
 
     // Handle WebSocket key moment updates
     useEffect(() => {

@@ -85,6 +85,7 @@ const useWebSocket = (url) => {
                 ws.close(1000); // Normal closure
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url]);
 
     const sendMessage = (message) => {

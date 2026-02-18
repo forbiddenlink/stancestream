@@ -11,6 +11,7 @@ const AgentConfig = ({ isVisible, onClose, agentId = 'senatorbot' }) => {
         if (isVisible && agentId) {
             loadProfile();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isVisible, agentId]);
 
     const loadProfile = async () => {

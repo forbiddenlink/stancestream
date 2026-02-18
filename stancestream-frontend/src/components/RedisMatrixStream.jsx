@@ -128,11 +128,12 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
         
         // Update operation progress
         const updateInterval = setInterval(updateOperations, 150);
-        
+
         return () => {
             clearInterval(addInterval);
             clearInterval(updateInterval);
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
 
     // Listen for real Redis operations from WebSocket
@@ -212,6 +213,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
 
         window.addEventListener('websocket-message', handleRedisOperation);
         return () => window.removeEventListener('websocket-message', handleRedisOperation);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
 
     // Get phase styling

@@ -63,7 +63,7 @@ export const usePerformanceMonitor = (componentName) => {
     useEffect(() => {
         renderCount.current += 1;
 
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
             console.log(`${componentName} rendered ${renderCount.current} times`);
 
             // Log slow renders (> 16ms for 60fps)
@@ -79,7 +79,7 @@ export const usePerformanceMonitor = (componentName) => {
     return {
         renderCount: renderCount.current,
         logPerformance: (operation, duration) => {
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.env.DEV) {
                 console.log(`${componentName} - ${operation}: ${duration}ms`);
             }
         }

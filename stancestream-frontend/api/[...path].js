@@ -1,3 +1,4 @@
+/* global process, Buffer */
 export default async function handler(req, res) {
   // Proxy all HTTP API requests to the Render backend to avoid CORS in previews
   try {

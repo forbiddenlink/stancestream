@@ -73,7 +73,7 @@ export default function EnhancedControls({
             const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
             
             // Use the platform demo endpoint (will be proxied through /api)
-            const response = await api.post('/platform/demo/cache-efficiency', {
+            await api.post('/platform/demo/cache-efficiency', {
                 similarity: randomScenario.similarity,
                 cost_saved: randomScenario.cost_saved
             });
@@ -117,7 +117,7 @@ export default function EnhancedControls({
                 try {
                     await api.startMultipleDebates(topics);
                     console.log(`🚀 Started ${topics.length} concurrent debates!`);
-                } catch (error) {
+                } catch {
                     // Fallback: start individually
                     for (const topic of topics) {
                         try {

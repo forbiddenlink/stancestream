@@ -1,5 +1,4 @@
 // Redis Matrix Modal - Full Screen "Matrix" View for Judges
-import { useState } from 'react';
 import RedisMatrixStream from './RedisMatrixStream';
 import Icon from './Icon';
 

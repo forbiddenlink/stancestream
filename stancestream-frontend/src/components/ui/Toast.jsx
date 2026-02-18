@@ -1,4 +1,5 @@
 // Enhanced Toast Notification System - Professional User Feedback
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import Icon from '../Icon';
 
@@ -35,6 +36,7 @@ export const ToastProvider = ({ children }) => {
         }
 
         return id;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const removeToast = useCallback((id) => {

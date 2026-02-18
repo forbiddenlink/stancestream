@@ -4,7 +4,7 @@ import Icon from './Icon';
 
 const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
     const [showcaseData, setShowcaseData] = useState(null);
-    const [systemMetrics, setSystemMetrics] = useState(null);
+    const [_systemMetrics, _setSystemMetrics] = useState(null);
     const [platformMetrics, setPlatformMetrics] = useState(null);
     const [optimizationMetrics, setOptimizationMetrics] = useState(null);
     const [demoRunning, setDemoRunning] = useState(false);

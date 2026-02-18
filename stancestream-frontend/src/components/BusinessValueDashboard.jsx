@@ -8,7 +8,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
     const [cacheMetrics, setCacheMetrics] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [refreshInterval, setRefreshInterval] = useState(null);
+    const [_refreshInterval, _setRefreshInterval] = useState(null);
 
     const fetchBusinessMetrics = useCallback(async () => {
         try {

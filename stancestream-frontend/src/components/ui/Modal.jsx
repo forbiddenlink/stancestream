@@ -134,7 +134,8 @@ export const ConfirmDialog = ({
         success: 'btn-success'
     };
 
-    const iconColors = {
+    // Icon colors kept for potential future use
+    const _iconColors = {
         primary: 'text-green-400',
         danger: 'text-red-400',
         warning: 'text-green-400',

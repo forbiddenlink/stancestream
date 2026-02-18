@@ -1,5 +1,4 @@
 // Main Layout Component - Consistent layout structure across all views
-import { useState } from 'react';
 import Header from '../Header';
 import EnhancedControls from '../EnhancedControls';
 import Icon from '../Icon';

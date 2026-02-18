@@ -1,5 +1,6 @@
 // UI Component Library Index - Enterprise Grade Component System
 // Centralized export for all UI components
+/* eslint-disable react-refresh/only-export-components */
 import React from 'react';
 import Icon from '../Icon';
 
@@ -175,22 +176,24 @@ export const getSizeClasses = (size = 'md') => {
 };
 
 // Component composition helpers
-export const withLoading = (Component) => {
+// eslint-disable-next-line no-unused-vars
+export const withLoading = (WrappedComponent) => {
     return ({ loading, ...props }) => {
         if (loading) {
             return <Spinner className="mx-auto" />;
         }
-        return <Component {...props} />;
+        return <WrappedComponent {...props} />;
     };
 };
 
-export const withTooltip = (Component) => {
+// eslint-disable-next-line no-unused-vars
+export const withTooltip = (WrappedComponent) => {
     return ({ tooltip, ...props }) => {
-        if (!tooltip) return <Component {...props} />;
+        if (!tooltip) return <WrappedComponent {...props} />;
 
         return (
             <div className="relative group">
-                <Component {...props} />
+                <WrappedComponent {...props} />
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap">
                     {tooltip}
                     <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>

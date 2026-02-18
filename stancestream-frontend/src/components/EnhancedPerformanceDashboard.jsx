@@ -12,7 +12,6 @@ import {
     Container,
     Grid,
     Stack,
-    useToast,
     Spinner,
     ProgressBar,
     StatusBadge,
@@ -114,7 +113,7 @@ export default function EnhancedPerformanceDashboard() {
                 setIsLoading(false);
                 return;
 
-            } catch (enhancedError) {
+            } catch {
                 console.log('Enhanced stats not available, using fallback');
             }
 
@@ -227,7 +226,7 @@ export default function EnhancedPerformanceDashboard() {
         );
     }
 
-    const redisModules = metrics?.redisModules || {};
+    // redisModules available via metrics?.redisModules if needed
 
     return (
         <Card className="border-green-500/30 bg-gradient-to-br from-black/90 to-gray-900/90 shadow-lg shadow-green-500/10">
