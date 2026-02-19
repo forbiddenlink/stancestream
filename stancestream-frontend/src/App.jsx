@@ -89,17 +89,13 @@ export default function App() {
   }, []);
 
   // Check for first-time user and show intro
+  // Only show intro if user hasn't explicitly completed it (localStorage = 'true')
   useEffect(() => {
-    const hasSeenIntro = localStorage.getItem('stancestream-intro-seen');
-    // Set showIntro to true by default for first-time users
-    setShowIntro(hasSeenIntro !== 'true');
-  }, []);
-
-  // Set initial state on component mount
-  useEffect(() => {
-    const hasSeenIntro = localStorage.getItem('stancestream-intro-seen');
-    if (!hasSeenIntro) {
-      localStorage.setItem('stancestream-intro-seen', 'false');
+    try {
+      const hasSeenIntro = localStorage.getItem('stancestream-intro-seen');
+      setShowIntro(hasSeenIntro !== 'true');
+    } catch {
+      // localStorage unavailable (private browsing) - show intro by default
       setShowIntro(true);
     }
   }, []);
@@ -497,12 +493,16 @@ export default function App() {
           <div className="matrix-rain"></div>
         </div>
 
-        <Header 
-          connectionStatus={connectionStatus} 
-          backendHealth={connectionHealth} 
+        <Header
+          connectionStatus={connectionStatus}
+          backendHealth={connectionHealth}
           onShowIntro={() => {
             console.log('Opening intro module...');
-            localStorage.removeItem('stancestream-intro-seen');
+            try {
+              localStorage.removeItem('stancestream-intro-seen');
+            } catch {
+              // localStorage unavailable - continue anyway
+            }
             setShowIntro(true);
           }}
         />
@@ -825,20 +825,32 @@ export default function App() {
           </Container>
         </footer>
 
-        {/* Redis Matrix Modal */}
-        <RedisMatrixModal 
-          isOpen={showMatrixModal} 
-          onClose={() => setShowMatrixModal(false)} 
-        />
+        {/* Redis Matrix Modal - wrapped in Suspense since it's lazy-loaded */}
+        {showMatrixModal && (
+          <Suspense fallback={<ModalLoader />}>
+            <RedisMatrixModal
+              isOpen={showMatrixModal}
+              onClose={() => setShowMatrixModal(false)}
+            />
+          </Suspense>
+        )}
 
-        {/* Intro Module */}
-        <IntroModule 
-          showIntro={showIntro}
-          onComplete={() => {
-            setShowIntro(false);
-            localStorage.setItem('stancestream-intro-seen', 'true');
-          }}
-        />
+        {/* Intro Module - wrapped in Suspense since it's lazy-loaded */}
+        {showIntro && (
+          <Suspense fallback={<ModalLoader />}>
+            <IntroModule
+              showIntro={showIntro}
+              onComplete={() => {
+                setShowIntro(false);
+                try {
+                  localStorage.setItem('stancestream-intro-seen', 'true');
+                } catch {
+                  // localStorage unavailable - intro will show again next visit
+                }
+              }}
+            />
+          </Suspense>
+        )}
         </div>
       </ErrorBoundary>
     </ToastProvider>

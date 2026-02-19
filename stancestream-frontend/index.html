@@ -92,7 +92,10 @@
     </script>
   </head>
   <body>
-    <div id="root">
+    <div id="root"></div>
+    <!-- SEO fallback content - only visible when JavaScript is disabled -->
+    <noscript>
+    <div id="seo-fallback">
       <header style="padding: 1rem; border-bottom: 1px solid #d1d5db;">
         <h1 style="margin: 0; font-family: Arial, sans-serif;">StanceStream</h1>
         <p style="margin: 0.5rem 0 0; font-family: Arial, sans-serif;">
@@ -153,9 +156,6 @@
         <a href="/privacy-policy">Privacy Policy</a>
       </footer>
     </div>
-    <noscript>
-      StanceStream requires JavaScript for live debate streaming. You can still read static pages at /about, /contact,
-      and /privacy-policy.
     </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
