@@ -33,3 +33,9 @@ Thumbs.db
 .github/instructions/codacy.instructions.md
 .env*.local
 .history
+
+# Build output
+.next/
+dist/
+build/
+out/
