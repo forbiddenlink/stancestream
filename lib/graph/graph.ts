@@ -22,6 +22,7 @@ import {
   finalSummaryNode,
 } from "./nodes.js";
 import { routeAfterAdvance } from "./edges.js";
+import { getLangfuse, flushLangfuse } from "../langfuse.js";
 
 /**
  * Create the compiled debate graph
@@ -80,10 +81,18 @@ export interface DebateProcess {
 export async function runDebate(
   config: DebateConfig,
   callbacks: DebateCallbacks = {},
-  process?: DebateProcess
+  process?: DebateProcess,
 ): Promise<StanceState> {
   const graph = createDebateGraph();
   const initialState = createInitialState(config);
+
+  const langfuse = getLangfuse();
+  const trace = langfuse?.trace({
+    name: "debate",
+    id: config.debateId,
+    metadata: { topic: config.topic, rounds: config.rounds },
+    tags: ["debate", "stancestream"],
+  });
 
   console.log(`[Debate] Starting debate: ${config.debateId}`);
   console.log(`[Debate] Topic: ${config.topic}`);
@@ -127,7 +136,10 @@ export async function runDebate(
         if (output.debateMessages) {
           finalState = {
             ...finalState,
-            debateMessages: [...finalState.debateMessages, ...output.debateMessages],
+            debateMessages: [
+              ...finalState.debateMessages,
+              ...output.debateMessages,
+            ],
           };
         }
         if (output.scores) {
@@ -142,7 +154,10 @@ export async function runDebate(
         if (output.roundSummaries) {
           finalState = {
             ...finalState,
-            roundSummaries: [...finalState.roundSummaries, ...output.roundSummaries],
+            roundSummaries: [
+              ...finalState.roundSummaries,
+              ...output.roundSummaries,
+            ],
           };
         }
         if (output.isComplete !== undefined) {
@@ -157,7 +172,18 @@ export async function runDebate(
     }
 
     console.log(`[Debate] Completed: ${config.debateId}`);
-    console.log(`[Debate] Final scores: PRO ${finalState.scores.pro} - CON ${finalState.scores.con}`);
+    console.log(
+      `[Debate] Final scores: PRO ${finalState.scores.pro} - CON ${finalState.scores.con}`,
+    );
+
+    trace?.update({
+      output: {
+        proScore: finalState.scores.pro,
+        conScore: finalState.scores.con,
+        messageCount: finalState.debateMessages.length,
+      },
+    });
+    flushLangfuse().catch(() => {});
 
     return finalState;
   } catch (error) {
@@ -181,7 +207,7 @@ export function createDebateOrchestrator() {
      */
     async start(
       config: DebateConfig,
-      callbacks: DebateCallbacks = {}
+      callbacks: DebateCallbacks = {},
     ): Promise<StanceState> {
       if (activeDebates.has(config.debateId)) {
         throw new Error(`Debate ${config.debateId} is already running`);
