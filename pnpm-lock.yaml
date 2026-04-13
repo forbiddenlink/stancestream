@@ -7,7 +7,6 @@ settings:
 overrides:
   glob: '>=10.5.0'
   js-yaml: '>=4.1.1'
-  '@langchain/core': '>=0.3.80'
   qs: '>=6.14.2'
   diff: '>=8.0.3'
   form-data: '>=4.0.4'
@@ -1693,12 +1692,12 @@ packages:
     resolution: {integrity: sha512-HM0cJLRpIsSlWBQ/xuDC67l52SqZ62Bh2Y61DX+Xorqwoh5e1KxYvfCD7GnSTbWWhjBOutvnR0vPhu4orFkZfw==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@langchain/core': '>=0.3.80'
+      '@langchain/core': ^1.0.1
 
   '@langchain/langgraph-sdk@1.8.2':
     resolution: {integrity: sha512-TQSw5O0NiE0W6D+UKcv6AdvCqQD2Xbv96oaUFUSSL3nnQ0WfZLcF5nPNTQm6KLUo4EuhKZeeoAgnDb2hRDW2Hw==}
     peerDependencies:
-      '@langchain/core': '>=0.3.80'
+      '@langchain/core': ^1.1.16
       react: ^18 || ^19
       react-dom: ^18 || ^19
       svelte: ^4.0.0 || ^5.0.0
@@ -1719,7 +1718,7 @@ packages:
     resolution: {integrity: sha512-5cX402dNGN6w9+0mlMU2dgUiKx6Y1tlENp7x05e9ByDbQCHSDc0kyqRWNFLGc7vatQ92S4ylxQrcCJvi8Fr4SQ==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@langchain/core': '>=0.3.80'
+      '@langchain/core': ^1.1.16
       zod: ^3.25.32 || ^4.2.0
       zod-to-json-schema: ^3.x
     peerDependenciesMeta:
@@ -1730,7 +1729,7 @@ packages:
     resolution: {integrity: sha512-CX1kOTbT5xVFNdtLjnM0GIYNf+P7oMSu+dGCFxxWRa3dZwWiuyuBXCm+dToUGxDLnsHuV1bKBtIzrY1mLq/A1Q==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@langchain/core': '>=0.3.80'
+      '@langchain/core': '>=0.3.58 <0.4.0'
 
   '@microsoft/fetch-event-source@2.0.1':
     resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
