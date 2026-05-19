@@ -1,10 +1,4 @@
 services:
-  - type: redis
-    name: stancestream-redis
-    plan: free
-    version: 7
-    ipAllowList: []
-
   - type: web
     name: stancestream
     env: node
@@ -16,10 +10,7 @@ services:
     startCommand: node server.js
     envVars:
       - key: REDIS_URL
-        fromService:
-          type: redis
-          name: stancestream-redis
-          property: connectionString
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: NODE_ENV
@@ -41,7 +32,3 @@ services:
         - package.json
         - setupCacheIndex.js
         - initCache.js
-    healthCheckPath: /api/health
-    depends_on:
-      - type: redis
-        name: stancestream-redis
