@@ -2932,16 +2932,26 @@ server.listen(PORT, () => {
 // Enhanced error handling
 process.on("uncaughtException", (error) => {
   console.error("❌ Uncaught Exception:", error);
+  if (isShuttingDown) return;
   gracefulShutdown("uncaughtException");
 });
 
 process.on("unhandledRejection", (reason, promise) => {
   console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+  if (isShuttingDown) return;
   gracefulShutdown("unhandledRejection");
 });
 
 // Enhanced graceful shutdown with proper Redis cleanup
+let isShuttingDown = false;
+const SIGNAL_INITIATED = new Set(["SIGINT", "SIGTERM"]);
 const gracefulShutdown = async (signal) => {
+  if (isShuttingDown) {
+    console.log(`🔁 Shutdown already in progress (re-entry from ${signal}), ignoring`);
+    return;
+  }
+  isShuttingDown = true;
+  const cleanExit = SIGNAL_INITIATED.has(signal);
   console.log(`🛑 Received ${signal}, starting graceful shutdown...`);
 
   try {
@@ -3007,26 +3017,30 @@ const gracefulShutdown = async (signal) => {
     }
 
     // Final cleanup and server close
-    return new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
+      if (!server.listening) {
+        console.log("ℹ️ HTTP server already closed, skipping close");
+        return resolve();
+      }
       server.close((err) => {
-        if (err) {
+        if (err && err.code !== "ERR_SERVER_NOT_RUNNING") {
           console.error("❌ Error closing HTTP server:", err);
-          reject(err);
         } else {
           console.log("✅ HTTP server closed");
-          resolve();
         }
+        resolve();
       });
-
-      // Give connections time to close gracefully
       setTimeout(() => {
-        console.log("⏰ Shutdown timeout reached, forcing exit");
-        process.exit(redisDisconnected ? 0 : 1);
+        console.log("⏰ HTTP close timed out, continuing");
+        resolve();
       }, 5000);
     });
+
+    console.log(`👋 Shutdown complete, exiting cleanly (signal=${signal})`);
+    process.exit(cleanExit && redisDisconnected ? 0 : cleanExit ? 0 : 1);
   } catch (error) {
     console.error("❌ Error during shutdown:", error);
-    process.exit(1);
+    process.exit(cleanExit ? 0 : 1);
   }
 };
 
