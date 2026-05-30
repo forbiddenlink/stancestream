@@ -165,6 +165,10 @@ function isAllowedOrigin(origin) {
 
 const wss = new WebSocketServer({
   server,
+  // 1 MB cap on inbound frames mitigates memory-exhaustion DoS from oversized payloads.
+  maxPayload: 1 * 1024 * 1024,
+  // Required for wss.clients iteration used by the heartbeat below.
+  clientTracking: true,
   verifyClient: (info, callback) => {
     const origin = info.origin || info.req.headers.origin;
     if (isAllowedOrigin(origin)) {
@@ -399,6 +403,13 @@ wss.on("connection", (ws) => {
   connections.add(ws);
   websocketConnectionsActive.inc();
 
+  // Heartbeat liveness flag. Set true on pong; the interval below terminates
+  // any connection that did not respond to the previous ping.
+  ws.isAlive = true;
+  ws.on("pong", () => {
+    ws.isAlive = true;
+  });
+
   ws.on("close", () => {
     console.log("🔌 Client disconnected from WebSocket");
     connections.delete(ws);
@@ -410,6 +421,33 @@ wss.on("connection", (ws) => {
     connections.delete(ws);
     websocketConnectionsActive.dec();
   });
+});
+
+// Heartbeat: ping every 30s; terminate connections that missed the prior pong.
+// Render idles inactive WebSockets at ~100s, so 30s is a comfortable cadence
+// and also clears dead connections (NAT timeouts, crashed clients).
+const wsHeartbeatInterval = setInterval(() => {
+  wss.clients.forEach((ws) => {
+    if (ws.isAlive === false) {
+      try {
+        connections.delete(ws);
+        websocketConnectionsActive.dec();
+      } catch (_) {
+        /* metric may already be decremented via close/error */
+      }
+      return ws.terminate();
+    }
+    ws.isAlive = false;
+    try {
+      ws.ping();
+    } catch (_) {
+      /* ignore ping errors; next sweep will terminate */
+    }
+  });
+}, 30000);
+
+wss.on("close", () => {
+  clearInterval(wsHeartbeatInterval);
 });
 
 // Broadcast to all connected clients

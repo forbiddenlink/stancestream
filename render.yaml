@@ -26,9 +26,7 @@ services:
       - key: PORT
         value: "3000"
     healthCheckPath: /api/health
-    buildFilter:
-      paths:
-        - server.js
-        - package.json
-        - setupCacheIndex.js
-        - initCache.js
+    # buildFilter intentionally REMOVED 2026-05-30: prior config excluded src/**
+    # which silently skipped Render builds when application code under src/ changed.
+    # Default (no buildFilter) triggers a build on every push to the connected branch,
+    # which is the safe choice for this small service.
