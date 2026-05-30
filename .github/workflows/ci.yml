@@ -24,15 +24,18 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-      
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: '20'
-          
-      - name: Install pnpm
-        run: npm install -g pnpm
-        
+          cache: 'pnpm'
+
       - name: Install backend dependencies
         run: pnpm install --frozen-lockfile
         
@@ -79,14 +82,24 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-      
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.14.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
       - name: Run security audit
         run: |
-          npm install -g pnpm
           pnpm install
           pnpm audit || true # Don't fail on audit initially
           
