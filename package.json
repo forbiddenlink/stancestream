@@ -71,7 +71,7 @@
     "@biomejs/biome": "^2.4.16",
     "@trigger.dev/build": "^4.4.6",
     "@types/express": "^5.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.19.19",
     "artillery": "^2.0.32",
     "axios": "^1.16.1",
     "c8": "^10.1.3",
