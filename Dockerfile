@@ -3,6 +3,8 @@
 
 # Builder stage
 FROM node:20-alpine AS builder
+# Patch OS packages for known CVEs (libssl3/libcrypto3)
+RUN apk upgrade --no-cache libssl3 libcrypto3
 
 WORKDIR /app
 
@@ -25,6 +27,8 @@ RUN pnpm build
 
 # Production stage
 FROM node:20-alpine
+# Patch OS packages for known CVEs (libssl3/libcrypto3)
+RUN apk upgrade --no-cache libssl3 libcrypto3
 
 WORKDIR /app
 
