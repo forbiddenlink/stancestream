@@ -124,7 +124,9 @@
       "basic-ftp": ">=5.3.1",
       "ip-address": ">=10.1.1",
       "fast-xml-builder": ">=1.1.7",
-      "postcss": ">=8.5.14"
+      "postcss": ">=8.5.14",
+      "shell-quote": ">=1.8.4",
+      "esbuild": ">=0.28.1"
     }
   },
   "engines": {
