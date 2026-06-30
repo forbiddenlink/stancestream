@@ -2977,7 +2977,9 @@ process.on("uncaughtException", (error) => {
 process.on("unhandledRejection", (reason, promise) => {
   console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
   if (isShuttingDown) return;
-  gracefulShutdown("unhandledRejection");
+  // Unhandled rejections are logged above; do NOT shut down. A background
+  // op rejecting (OpenAI timeout, Redis blip, WS send to closed socket) was
+  // exiting the process ~daily -> Render restart -> downtime emails.
 });
 
 // Enhanced graceful shutdown with proper Redis cleanup
