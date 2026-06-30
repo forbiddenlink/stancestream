@@ -253,12 +253,18 @@ export function sanitizeRequest(req, res, next) {
         req.body = sanitizeInput(req.body);
     }
     
+    // req.query and req.params are getter-only in modern Express (4.22+/5);
+    // reassigning throws. Redefine as a writable value holding the sanitized data.
     if (req.query) {
-        req.query = sanitizeInput(req.query);
+        Object.defineProperty(req, 'query', {
+            value: sanitizeInput(req.query), writable: true, configurable: true, enumerable: true,
+        });
     }
-    
+
     if (req.params) {
-        req.params = sanitizeInput(req.params);
+        Object.defineProperty(req, 'params', {
+            value: sanitizeInput(req.params), writable: true, configurable: true, enumerable: true,
+        });
     }
     
     next();

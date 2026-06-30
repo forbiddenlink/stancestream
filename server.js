@@ -112,7 +112,6 @@ const apiRateLimit = rateLimit({
   message: { error: "Too many requests, please try again later." },
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => req.ip, // IP-based tracking
   skip: (req) => req.path.startsWith("/api/health"), // Don't rate limit health checks
 });
 
