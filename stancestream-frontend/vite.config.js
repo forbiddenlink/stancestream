@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import compression from 'vite-plugin-compression2'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    tailwindcss(),
     react(),
     compression({
       algorithm: 'gzip',
@@ -26,10 +28,10 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'charts': ['recharts'],
-          'ui-components': ['lucide-react'],
-          'redis-components': ['./src/components/RedisMatrixModal.jsx', './src/components/LivePerformanceOverlay.jsx']
+        manualChunks(id) {
+          if (id.includes('recharts')) return 'charts';
+          if (id.includes('lucide-react')) return 'ui-components';
+          if (id.includes('RedisMatrixModal') || id.includes('LivePerformanceOverlay')) return 'redis-components';
         }
       }
     },
