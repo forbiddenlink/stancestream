@@ -6,6 +6,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function summarizeDebate(debateId, maxMessages = 20) {
     const client = createClient({ url: process.env.REDIS_URL });
+    client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
 
     try {
         await client.connect();
@@ -120,6 +121,7 @@ Keep the summary concise but informative (200-400 words).
 // Helper function to get all summaries for a debate
 export async function getDebateSummaries(debateId) {
     const client = createClient({ url: process.env.REDIS_URL });
+    client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
 
     try {
         await client.connect();

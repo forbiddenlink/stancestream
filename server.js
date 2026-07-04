@@ -2970,6 +2970,21 @@ server.listen(PORT, () => {
 process.on("uncaughtException", (error) => {
   console.error("❌ Uncaught Exception:", error);
   if (isShuttingDown) return;
+  // Transient Redis socket drops (Upstash cycles idle sockets ~every 6h) surface
+  // as SocketClosedUnexpectedlyError / ECONNRESET. node-redis auto-reconnects, so
+  // they are NOT fatal. Exiting on them was restarting the process ~every 6h ->
+  // Render "Exited with status 1" downtime emails. Log and keep running.
+  const name = error?.name || "";
+  const code = error?.code || "";
+  const msg = error?.message || "";
+  const isTransientRedis =
+    name === "SocketClosedUnexpectedlyError" ||
+    code === "ECONNRESET" ||
+    /socket closed unexpectedly/i.test(msg);
+  if (isTransientRedis) {
+    console.warn("⚠️ Transient Redis socket error, not shutting down:", msg);
+    return;
+  }
   gracefulShutdown("uncaughtException");
 });
 

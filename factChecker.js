@@ -3,6 +3,7 @@ import { createClient } from 'redis';
 import { OpenAIEmbeddings } from '@langchain/openai';
 
 const client = createClient({ url: process.env.REDIS_URL });
+client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
 const embeddings = new OpenAIEmbeddings();
 
 async function findClosestFact(messageText) { // ✅ Renamed for clarity

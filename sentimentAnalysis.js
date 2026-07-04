@@ -18,6 +18,7 @@ class SentimentAnalyzer {
     async initialize() {
         try {
             this.client = createClient({ url: process.env.REDIS_URL });
+            this.client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
             await this.client.connect();
             console.log('📊 Redis client connected for sentiment analysis');
 

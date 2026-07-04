@@ -31,6 +31,7 @@ class PlatformMetricsEngine {
     async connect() {
         if (!this.client) {
             this.client = createClient({ url: process.env.REDIS_URL });
+            this.client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
             await this.client.connect();
         }
     }
