@@ -1,13 +1,20 @@
+# NOTE (reconciled 2026-07-04): this service is NOT Blueprint-synced. The live
+# Render service is manually managed, so editing THIS FILE alone has no effect.
+# Deploys are triggered by the render-redeploy.yml GitHub Action (POSTs the Render
+# deploy hook on push to main); the service runs with autoDeploy = off. Any change
+# here must ALSO be applied on the dashboard or via `render services update ...`.
+# This file is kept as reference and now mirrors the actual live configuration.
 services:
   - type: web
     name: stancestream
     env: node
     plan: starter
-    buildCommand: |
-      npm install
-      node setupCacheIndex.js
-      node initCache.js
+    # Matches live. Repo uses pnpm@10.14.0; --frozen-lockfile for reproducible installs.
+    # Redis index seeding (setupCacheIndex.js / initCache.js) is handled out-of-band,
+    # NOT at build time, so it is intentionally not part of buildCommand.
+    buildCommand: pnpm install --frozen-lockfile
     startCommand: node server.js
+    healthCheckPath: /api/health
     envVars:
       - key: REDIS_URL
         sync: false
@@ -23,10 +30,5 @@ services:
         value: "0.85"
       - key: CACHE_TTL
         value: "86400"
-      - key: PORT
-        value: "3000"
-    healthCheckPath: /api/health
-    # buildFilter intentionally REMOVED 2026-05-30: prior config excluded src/**
-    # which silently skipped Render builds when application code under src/ changed.
-    # Default (no buildFilter) triggers a build on every push to the connected branch,
-    # which is the safe choice for this small service.
+    # PORT intentionally omitted: Render injects PORT (10000) at runtime and the app
+    # reads process.env.PORT. The prior hardcoded PORT=3000 was stale and misleading.
