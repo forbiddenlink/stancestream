@@ -129,7 +129,8 @@
       "esbuild": ">=0.28.1",
       "engine.io": ">=6.6.7 <7",
       "ws": ">=8.21.0 <9",
-      "@opentelemetry/core": ">=2.8.0 <3"
+      "@opentelemetry/core": ">=2.8.0 <3",
+      "body-parser@1": ">=1.20.6 <2"
     }
   },
   "engines": {
