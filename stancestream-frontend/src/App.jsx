@@ -647,7 +647,7 @@ export default function App() {
                 {/* Main content row: 2-column layout with Matrix styling */}
                 <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
                   {/* Left Column: Debate Panel (70% width) - Matrix Style */}
-                  <div className="flex-1 lg:flex-[7] min-w-0 min-h-[500px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm">
+                  <div className="flex-1 lg:flex-[7] min-w-0 min-h-[500px] bg-stage border border-stage-line rounded-xl backdrop-blur-sm">
                     <DebatePanel messages={getFilteredMessages()} />
                   </div>
 

@@ -7,6 +7,26 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+/* ===== Broadcast Versus-Arena two-hue theme =====
+   Cool "A" side vs hot "B" side over a shared near-black stage.
+   Declared as Tailwind v4 @theme tokens (generates both the
+   --color-* CSS variables and bg-/text-/border- utilities) and
+   mirrored on :root so keyframes + inline glow can read them. */
+@theme {
+    --color-arena-a: #38bdf8;      /* cool - sky */
+    --color-arena-a-deep: #0284c7;
+    --color-arena-b: #fb7185;      /* hot - rose */
+    --color-arena-b-deep: #e11d48;
+    --color-stage: #07090e;        /* shared near-black */
+    --color-stage-raised: #0d1017;
+    --color-stage-line: #1b2130;
+}
+
+:root {
+    --arena-a-rgb: 56, 189, 248;
+    --arena-b-rgb: 251, 113, 133;
+}
+
 /* Matrix Rain Effect */
 .matrix-rain {
     position: fixed;
@@ -31,15 +51,15 @@
             0deg,
             transparent,
             transparent 2px,
-            rgba(0, 255, 65, 0.03) 2px,
-            rgba(0, 255, 65, 0.03) 4px
+            rgba(148, 163, 184, 0.03) 2px,
+            rgba(148, 163, 184, 0.03) 4px
         ),
         repeating-linear-gradient(
             90deg,
             transparent,
             transparent 2px,
-            rgba(0, 255, 65, 0.03) 2px,
-            rgba(0, 255, 65, 0.03) 4px
+            rgba(148, 163, 184, 0.03) 2px,
+            rgba(148, 163, 184, 0.03) 4px
         );
     animation: matrixRain 20s linear infinite;
 }

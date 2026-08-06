@@ -77,15 +77,15 @@ module.exports = {
             },
 
             boxShadow: {
-                // Matrix glow system - green based
-                'glow': '0 0 20px rgba(34, 197, 94, 0.3)',
-                'glow-hover': '0 0 30px rgba(34, 197, 94, 0.4)',
-                'glow-strong': '0 0 40px rgba(34, 197, 94, 0.5)',
+                // Broadcast versus-arena glow system - two-hue (cool A / hot B)
+                'glow': '0 0 24px rgba(56, 189, 248, 0.45)',        // arena-a (cool)
+                'glow-hover': '0 0 34px rgba(56, 189, 248, 0.55)',
+                'glow-strong': '0 0 32px rgba(251, 113, 133, 0.5)', // arena-b (hot)
                 // Card shadows for dark surfaces
                 'card': '0 4px 24px rgba(0, 0, 0, 0.5)',
-                'card-hover': '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(34, 197, 94, 0.2)',
+                'card-hover': '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(56, 189, 248, 0.2)',
                 'elevated': '0 8px 32px rgba(0, 0, 0, 0.8)',
-                'modal': '0 16px 48px rgba(0, 0, 0, 0.9), 0 0 30px rgba(34, 197, 94, 0.15)',
+                'modal': '0 16px 48px rgba(0, 0, 0, 0.9), 0 0 30px rgba(56, 189, 248, 0.15)',
                 // Status glows
                 'glow-success': '0 0 20px rgba(34, 197, 94, 0.4)',
                 'glow-warning': '0 0 20px rgba(234, 179, 8, 0.4)',

@@ -1,213 +1,330 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import Icon from './Icon';
 import SentimentBadge from './SentimentBadge';
-import { Card, CardHeader, CardContent, Stack, Container } from './ui';
+import TranscriptTicker from './TranscriptTicker';
 
-const DebatePanel = ({ messages = [] }) => {
-    const messagesEndRef = useRef(null);
-    const messagesContainerRef = useRef(null);
-    const lastMessageCountRef = useRef(0);
+/**
+ * DebatePanel — Broadcast Versus-Arena
+ *
+ * Split-column "versus stage": each agent is pinned to the top of its own
+ * column (cool "A" on the left, hot "B" on the right) over a shared near-black
+ * stage, with a center spine carrying the VS badge and a live sentiment-lean
+ * readout. The active speaker's column glows/pulses; new arguments reveal
+ * word-by-word; a broadcast chyron scrolls the transcript along the bottom.
+ */
 
-    const scrollToBottom = () => {
-        if (messagesEndRef.current) {
-            setTimeout(() => {
-                messagesEndRef.current?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'nearest',
-                    inline: 'nearest'
-                });
-            }, 100);
-        }
-    };
+// --- Agent / side configuration -------------------------------------------
+
+const SIDES = {
+    a: {
+        key: 'a',
+        icon: 'user',
+        text: 'text-arena-a',
+        border: 'border-arena-a/30',
+        chip: 'bg-arena-a/10 border-arena-a/25',
+        dot: 'bg-arena-a',
+        avatar: 'from-arena-a to-arena-a-deep',
+        column: 'arena-column-a',
+    },
+    b: {
+        key: 'b',
+        icon: 'zap',
+        text: 'text-arena-b',
+        border: 'border-arena-b/30',
+        chip: 'bg-arena-b/10 border-arena-b/25',
+        dot: 'bg-arena-b',
+        avatar: 'from-arena-b to-arena-b-deep',
+        column: 'arena-column-b',
+    },
+};
+
+const sideKeyOf = (agentId) => (agentId === 'reformerbot' ? 'b' : 'a');
+
+const displayName = (msg, agentId) =>
+    (msg?.sender || agentId || 'agent').toString().toUpperCase();
+
+const formatTimestamp = (timestamp) =>
+    new Date(timestamp).toLocaleTimeString('en-US', {
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+
+const sentimentScore = (sentiment) => {
+    if (!sentiment) return 0;
+    const label = (sentiment.sentiment || sentiment || '').toString().toLowerCase();
+    const conf = typeof sentiment.confidence === 'number' ? sentiment.confidence : 0.5;
+    if (label.includes('pos')) return conf;
+    if (label.includes('neg')) return -conf;
+    return 0;
+};
+
+// --- Kinetic streaming-text reveal ----------------------------------------
+
+const StreamingText = ({ text = '', animate = false }) => {
+    if (!animate) return text;
+    const tokens = text.split(/(\s+)/);
+    let wordIndex = 0;
+    return tokens.map((token, i) => {
+        if (token.trim() === '') return <React.Fragment key={i}>{token}</React.Fragment>;
+        const delay = Math.min(wordIndex * 26, 1400);
+        wordIndex += 1;
+        return (
+            <span key={i} className="arena-word" style={{ animationDelay: `${delay}ms` }}>
+                {token}
+            </span>
+        );
+    });
+};
+
+// --- Single agent column ---------------------------------------------------
+
+const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => {
+    const side = SIDES[sideKey];
+    const endRef = useRef(null);
+    const countRef = useRef(0);
 
     useEffect(() => {
-        if (messages.length > lastMessageCountRef.current && messages.length > 0) {
-            scrollToBottom();
+        if (messages.length > countRef.current) {
+            const t = setTimeout(() => {
+                endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 80);
+            countRef.current = messages.length;
+            return () => clearTimeout(t);
         }
-        lastMessageCountRef.current = messages.length;
-    }, [messages]);
-
-    const getAgentStyle = (agentId) => {
-        switch (agentId) {
-            case 'senatorbot':
-                return {
-                    gradient: 'from-green-600 via-green-500 to-emerald-600',
-                    avatar: <Icon name="user" size={20} className="text-black" />,
-                    name: 'SENATORBOT',
-                    accentColor: 'green-400',
-                    bgColor: 'bg-green-500/10 border-green-500/30'
-                };
-            case 'reformerbot':
-                return {
-                    gradient: 'from-green-400 via-green-500 to-green-600',
-                    avatar: <Icon name="zap" size={20} className="text-black" />,
-                    name: 'REFORMERBOT',
-                    accentColor: 'green-300',
-                    bgColor: 'bg-green-400/10 border-green-400/30'
-                };
-            default:
-                return {
-                    gradient: 'from-green-600 to-green-700',
-                    avatar: <Icon name="message" size={20} className="text-black" />,
-                    name: 'AGENT',
-                    accentColor: 'green-400',
-                    bgColor: 'bg-green-500/10 border-green-500/30'
-                };
-        }
-    };
-
-    const formatTimestamp = (timestamp) => {
-        return new Date(timestamp).toLocaleTimeString('en-US', {
-            hour12: false,
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    };
+        countRef.current = messages.length;
+    }, [messages.length]);
 
     return (
-        <div className="h-full flex flex-col bg-surface-base border border-green-500/20 rounded-xl shadow-elevated animate-fade-in">
-            {/* Matrix Header */}
-            <div className="flex-shrink-0 bg-surface-elevated px-6 py-4 border-b border-green-500/20 rounded-t-xl">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                        <div className="relative">
-                            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30">
-                                <Icon name="message-circle" size={20} className="text-black" />
-                            </div>
-                            <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-black animate-pulse"></div>
-                        </div>
-                        <div>
-                            <h2 className="text-xl font-bold text-green-400 font-mono tracking-wide">LIVE DEBATE</h2>
-                            <p className="text-gray-400 text-sm font-mono">REAL-TIME AI DISCUSSION</p>
-                        </div>
+        <div
+            className={`arena-column ${side.column} ${isActive ? 'is-speaking' : ''} flex flex-col min-h-0 bg-stage-raised/60 rounded-xl border ${
+                isActive ? side.border : 'border-stage-line'
+            }`}
+        >
+            {/* Pinned agent header */}
+            <div
+                className={`flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-stage-line rounded-t-xl bg-stage/70 ${
+                    align === 'right' ? 'flex-row-reverse text-right' : ''
+                }`}
+            >
+                <div className="relative flex-shrink-0">
+                    <div
+                        className={`w-11 h-11 rounded-xl bg-gradient-to-br ${side.avatar} flex items-center justify-center shadow-lg`}
+                    >
+                        <Icon name={side.icon} size={20} className="text-stage" />
                     </div>
-
-                    {messages.length > 0 && (
-                        <div className="flex items-center space-x-4">
-                            <div className="bg-surface-card border border-green-500/20 px-3 py-1.5 rounded-xl">
-                                <div className="flex items-center space-x-2">
-                                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                    <span className="text-green-400 text-sm font-medium font-mono">
-                                        {messages.length} EXCHANGES
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="text-gray-400 text-sm font-mono">
-                                {formatTimestamp(messages[messages.length - 1]?.timestamp)}
-                            </div>
-                        </div>
+                    {isActive && (
+                        <span
+                            className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full ${side.dot} border-2 border-stage animate-pulse`}
+                            aria-hidden="true"
+                        />
                     )}
+                </div>
+                <div className={align === 'right' ? 'items-end' : ''}>
+                    <div className={`font-display font-bold tracking-wide ${side.text}`}>{name}</div>
+                    <div className="font-mono text-[10px] tracking-[0.18em] text-slate-500">
+                        {isActive ? 'ON AIR' : 'STANDBY'} · {messages.length} ARG
+                    </div>
                 </div>
             </div>
 
-            {/* Matrix Messages Area */}
-            <div
-                ref={messagesContainerRef}
-                className="flex-1 overflow-y-auto scrollbar-thin p-6 space-y-6 min-h-0 bg-surface-base"
-            >
+            {/* Column message stream */}
+            <div className="flex-1 overflow-y-auto scrollbar-thin min-h-0 px-3 py-4 space-y-3">
                 {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in">
-                        <div className="relative mb-8">
-                            <div className="w-20 h-20 bg-surface-card border border-green-500/20 rounded-xl flex items-center justify-center">
-                                <Icon name="message-circle" size={40} className="text-green-400" />
-                            </div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-green-600/20 rounded-2xl blur-xl -z-10"></div>
-                        </div>
-                        <h3 className="text-xl font-bold text-green-400 mb-4 font-mono tracking-wide">
-                            READY FOR INTELLIGENT DEBATE
-                        </h3>
-                        <p className="text-gray-400 max-w-md leading-relaxed font-mono">
-                            SELECT A TOPIC AND START A DEBATE TO WATCH AI AGENTS ENGAGE IN SOPHISTICATED
-                            DISCUSSION WITH FACT-CHECKING, MEMORY FORMATION, AND STANCE EVOLUTION.
+                    <div className="h-full min-h-[140px] flex items-center justify-center text-center px-4">
+                        <p className="font-mono text-[11px] tracking-widest text-slate-600">
+                            AWAITING OPENING STATEMENT
                         </p>
-                        <div className="mt-6 flex items-center space-x-6 text-gray-500 text-sm font-mono">
-                            <div className="flex items-center space-x-2">
-                                <Icon name="activity" size={16} />
-                                <span>AI MEMORY</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Icon name="search" size={16} />
-                                <span>FACT CHECKING</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Icon name="trending-up" size={16} />
-                                <span>STANCE EVOLUTION</span>
-                            </div>
-                        </div>
                     </div>
                 ) : (
-                    <>
-                        {messages.map((msg, index) => {
-                            const agentStyle = getAgentStyle(msg.agentId);
-                            const isLeft = msg.agentId === 'senatorbot';
-                            const prevMessage = messages[index - 1];
-                            const showAvatar = !prevMessage || prevMessage.agentId !== msg.agentId;
+                    messages.map((msg) => (
+                        <div
+                            key={msg.id}
+                            className={`animate-slide-up rounded-xl border ${side.chip} p-3.5`}
+                        >
+                            <div
+                                className={`flex items-center gap-2 mb-1.5 ${
+                                    align === 'right' ? 'flex-row-reverse' : ''
+                                }`}
+                            >
+                                <span className="font-mono text-[10px] text-slate-500">
+                                    {formatTimestamp(msg.timestamp)}
+                                </span>
+                                {msg.sentiment && (
+                                    <SentimentBadge
+                                        sentiment={msg.sentiment.sentiment || msg.sentiment}
+                                        confidence={msg.sentiment.confidence || 0}
+                                        debateId={msg.debateId}
+                                        agentId={msg.agentId}
+                                        timestamp={msg.timestamp}
+                                    />
+                                )}
+                            </div>
 
-                            return (
-                                <div
-                                    key={msg.id || index}
-                                    className={`flex items-start space-x-4 animate-slide-up ${isLeft ? 'flex-row' : 'flex-row-reverse space-x-reverse'
-                                        }`}
-                                >
-                                    {/* Matrix Avatar */}
-                                    <div className={`flex-shrink-0 ${showAvatar ? 'opacity-100' : 'opacity-0'}`}>
-                                        <div className="relative">
-                                            <div className={`w-12 h-12 bg-gradient-to-r ${agentStyle.gradient} rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 transform hover:scale-105 transition-all duration-300`}>
-                                                {agentStyle.avatar}
-                                            </div>
-                                            <div className={`absolute -bottom-1 -right-1 w-4 h-4 bg-${agentStyle.accentColor} rounded-full border-2 border-black`}></div>
-                                        </div>
-                                    </div>
+                            <p className="font-sans text-[15px] leading-relaxed text-slate-100">
+                                <StreamingText text={msg.text} animate={msg.id === newestId} />
+                            </p>
 
-                                    {/* Matrix Message Bubble */}
-                                    <div className={`flex-1 max-w-3xl ${isLeft ? 'mr-12' : 'ml-12'}`}>
-                                        {showAvatar && (
-                                            <div className={`flex items-center space-x-3 mb-2 ${isLeft ? 'justify-start' : 'justify-end'
-                                                }`}>
-                                                <span className={`text-${agentStyle.accentColor} font-semibold text-sm font-mono`}>
-                                                    {agentStyle.name}
-                                                </span>
-                                                <span className="text-gray-500 text-xs font-mono">
-                                                    {formatTimestamp(msg.timestamp)}
-                                                </span>
-                                                {msg.sentiment && (
-                                                    <SentimentBadge 
-                                                        sentiment={msg.sentiment.sentiment || msg.sentiment} 
-                                                        confidence={msg.sentiment.confidence || 0}
-                                                        debateId={msg.debateId}
-                                                        agentId={msg.agentId}
-                                                        timestamp={msg.timestamp}
-                                                    />
-                                                )}
-                                            </div>
-                                        )}
-
-                                        <div className={`bg-surface-card border p-4 rounded-xl ${agentStyle.bgColor} ${isLeft ? 'rounded-tl-sm' : 'rounded-tr-sm'
-                                            } hover:shadow-card-hover transition-all duration-150`}>
-                                            <p className="text-green-100 leading-relaxed text-base font-mono">
-                                                {msg.text}
-                                            </p>
-
-                                            {/* Matrix Fact Check Indicator */}
-                                            {msg.factCheck && (
-                                                <div className="mt-3 pt-3 border-t border-green-500/20">
-                                                    <div className="flex items-center space-x-2">
-                                                        <Icon name="shield-check" size={14} className="text-green-400" />
-                                                        <span className="text-green-400 text-xs font-medium font-mono">
-                                                            FACT CHECK: {(msg.factCheck.score * 100).toFixed(0)}% CONFIDENCE
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                            {msg.factCheck && (
+                                <div className="mt-2.5 pt-2.5 border-t border-stage-line flex items-center gap-2">
+                                    <Icon name="shield-check" size={13} className={side.text} />
+                                    <span className={`font-mono text-[10px] font-medium ${side.text}`}>
+                                        FACT CHECK: {(msg.factCheck.score * 100).toFixed(0)}%
+                                    </span>
                                 </div>
-                            );
-                        })}
-                        <div ref={messagesEndRef} />
-                    </>
+                            )}
+                        </div>
+                    ))
+                )}
+                <div ref={endRef} />
+            </div>
+        </div>
+    );
+};
+
+// --- Center spine: VS badge + live sentiment lean -------------------------
+
+const CenterSpine = ({ scoreA, scoreB, hasData }) => {
+    // Map -1..1 signed sentiment to a 0..100 bar height per side.
+    const heightA = Math.round(((scoreA + 1) / 2) * 100);
+    const heightB = Math.round(((scoreB + 1) / 2) * 100);
+    const delta = (scoreA - scoreB).toFixed(2);
+
+    return (
+        <div className="hidden md:flex flex-col items-center justify-between py-2 px-1 select-none">
+            <div className="font-display font-black text-slate-600 text-sm tracking-widest">VS</div>
+
+            {hasData ? (
+                <div className="flex-1 flex flex-col items-center justify-center gap-2 w-14">
+                    <div className="flex items-end gap-1.5 h-24">
+                        <div className="w-2.5 h-full bg-stage-line/60 rounded-full flex flex-col justify-end overflow-hidden">
+                            <div
+                                className="w-full bg-arena-a rounded-full transition-all duration-500"
+                                style={{ height: `${heightA}%` }}
+                            />
+                        </div>
+                        <div className="w-2.5 h-full bg-stage-line/60 rounded-full flex flex-col justify-end overflow-hidden">
+                            <div
+                                className="w-full bg-arena-b rounded-full transition-all duration-500"
+                                style={{ height: `${heightB}%` }}
+                            />
+                        </div>
+                    </div>
+                    <div className="font-mono text-[9px] tracking-widest text-slate-500 text-center leading-tight">
+                        SENTIMENT
+                        <br />
+                        Δ {delta}
+                    </div>
+                </div>
+            ) : (
+                <div className="flex-1" />
+            )}
+
+            <div className="w-px flex-shrink-0 bg-stage-line" style={{ height: 0 }} />
+        </div>
+    );
+};
+
+// --- Panel -----------------------------------------------------------------
+
+const DebatePanel = ({ messages = [] }) => {
+    const activeAgentId = messages[messages.length - 1]?.agentId;
+    const activeSide = messages.length ? sideKeyOf(activeAgentId) : null;
+    const newestId = messages[messages.length - 1]?.id;
+
+    const { colA, colB, nameA, nameB, scoreA, scoreB, hasSentiment } = useMemo(() => {
+        const a = [];
+        const b = [];
+        let nA = 'SENATORBOT';
+        let nB = 'REFORMERBOT';
+        let sA = 0;
+        let sB = 0;
+        let sentimentSeen = false;
+        for (const msg of messages) {
+            if (sideKeyOf(msg.agentId) === 'b') {
+                b.push(msg);
+                nB = displayName(msg, msg.agentId);
+                if (msg.sentiment) { sB = sentimentScore(msg.sentiment); sentimentSeen = true; }
+            } else {
+                a.push(msg);
+                nA = displayName(msg, msg.agentId);
+                if (msg.sentiment) { sA = sentimentScore(msg.sentiment); sentimentSeen = true; }
+            }
+        }
+        return { colA: a, colB: b, nameA: nA, nameB: nB, scoreA: sA, scoreB: sB, hasSentiment: sentimentSeen };
+    }, [messages]);
+
+    return (
+        <div className="h-full flex flex-col bg-stage border border-stage-line rounded-xl shadow-elevated overflow-hidden animate-fade-in">
+            {/* Broadcast header */}
+            <div className="flex-shrink-0 flex items-center justify-between px-5 py-3 bg-stage-raised border-b border-stage-line">
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-1.5">
+                        <span className="w-2.5 h-2.5 rounded-full bg-arena-b animate-pulse" aria-hidden="true" />
+                        <span className="font-mono text-[10px] font-bold tracking-[0.22em] text-arena-b">
+                            LIVE
+                        </span>
+                    </div>
+                    <div className="h-4 w-px bg-stage-line" aria-hidden="true" />
+                    <h2 className="font-display text-lg font-bold tracking-wide text-slate-100">
+                        Debate Arena
+                    </h2>
+                </div>
+
+                {messages.length > 0 && (
+                    <div className="flex items-center gap-4">
+                        <span className="font-mono text-[11px] text-slate-400">
+                            {messages.length} EXCHANGES
+                        </span>
+                        <span className="font-mono text-[11px] text-slate-500">
+                            {formatTimestamp(messages[messages.length - 1]?.timestamp)}
+                        </span>
+                    </div>
                 )}
             </div>
+
+            {/* Versus stage */}
+            {messages.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-6 gap-5">
+                    <div className="flex items-center gap-6">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-arena-a to-arena-a-deep flex items-center justify-center shadow-glow">
+                            <Icon name="user" size={28} className="text-stage" />
+                        </div>
+                        <span className="font-display font-black text-2xl text-slate-600">VS</span>
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-arena-b to-arena-b-deep flex items-center justify-center shadow-glow-strong">
+                            <Icon name="zap" size={28} className="text-stage" />
+                        </div>
+                    </div>
+                    <h3 className="font-display text-xl font-bold text-slate-200">Ready for the Arena</h3>
+                    <p className="font-sans text-slate-400 max-w-md leading-relaxed">
+                        Select a topic and start a debate. Two AI agents take opposite corners with
+                        live fact-checking, memory, and stance evolution.
+                    </p>
+                </div>
+            ) : (
+                <div className="flex-1 min-h-0 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] gap-2 p-2">
+                    <AgentColumn
+                        sideKey="a"
+                        name={nameA}
+                        messages={colA}
+                        isActive={activeSide === 'a'}
+                        newestId={newestId}
+                        align="left"
+                    />
+                    <CenterSpine scoreA={scoreA} scoreB={scoreB} hasData={hasSentiment} />
+                    <AgentColumn
+                        sideKey="b"
+                        name={nameB}
+                        messages={colB}
+                        isActive={activeSide === 'b'}
+                        newestId={newestId}
+                        align="right"
+                    />
+                </div>
+            )}
+
+            {/* Broadcast chyron */}
+            <TranscriptTicker messages={messages} />
         </div>
     );
 };
