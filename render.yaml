@@ -20,6 +20,10 @@ services:
         sync: false
       - key: OPENAI_API_KEY
         sync: false
+      # Sentry backend error tracking. Set the value on the Render dashboard
+      # (this file is reference-only, not Blueprint-synced). No-op until set.
+      - key: SENTRY_DSN
+        sync: false
       - key: NODE_ENV
         value: production
       - key: OPENAI_API_BASE
