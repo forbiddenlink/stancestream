@@ -42,7 +42,7 @@ jobs:
       - name: Install frontend dependencies
         run: |
           cd stancestream-frontend
-          pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile --ignore-workspace
         
       - name: Run linter
         run: pnpm lint || true # Don't fail on lint errors initially

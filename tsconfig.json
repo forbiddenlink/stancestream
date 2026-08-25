@@ -22,8 +22,7 @@
       "@/lib/*": ["./lib/*"],
       "@/agents/*": ["./lib/agents/*"],
       "@/graph/*": ["./lib/graph/*"]
-    },
-    "baseUrl": "."
+    }
   },
   "include": [
     "lib/**/*.ts",
