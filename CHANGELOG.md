@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/forbiddenlink/stancestream/compare/v1.0.0...v1.0.1) (2026-08-29)
+
+
+### Bug Fixes
+
+* **ci:** pass --ignore-workspace to frontend pnpm install ([#61](https://github.com/forbiddenlink/stancestream/issues/61)) ([a4336a0](https://github.com/forbiddenlink/stancestream/commit/a4336a0d20825c4e28d588d314b0c79596ed3877))
+
 ## 1.0.0 (2026-08-16)
 
 
