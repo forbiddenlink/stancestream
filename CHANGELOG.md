@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.3](https://github.com/forbiddenlink/stancestream/compare/v1.0.2...v1.0.3) (2026-09-02)
+
+
+### Bug Fixes
+
+* **ci:** let pnpm/action-setup read the version from packageManager ([bf0dc45](https://github.com/forbiddenlink/stancestream/commit/bf0dc45ceca182c76006c7d85f4a84c3e5d7fab6))
+* **ci:** let pnpm/action-setup read the version from packageManager ([3dfdd6d](https://github.com/forbiddenlink/stancestream/commit/3dfdd6d3924749588411e8c9179cca0b0696d5fb))
+
 ## [1.0.2](https://github.com/forbiddenlink/stancestream/compare/v1.0.1...v1.0.2) (2026-08-29)
 
 
