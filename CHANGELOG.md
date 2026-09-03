@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/forbiddenlink/stancestream/compare/v1.0.3...v1.0.4) (2026-09-03)
+
+
+### Bug Fixes
+
+* **docker:** delete the dead pnpm-workspace.yaml and pin pnpm's version ([4a3a1f6](https://github.com/forbiddenlink/stancestream/commit/4a3a1f6e496a57131802ef8f6489fd958a37337c))
+
 ## [1.0.3](https://github.com/forbiddenlink/stancestream/compare/v1.0.2...v1.0.3) (2026-09-02)
 
 
