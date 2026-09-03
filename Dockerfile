@@ -9,7 +9,7 @@ RUN apk upgrade --no-cache libssl3 libcrypto3
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.14.0
 
 # Copy package files
 COPY package*.json pnpm-lock.yaml ./
@@ -33,7 +33,7 @@ RUN apk upgrade --no-cache libssl3 libcrypto3
 WORKDIR /app
 
 # Install pnpm
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.14.0
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
