@@ -34,7 +34,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.34.5",
   "dependencies": {
     "@ai-sdk/google": "^4.0.24",
     "@langchain/core": ">=1.2.2",
