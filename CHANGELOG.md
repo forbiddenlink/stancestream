@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/forbiddenlink/stancestream/compare/v1.0.4...v1.0.5) (2026-09-04)
+
+
+### Bug Fixes
+
+* **deps:** record the frontend overrides in its lockfile ([f6f8527](https://github.com/forbiddenlink/stancestream/commit/f6f8527299b4db283672e55d4f572421fb9e9006))
+
 ## [1.0.4](https://github.com/forbiddenlink/stancestream/compare/v1.0.3...v1.0.4) (2026-09-03)
 
 
