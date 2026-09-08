@@ -4,40 +4,37 @@ import api from '../services/api';
 
 const AgentConfig = ({ isVisible, onClose, agentId = 'senatorbot' }) => {
     const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (isVisible && agentId) {
-            loadProfile();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isVisible, agentId]);
-
-    const loadProfile = async () => {
-        setLoading(true);
-        try {
-            console.log('📡 Loading profile for agent:', agentId);
-            const agentProfile = await api.getAgentProfile(agentId);
-            console.log('✅ Profile loaded:', agentProfile);
-            setProfile(agentProfile);
-        } catch (error) {
-            console.error('❌ Failed to load profile:', error);
-            // Show a more user-friendly error
-            setProfile({
-                name: agentId === 'senatorbot' ? 'SenatorBot' : 'ReformerBot',
-                role: 'AI Agent',
-                tone: 'measured',
-                stance: {
-                    climate_policy: 0.5,
-                    economic_risk: 0.5
-                },
-                biases: ['analytical thinking', 'evidence-based reasoning']
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
+        let cancelled = false;
+        const loadProfile = async () => {
+            try {
+                console.log('📡 Loading profile for agent:', agentId);
+                const agentProfile = await api.getAgentProfile(agentId);
+                console.log('✅ Profile loaded:', agentProfile);
+                if (!cancelled) setProfile(agentProfile);
+            } catch (error) {
+                console.error('❌ Failed to load profile:', error);
+                // Show a more user-friendly error
+                if (!cancelled) setProfile({
+                    name: agentId === 'senatorbot' ? 'SenatorBot' : 'ReformerBot',
+                    role: 'AI Agent',
+                    tone: 'measured',
+                    stance: {
+                        climate_policy: 0.5,
+                        economic_risk: 0.5
+                    },
+                    biases: ['analytical thinking', 'evidence-based reasoning']
+                });
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        };
+        loadProfile();
+        return () => { cancelled = true; };
+    }, [agentId]);
 
     const saveProfile = async () => {
         setSaving(true);
@@ -265,4 +262,6 @@ const AgentConfig = ({ isVisible, onClose, agentId = 'senatorbot' }) => {
     );
 };
 
-export default AgentConfig;
+export default function AgentConfigDialog(props) {
+    return props.isVisible ? <AgentConfig key={props.agentId} {...props} /> : null;
+}

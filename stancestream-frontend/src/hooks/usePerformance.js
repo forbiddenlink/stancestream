@@ -20,7 +20,10 @@ export const useDebounce = (value, delay) => {
 
 // Throttle hook for limiting function calls
 export const useThrottle = (callback, delay) => {
-    const lastRun = useRef(Date.now());
+    const lastRun = useRef(null);
+    useEffect(() => {
+        if (lastRun.current === null) lastRun.current = Date.now();
+    }, []);
 
     return useCallback((...args) => {
         if (Date.now() - lastRun.current >= delay) {
@@ -58,7 +61,7 @@ export const useLocalStorage = (key, initialValue) => {
 // Performance monitoring hook
 export const usePerformanceMonitor = (componentName) => {
     const renderCount = useRef(0);
-    const startTime = useRef(Date.now());
+    const startTime = useRef(null);
 
     useEffect(() => {
         renderCount.current += 1;
@@ -67,7 +70,7 @@ export const usePerformanceMonitor = (componentName) => {
             console.log(`${componentName} rendered ${renderCount.current} times`);
 
             // Log slow renders (> 16ms for 60fps)
-            const renderTime = Date.now() - startTime.current;
+            const renderTime = startTime.current === null ? 0 : Date.now() - startTime.current;
             if (renderTime > 16) {
                 console.warn(`Slow render detected in ${componentName}: ${renderTime}ms`);
             }
@@ -77,7 +80,7 @@ export const usePerformanceMonitor = (componentName) => {
     });
 
     return {
-        renderCount: renderCount.current,
+        get renderCount() { return renderCount.current; },
         logPerformance: (operation, duration) => {
             if (import.meta.env.DEV) {
                 console.log(`${componentName} - ${operation}: ${duration}ms`);

@@ -1,4 +1,6 @@
 // Loading States Component - Professional loading indicators
+import { Stack } from './ui/Layout';
+import { Card, CardContent } from './ui/Card';
 import Icon from './Icon';
 
 export const DashboardLoader = () => (
@@ -108,11 +110,11 @@ export const MessageLoader = ({ count = 3 }) => (
             <Card key={index} className={`animate-shimmer stagger-${Math.min(index + 1, 5)}`}>
                 <CardContent className="p-4">
                     <div className="flex items-start space-x-3">
-                        <Skeleton className="w-8 h-8 rounded-full" />
+                        <div aria-hidden="true" className="animate-pulse bg-neutral-700 w-8 h-8 rounded-full" />
                         <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-1/4" />
-                            <Skeleton className="h-3 w-full" />
-                            <Skeleton className="h-3 w-3/4" />
+                            <div aria-hidden="true" className="animate-pulse bg-neutral-700 h-4 w-1/4" />
+                            <div aria-hidden="true" className="animate-pulse bg-neutral-700 h-3 w-full" />
+                            <div aria-hidden="true" className="animate-pulse bg-neutral-700 h-3 w-3/4" />
                         </div>
                     </div>
                 </CardContent>

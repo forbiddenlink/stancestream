@@ -68,7 +68,11 @@ test('api client surfaces timeout errors with user friendly message', async () =
 
   await assert.rejects(
     () => api.get('/slow', { retry: false, timeout: 5 }),
-    /Request timeout - please check your connection/
+    error => {
+      assert.equal(error.message, 'Request timeout - please check your connection');
+      assert.equal(error.cause.message, 'Request timeout');
+      return true;
+    }
   );
 });
 
@@ -113,3 +117,16 @@ test('api client includes payload and endpoint on post success', async () => {
   assert.equal(calls[0].options.headers['Content-Type'], 'application/json');
   assert.equal(calls[0].options.body, JSON.stringify({ topic: 'Climate Policy' }));
 });
+
+for (const method of ['get', 'post']) {
+  test(`${method} preserves the original timeout cause`, async () => {
+    const timeout = new Error('cancelled');
+    timeout.name = 'TimeoutError';
+    const api = new StanceStreamAPI({ fetchImpl: async () => { throw timeout; }, abortSignalImpl: { timeout: () => undefined } });
+    await assert.rejects(() => method === 'get' ? api.get('/slow', { retry: false }) : api.post('/slow', {}), error => {
+      assert.equal(error.cause, timeout);
+      assert.equal(error.message, 'Request timeout - please check your connection');
+      return true;
+    });
+  });
+}

@@ -222,7 +222,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                 ) : (
                     <div className="space-y-4 overflow-y-auto overflow-x-hidden flex-1 relative z-10 pr-2" style={{ maxHeight: 'calc(100vh - 20rem)' }}>
                         {keyMoments.map((moment, index) => (
-                            <div key={`${moment.id}_${index}_${moment.timestamp || Date.now()}`} className={`${getMomentStyle(moment.type, moment.significance)} mb-4`}>
+                            <div key={`${moment.id}_${index}_${moment.timestamp ?? ''}`} className={`${getMomentStyle(moment.type, moment.significance)} mb-4`}>
                                 {/* Matrix Header with Enhanced Visual Hierarchy */}
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-center gap-3 flex-1">

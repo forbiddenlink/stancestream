@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import DebatePanel from './components/DebatePanel';
 import FactChecker from './components/FactChecker';
@@ -35,7 +35,13 @@ export default function App() {
   const [stanceData, setStanceData] = useState([]); // Track stance evolution for chart
   const [_currentStances, setCurrentStances] = useState({ senatorbot: 0, reformerbot: 0 }); // Track current stance values
   const [showMatrixModal, setShowMatrixModal] = useState(false); // Matrix modal state
-  const [showIntro, setShowIntro] = useState(false); // Intro module state
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return localStorage.getItem('stancestream-intro-seen') !== 'true';
+    } catch {
+      return true;
+    }
+  }); // Intro module state
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
   const webSocketMessageHandlerRef = useRef(() => {});
 
@@ -86,18 +92,6 @@ export default function App() {
       cleanup.forEach(fn => fn());
       wsManager.disconnect({ clearListeners: false });
     };
-  }, []);
-
-  // Check for first-time user and show intro
-  // Only show intro if user hasn't explicitly completed it (localStorage = 'true')
-  useEffect(() => {
-    try {
-      const hasSeenIntro = localStorage.getItem('stancestream-intro-seen');
-      setShowIntro(hasSeenIntro !== 'true');
-    } catch {
-      // localStorage unavailable (private browsing) - show intro by default
-      setShowIntro(true);
-    }
   }, []);
 
   // Handle incoming WebSocket messages
@@ -403,7 +397,9 @@ export default function App() {
           break;
       }
   };
-  webSocketMessageHandlerRef.current = handleWebSocketMessage;
+  useLayoutEffect(() => {
+    webSocketMessageHandlerRef.current = handleWebSocketMessage;
+  });
 
   // Check backend health on mount
   // Note: WebSocket connection also sets connectionHealth to 'healthy' when connected,
