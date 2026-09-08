@@ -3,32 +3,33 @@
 import { useState, useEffect, useRef } from 'react';
 import Icon from './Icon';
 import { buildApiUrl } from '../utils/url';
+import { normalizePerformanceMetrics } from '../utils/performanceMetrics';
 
 export default function LivePerformanceOverlay({ position = 'top-right', size = 'normal', className = '' }) {
     const [metrics, setMetrics] = useState({
-        cacheHitRate: 99.1,
-        costSavings: 47,
-        responseTime: 2.8,
-        operationsPerSec: 127,
-        activeDebates: 0,
-        totalMessages: 0,
-        redisOpsPerMin: 1200,
-        systemHealth: 99.7
+        cacheHitRate: null,
+        costSavings: null,
+        responseTime: null,
+        operationsPerSec: null,
+        activeDebates: null,
+        totalMessages: null,
+        redisOpsPerMin: null,
+        systemHealth: null
     });
 
     const [businessMetrics, setBusinessMetrics] = useState({
         current_usage: {
-            monthly_savings: 0,
+            monthly_savings: null,
             daily_cost_saved: 0,
-            cache_efficiency: '0%',
+            cache_efficiency: 'Unavailable',
             daily_tokens_saved: 0
         },
         enterprise_projections: {
             medium_enterprise: { annual_savings: 0 }
         },
         performance_impact: {
-            api_calls_eliminated: 0,
-            system_efficiency: 'Optimizing'
+            api_calls_eliminated: null,
+            system_efficiency: 'Unavailable'
         }
     });
 
@@ -67,27 +68,27 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
         try {
             // Fetch cache metrics with business value
             const cacheResponse = await fetch(buildApiUrl('/cache/metrics'));
+            if (!cacheResponse.ok) throw new Error("Failed to fetch cache metrics");
             const cacheData = await cacheResponse.json();
             
             // Fetch performance metrics
             const perfResponse = await fetch(buildApiUrl('/analytics/performance'));
+            if (!perfResponse.ok) throw new Error("Failed to fetch performance metrics");
             const perfData = await perfResponse.json();
             
             // Fetch platform metrics
             const platformResponse = await fetch(buildApiUrl('/contest/live-metrics'));
+            if (!platformResponse.ok) throw new Error("Failed to fetch platform metrics");
             const platformData = await platformResponse.json();
 
             // Update metrics with real data
             setMetrics(prev => ({
                 ...prev,
-                cacheHitRate: cacheData?.metrics?.hit_ratio || prev.cacheHitRate,
-                costSavings: cacheData?.business_value?.current_usage?.monthly_savings || prev.costSavings,
-                responseTime: perfData?.average_response_time || prev.responseTime,
-                activeDebates: platformData?.contestMetrics?.debateStatistics?.activeDebates || prev.activeDebates,
-                totalMessages: platformData?.contestMetrics?.debateStatistics?.totalMessages || prev.totalMessages,
-                operationsPerSec: perfData?.redis_ops_per_second || prev.operationsPerSec,
-                redisOpsPerMin: perfData?.redis_ops_per_minute || prev.redisOpsPerMin,
-                systemHealth: perfData?.uptime_percentage || prev.systemHealth
+                cacheHitRate: cacheData?.metrics?.hit_ratio ?? null,
+                costSavings: cacheData?.business_value?.current_usage?.monthly_savings ?? null,
+                activeDebates: platformData?.contestMetrics?.debateStatistics?.activeDebates ?? null,
+                totalMessages: platformData?.contestMetrics?.debateStatistics?.totalMessages ?? null,
+                ...normalizePerformanceMetrics(perfData?.performance)
             }));
 
             // Update business metrics
@@ -132,10 +133,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                 const liveMetrics = event.detail.metrics;
                 setMetrics(prev => ({
                     ...prev,
-                    responseTime: liveMetrics.average_response_time,
-                    operationsPerSec: liveMetrics.redis_ops_per_second,
-                    redisOpsPerMin: liveMetrics.redis_ops_per_minute,
-                    systemHealth: liveMetrics.uptime_percentage
+                    ...normalizePerformanceMetrics(liveMetrics)
                 }));
                 setLastUpdate(new Date());
             } else if (event.detail?.type === 'new_message') {
@@ -329,7 +327,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                                 unit === '/mo' ? Math.floor(value) :
                                 unit === 's' ? value.toFixed(1) :
                                 Math.floor(value).toLocaleString()
-                            ) : value}
+                            ) : (value ?? '—')}
                         </span>
                         <span className="text-xs text-gray-400 font-medium font-mono">{unit}</span>
                     </>
@@ -447,7 +445,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                         unit="%"
                         icon="target"
                         color="green"
-                        trend={5.2}
                         isLoading={isLoading}
                         pulse={metrics.cacheHitRate > 85}
                         celebration={showCelebration}
@@ -459,7 +456,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                         unit="/mo"
                         icon="dollar-sign"
                         color="emerald"
-                        trend={12.7}
                         isLoading={isLoading}
                         pulse={businessMetrics.current_usage.monthly_savings > 0}
                     />
@@ -472,7 +468,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                                 unit="%"
                                 icon="search"
                                 color="purple"
-                                trend={8.5}
                                 isLoading={isLoading}
                                 pulse={lastSimilarity > 0.85}
                             />
@@ -483,7 +478,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                                 unit="calls"
                                 icon="zap"
                                 color="green"
-                                trend={15.1}
                                 isLoading={isLoading}
                                 pulse={true}
                             />
