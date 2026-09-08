@@ -1,5 +1,5 @@
 // IntroModule.jsx - Professional User Onboarding Experience
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Icon from './Icon';
 import { Button, Modal, ModalHeader, ModalContent, Card, CardHeader, CardContent } from './ui';
 
@@ -7,10 +7,11 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(showIntro);
 
-  // Sync visibility with showIntro prop
-  useEffect(() => {
+  const [previousShowIntro, setPreviousShowIntro] = useState(showIntro);
+  if (previousShowIntro !== showIntro) {
+    setPreviousShowIntro(showIntro);
     setIsVisible(showIntro);
-  }, [showIntro]);
+  }
 
   const steps = [
     {
@@ -225,24 +226,12 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
       className="max-w-4xl max-h-[90vh]"
       closeOnOverlay={true}
     >
-      <ModalHeader>
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-3">
-            <Icon name={currentStepData.icon} className={`w-6 h-6 text-${currentStepData.color}-400`} />
-            <div>
-              <h2 className="text-xl font-bold text-white">{currentStepData.title}</h2>
-              <p className="text-sm text-gray-400">{currentStepData.subtitle}</p>
-            </div>
-          </div>
-          <button
-            onClick={handleSkip}
-            className="text-gray-400 hover:text-white transition-colors"
-            title="Skip intro"
-          >
-            <Icon name="x" className="w-5 h-5" />
-          </button>
-        </div>
-      </ModalHeader>
+      <ModalHeader
+        title={currentStepData.title}
+        subtitle={currentStepData.subtitle}
+        icon={currentStepData.icon}
+        onClose={handleSkip}
+      />
 
       <ModalContent>
         <div className="min-h-[400px] flex flex-col">

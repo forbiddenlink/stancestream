@@ -63,16 +63,8 @@ const calculateModulePerformance = (stats, module) => {
     }
 };
 
-export default function EnhancedPerformanceDashboard() {
-    const [metrics, setMetrics] = useState(null);
-    const [cacheMetrics, setCacheMetrics] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [autoRefresh, setAutoRefresh] = useState(true);
-    const [error, setError] = useState(null);
-
-    const fetchEnhancedMetrics = async () => {
+async function loadEnhancedMetrics() {
         try {
-            setError(null);
 
             // Try the enhanced Redis stats endpoint with contest metrics
             try {
@@ -90,10 +82,7 @@ export default function EnhancedPerformanceDashboard() {
                     }))
                 ]);
 
-                // Set cache metrics if available
-                if (cacheResponse?.metrics) {
-                    setCacheMetrics(cacheResponse.metrics);
-                }
+
 
                 // Combine all metrics for contest showcase
                 const enhancedMetrics = {
@@ -109,9 +98,7 @@ export default function EnhancedPerformanceDashboard() {
                     }
                 };
 
-                setMetrics(enhancedMetrics);
-                setIsLoading(false);
-                return;
+                return { metrics: enhancedMetrics, cacheMetrics: cacheResponse?.metrics };
 
             } catch {
                 console.log('Enhanced stats not available, using fallback');
@@ -161,15 +148,30 @@ export default function EnhancedPerformanceDashboard() {
                 fallback: true
             };
 
-            setMetrics(fallbackMetrics);
-            setIsLoading(false);
+            return { metrics: fallbackMetrics };
 
         } catch (error) {
             console.error('Failed to fetch any metrics:', error);
-            setError('Failed to load metrics');
-            setIsLoading(false);
+            throw error;
         }
     };
+
+export default function EnhancedPerformanceDashboard() {
+    const [metrics, setMetrics] = useState(null);
+    const [cacheMetrics, setCacheMetrics] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [autoRefresh, setAutoRefresh] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchEnhancedMetrics = () => loadEnhancedMetrics().then(result => {
+        setError(null);
+        setMetrics(result.metrics);
+        if (result.cacheMetrics) setCacheMetrics(result.cacheMetrics);
+        setIsLoading(false);
+    }).catch(() => {
+        setError('Failed to load metrics');
+        setIsLoading(false);
+    });
 
     useEffect(() => {
         fetchEnhancedMetrics();

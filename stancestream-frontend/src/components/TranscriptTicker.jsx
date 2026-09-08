@@ -27,6 +27,29 @@ function usePrefersReducedMotion() {
 
 const sideOf = (agentId) => (agentId === 'reformerbot' ? 'b' : 'a');
 
+const Item = ({ item }) => (
+    <span className="inline-flex items-center gap-2 px-5">
+        <span
+            className={`font-mono text-[11px] font-semibold tracking-widest ${
+                item.side === 'b' ? 'text-arena-b' : 'text-arena-a'
+            }`}
+        >
+            {item.name}
+        </span>
+        <span className="text-stage-line" aria-hidden="true">
+            ▸
+        </span>
+        <span className="font-mono text-[12px] text-slate-300/90">{item.text}</span>
+    </span>
+);
+
+const Divider = () => (
+    <span className="px-2 text-slate-600 select-none" aria-hidden="true">
+        //
+    </span>
+);
+
+
 const TranscriptTicker = ({ messages = [] }) => {
     const reduced = usePrefersReducedMotion();
 
@@ -40,28 +63,6 @@ const TranscriptTicker = ({ messages = [] }) => {
     }, [messages]);
 
     const hasItems = items.length > 0;
-
-    const Item = ({ item }) => (
-        <span className="inline-flex items-center gap-2 px-5">
-            <span
-                className={`font-mono text-[11px] font-semibold tracking-widest ${
-                    item.side === 'b' ? 'text-arena-b' : 'text-arena-a'
-                }`}
-            >
-                {item.name}
-            </span>
-            <span className="text-stage-line" aria-hidden="true">
-                ▸
-            </span>
-            <span className="font-mono text-[12px] text-slate-300/90">{item.text}</span>
-        </span>
-    );
-
-    const Divider = () => (
-        <span className="px-2 text-slate-600 select-none" aria-hidden="true">
-            //
-        </span>
-    );
 
     return (
         <div

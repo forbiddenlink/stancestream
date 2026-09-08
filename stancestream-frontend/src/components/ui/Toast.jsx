@@ -18,6 +18,10 @@ export const useToast = () => {
 export const ToastProvider = ({ children }) => {
     const [toasts, setToasts] = useState([]);
 
+    const removeToast = useCallback((id) => {
+        setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, []);
+
     const addToast = useCallback((toast) => {
         const id = Date.now() + Math.random();
         const newToast = {
@@ -36,12 +40,7 @@ export const ToastProvider = ({ children }) => {
         }
 
         return id;
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const removeToast = useCallback((id) => {
-        setToasts(prev => prev.filter(toast => toast.id !== id));
-    }, []);
+    }, [removeToast]);
 
     const toast = {
         success: (message, options = {}) => addToast({ ...options, type: 'success', message }),
