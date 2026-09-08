@@ -1,3 +1,4 @@
+import { collectPerformanceMetrics } from "./src/services/performanceMetrics.js";
 import "./instrument.js";
 import "dotenv/config";
 import express from "express";
@@ -54,6 +55,7 @@ import enhancedEndpoints from "./src/routes/enhanced-endpoints.js";
 import { validateEnvironment } from "./src/config/environment.js";
 import {
   getMetricsHandler,
+  httpRequestDuration,
   trackHttpRequest,
   activeDebatesGauge,
   websocketConnectionsActive,
@@ -474,23 +476,14 @@ function broadcastRedisOperation(operationType, operation, metadata = {}) {
 }
 
 // Broadcast live performance metrics for mission control overlay
-function broadcastPerformanceMetrics() {
-  const opsPerSecond = Math.floor(Math.random() * 50) + 100; // 100-150 ops/sec
-  const avgResponseTime = Math.random() * 2 + 1; // 1-3 seconds
-  const uptimePercentage = Math.min(99.9, 98 + Math.random() * 1.9);
-
-  broadcast({
-    type: "live_performance_update",
-    metrics: {
-      redis_ops_per_second: opsPerSecond,
-      redis_ops_per_minute: opsPerSecond * 60,
-      average_response_time: avgResponseTime,
-      uptime_percentage: uptimePercentage,
-      system_load: Math.random() * 20 + 10,
-      memory_usage: Math.random() * 40 + 40,
-      timestamp: new Date().toISOString(),
-    },
-  });
+async function broadcastPerformanceMetrics() {
+  try {
+    const redisClient = await redisManager.getClient();
+    const metrics = await collectPerformanceMetrics(redisClient, httpRequestDuration);
+    broadcast({ type: "live_performance_update", metrics: { ...metrics, timestamp: metrics.last_updated } });
+  } catch (error) {
+    console.error("Failed to collect live performance metrics:", error.message);
+  }
 }
 
 // Start broadcasting performance metrics every 5 seconds for mission control feel
@@ -1675,39 +1668,7 @@ app.get("/api/analytics/performance", async (req, res) => {
     // Use centralized Redis manager instead of creating new client
     const redisClient = await redisManager.getClient();
 
-    // Calculate performance metrics
-    const now = Date.now();
-    const uptimeSeconds = process.uptime();
-    const uptime = uptimeSeconds * 1000; // Convert to milliseconds
-
-    // Simulate Redis operations per second (based on request patterns)
-    const opsPerSecond = Math.floor(Math.random() * 50) + 100; // 100-150 ops/sec
-    const opsPerMinute = opsPerSecond * 60;
-
-    // Calculate average response time (simulated for now)
-    const avgResponseTime = Math.random() * 2 + 1; // 1-3 seconds
-
-    // Get uptime percentage
-    const uptimePercentage = Math.min(99.9, 98 + Math.random() * 1.9);
-
-    // Redis connection health
-    const redisConnected = redisClient.isReady;
-
-    const performanceMetrics = {
-      redis_ops_per_second: opsPerSecond,
-      redis_ops_per_minute: opsPerMinute,
-      average_response_time: avgResponseTime,
-      uptime_percentage: uptimePercentage,
-      uptime_milliseconds: uptime,
-      redis_connected: redisConnected,
-      system_load: Math.random() * 20 + 10, // 10-30%
-      memory_usage: Math.random() * 40 + 40, // 40-80%
-      last_updated: new Date().toISOString(),
-    };
-
-    console.log(
-      `⚡ Performance: ${opsPerSecond} ops/sec, ${avgResponseTime.toFixed(1)}s avg response, ${uptimePercentage.toFixed(1)}% uptime`,
-    );
+    const performanceMetrics = await collectPerformanceMetrics(redisClient, httpRequestDuration);
 
     const response = {
       success: true,
@@ -1725,10 +1686,10 @@ app.get("/api/analytics/performance", async (req, res) => {
       error: "Failed to fetch performance analytics",
       message: error.message,
       performance: {
-        redis_ops_per_second: 0,
-        redis_ops_per_minute: 0,
-        average_response_time: 0,
-        uptime_percentage: 0,
+        redis_ops_per_second: null,
+        redis_ops_per_minute: null,
+        average_response_time: null,
+        uptime_percentage: null,
         redis_connected: false,
         last_updated: new Date().toISOString(),
       },
