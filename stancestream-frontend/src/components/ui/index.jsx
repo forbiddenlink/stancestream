@@ -1,6 +1,7 @@
 // UI Component Library Index - Enterprise Grade Component System
 // Centralized export for all UI components
 /* eslint-disable react-refresh/only-export-components */
+import { Spinner } from './Loading';
 import React from 'react';
 import Icon from '../Icon';
 
@@ -176,7 +177,6 @@ export const getSizeClasses = (size = 'md') => {
 };
 
 // Component composition helpers
-// eslint-disable-next-line no-unused-vars
 export const withLoading = (WrappedComponent) => {
     return ({ loading, ...props }) => {
         if (loading) {
@@ -186,7 +186,6 @@ export const withLoading = (WrappedComponent) => {
     };
 };
 
-// eslint-disable-next-line no-unused-vars
 export const withTooltip = (WrappedComponent) => {
     return ({ tooltip, ...props }) => {
         if (!tooltip) return <WrappedComponent {...props} />;

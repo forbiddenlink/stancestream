@@ -233,11 +233,11 @@ export const InputDialog = ({
         setValue(defaultValue);
     };
 
-    useEffect(() => {
-        if (isOpen) {
-            setValue(defaultValue);
-        }
-    }, [isOpen, defaultValue]);
+    const [previousInputs, setPreviousInputs] = React.useState({ isOpen, defaultValue });
+    if (previousInputs.isOpen !== isOpen || previousInputs.defaultValue !== defaultValue) {
+        setPreviousInputs({ isOpen, defaultValue });
+        if (isOpen) setValue(defaultValue);
+    }
 
     return (
         <Modal isOpen={isOpen} onClose={onClose} size="sm">

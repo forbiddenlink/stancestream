@@ -74,7 +74,7 @@ export class StanceStreamAPI {
         } catch (error) {
             if (error.name === 'TimeoutError' || error.message === 'Request timeout') {
                 console.error(`⏰ API request timeout: ${endpoint}`);
-                throw new Error(`Request timeout - please check your connection`);
+                throw new Error(`Request timeout - please check your connection`, { cause: error });
             }
             console.error(`❌ API GET error for ${endpoint}:`, error);
             throw error;
@@ -114,7 +114,7 @@ export class StanceStreamAPI {
         } catch (error) {
             if (error.name === 'TimeoutError' || error.message === 'Request timeout') {
                 console.error(`⏰ API request timeout: ${endpoint}`);
-                throw new Error(`Request timeout - please check your connection`);
+                throw new Error(`Request timeout - please check your connection`, { cause: error });
             }
             console.error(`❌ API POST error for ${endpoint}:`, error);
             throw error;

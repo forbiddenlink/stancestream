@@ -151,6 +151,25 @@ export const SidebarNav = ({
     );
 };
 
+const PageButton = ({ page, active = false, disabled = false, children, onClick }) => (
+    <button
+        onClick={onClick}
+        disabled={disabled}
+        className={`
+            w-10 h-10 rounded-lg font-medium transition-all duration-150 flex items-center justify-center
+            ${active
+                ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                : disabled
+                    ? 'text-neutral-600 cursor-not-allowed'
+                    : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
+            }
+        `}
+    >
+        {children || page}
+    </button>
+);
+
+
 // Pagination Component
 export const Pagination = ({
     currentPage,
@@ -177,24 +196,6 @@ export const Pagination = ({
 
         return pages;
     };
-
-    const PageButton = ({ page, active = false, disabled = false, children, onClick }) => (
-        <button
-            onClick={onClick}
-            disabled={disabled}
-            className={`
-                w-10 h-10 rounded-lg font-medium transition-all duration-150 flex items-center justify-center
-                ${active
-                    ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : disabled
-                        ? 'text-neutral-600 cursor-not-allowed'
-                        : 'text-neutral-400 hover:text-white hover:bg-neutral-800/50'
-                }
-            `}
-        >
-            {children || page}
-        </button>
-    );
 
     return (
         <div className={`flex items-center space-x-1 ${className}`}>

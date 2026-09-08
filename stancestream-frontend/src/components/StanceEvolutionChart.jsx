@@ -3,6 +3,26 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useState, useEffect } from 'react';
 import Icon from './Icon';
 
+// Custom tooltip to show actual values and time
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        return (
+            <div className="bg-black/95 backdrop-blur-sm p-3 border border-green-500/50 rounded-lg shadow-xl shadow-green-500/20">
+                <p className="text-sm font-medium text-green-300 font-mono">{label}</p>
+                <p className="text-xs text-gray-400 mb-2 font-mono">TURN {data.turn}</p>
+                {payload.map((entry, index) => (
+                    <p key={index} className="text-sm font-mono" style={{ color: entry.color }}>
+                        <span className="font-medium">{entry.dataKey === 'senatorbot' ? 'SENATORBOT' : 'REFORMERBOT'}:</span> {entry.value.toFixed(2)}
+                    </p>
+                ))}
+            </div>
+        );
+    }
+    return null;
+};
+
+
 export default function StanceEvolutionChart({ stanceData = [] }) {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -32,25 +52,6 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
             timeLabel: timeLabel
         };
     });
-
-    // Custom tooltip to show actual values and time
-    const CustomTooltip = ({ active, payload, label }) => {
-        if (active && payload && payload.length) {
-            const data = payload[0].payload;
-            return (
-                <div className="bg-black/95 backdrop-blur-sm p-3 border border-green-500/50 rounded-lg shadow-xl shadow-green-500/20">
-                    <p className="text-sm font-medium text-green-300 font-mono">{label}</p>
-                    <p className="text-xs text-gray-400 mb-2 font-mono">TURN {data.turn}</p>
-                    {payload.map((entry, index) => (
-                        <p key={index} className="text-sm font-mono" style={{ color: entry.color }}>
-                            <span className="font-medium">{entry.dataKey === 'senatorbot' ? 'SENATORBOT' : 'REFORMERBOT'}:</span> {entry.value.toFixed(2)}
-                        </p>
-                    ))}
-                </div>
-            );
-        }
-        return null;
-    };
 
     const toggleExpanded = () => {
         setIsExpanded(!isExpanded);
