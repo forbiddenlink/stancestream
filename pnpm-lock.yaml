@@ -21,7 +21,7 @@ overrides:
   dompurify: '>=3.4.0'
   engine.io: '>=6.6.7 <7'
   esbuild: '>=0.28.1'
-  express>path-to-regexp: ^0.1.13
+  express>path-to-regexp: ^0.2.0
   fast-xml-builder: '>=1.1.7'
   fast-xml-parser: '>=5.10.1 <6'
   flatted: '>=3.4.2'
