@@ -1,7 +1,7 @@
 {
   "name": "stancestream",
   "type": "module",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Real-Time Multi-Agent AI Intelligence Platform - Enterprise-grade system showcasing Redis capabilities for intelligent applications",
   "main": "index.js",
   "scripts": {

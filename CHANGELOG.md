@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.5](https://github.com/forbiddenlink/stancestream/compare/v1.0.4...v1.0.5) (2026-09-09)
+
+
+### Bug Fixes
+
+* **deps:** raise stale override floor(s) to the current patch ([#95](https://github.com/forbiddenlink/stancestream/issues/95)) ([d3b379f](https://github.com/forbiddenlink/stancestream/commit/d3b379f11721c472c7e8f21a38a84da2649b7018))
+* **deps:** record the frontend overrides in its lockfile ([f6f8527](https://github.com/forbiddenlink/stancestream/commit/f6f8527299b4db283672e55d4f572421fb9e9006))
+* keep frontend lifecycle stable under hooks lint rules ([#103](https://github.com/forbiddenlink/stancestream/issues/103)) ([405f0ad](https://github.com/forbiddenlink/stancestream/commit/405f0ad9599ec39e9bd31c8f45ff8fb9ecdd1d07))
+* replace fabricated telemetry and repair frontend lifecycle ([#101](https://github.com/forbiddenlink/stancestream/issues/101)) ([15984ae](https://github.com/forbiddenlink/stancestream/commit/15984aec12fb5751c06ec087acc7e41ebc100573))
+* **security:** pin browserslist off the open HIGH advisories ([#96](https://github.com/forbiddenlink/stancestream/issues/96)) ([d08b608](https://github.com/forbiddenlink/stancestream/commit/d08b60889bf084040a06ad929a2a1c9886c8defa))
+* **security:** pin transitive dependencies off their open advisories ([#97](https://github.com/forbiddenlink/stancestream/issues/97)) ([481476c](https://github.com/forbiddenlink/stancestream/commit/481476cd319fc151c2a8b8305a825dde2dc65a90))
+
 ## [1.0.4](https://github.com/forbiddenlink/stancestream/compare/v1.0.3...v1.0.4) (2026-09-03)
 
 
