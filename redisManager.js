@@ -18,6 +18,11 @@ class RedisConnectionManager {
         this.reconnectStrategy = this.exponentialBackoff.bind(this);
         this.lastPingTime = Date.now();
         this.healthCheckInterval = null;
+        // Set while disconnect() is intentionally tearing the client down, so
+        // the 'end'/'disconnect' event handlers below don't treat a deliberate
+        // client.quit() as a dropped connection and schedule an auto-recovery
+        // reconnect for it.
+        this.isShuttingDown = false;
     }
 
     /**
@@ -147,10 +152,18 @@ class RedisConnectionManager {
     handleDisconnection(error = null) {
         this.isConnected = false;
         this.notifyHealthStatus('disconnected', error);
-        
+
+        // A deliberate disconnect() still fires the client's 'end'/'disconnect'
+        // events (this is normal client.quit() behavior), which would otherwise
+        // land here and schedule a reconnect for a shutdown nobody asked to
+        // recover from. Skip auto-recovery while shutting down intentionally.
+        if (this.isShuttingDown) {
+            return;
+        }
+
         // Attempt recovery after a delay
         setTimeout(() => {
-            if (!this.isConnected) {
+            if (!this.isConnected && !this.isShuttingDown) {
                 this.getClient().catch(err => {
                     console.error('❌ Redis auto-recovery failed:', err.message);
                 });
@@ -272,6 +285,10 @@ class RedisConnectionManager {
      * Graceful shutdown with enhanced cleanup and connection state verification
      */
     async disconnect() {
+        // Suppress the 'end'/'disconnect' event handlers' auto-recovery for the
+        // quit() this method is about to perform - see handleDisconnection().
+        this.isShuttingDown = true;
+
         // Stop health check immediately
         if (this.healthCheckInterval) {
             clearInterval(this.healthCheckInterval);
@@ -282,6 +299,7 @@ class RedisConnectionManager {
         // Early return if already fully disconnected
         if (!this.client) {
             console.log('ℹ️ Redis already disconnected');
+            this.isShuttingDown = false;
             return;
         }
 
@@ -339,6 +357,7 @@ class RedisConnectionManager {
             this.connectionPromise = null;
             this.connectionAttempts = 0;
             this.lastPingTime = 0;
+            this.isShuttingDown = false;
             console.log('✅ Redis manager state reset');
         }
     }
