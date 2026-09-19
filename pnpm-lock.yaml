@@ -50,6 +50,7 @@ overrides:
   vite: '>=7.3.2'
   ws: '>=8.21.0 <9'
   yaml: '>=2.8.3'
+  csv-parse: '>=7.0.2 <8'
 
 importers:
 
@@ -3174,8 +3175,8 @@ packages:
     resolution: {integrity: sha512-u/O3vwbptzhMs3L1fQE82ZSLHQQfto5gyZzwteVIEyeaY5Fc7R4dapF/BvRoSYFeqfBk4m0V1Vafq5Pjv25wvA==}
     engines: {node: '>= 6'}
 
-  csv-parse@4.16.3:
-    resolution: {integrity: sha512-cO1I/zmz4w2dcKHVvpCr7JVRu8/FymG5OEpmvsZYlccYolPBLoVGKUHgNoc4ZGkFeFlWGEDmMyBM+TTqRdW/wg==}
+  csv-parse@7.0.2:
+    resolution: {integrity: sha512-uKZghv9UmPkMVLYy//KZ9HFAIJsl7wkhoEdIL0+rhuSY9pZQlhaeGEDPIe+/w7eh81MOql8Q/9+inAGWG6ZHYA==}
 
   datadog-metrics@0.12.1:
     resolution: {integrity: sha512-Gy+17ia7m9Uy+nKQHDd7fljdq0fqqfpgkpxlwW0x1oFKI7RcgDV32pMCfHtv4HKychP6fHtncj3Lf4VN/g4G6A==}
@@ -8558,7 +8559,7 @@ snapshots:
       cli-table3: 0.6.5
       cookie-parser: 1.4.7
       cross-spawn: 7.0.6
-      csv-parse: 4.16.3
+      csv-parse: 7.0.2
       datadog-metrics: 0.12.1
       debug: 4.4.3
       decompress-response: 6.0.0
@@ -9094,7 +9095,7 @@ snapshots:
 
   css-what@6.2.2: {}
 
-  csv-parse@4.16.3: {}
+  csv-parse@7.0.2: {}
 
   datadog-metrics@0.12.1:
     dependencies:
