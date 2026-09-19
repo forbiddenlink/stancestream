@@ -8,7 +8,6 @@ import { createServer } from 'http';
 import express from 'express';
 import sinon from 'sinon';
 import { WebSocketServer } from 'ws';
-import { validateSystem } from '../../src/config/environment.js';
 import logger from '../../src/utils/logger.js';
 
 describe('WebSocket Integration', () => {

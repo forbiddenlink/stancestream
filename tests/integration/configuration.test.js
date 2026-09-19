@@ -5,17 +5,13 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { createClient } from 'redis';
-import OpenAI from 'openai';
-import { validateSystem } from '../../src/config/environment.js';
+import { validateEnvironment } from '../../src/config/environment.js';
 import { errorHandler, notFoundHandler } from '../../src/middleware/errorHandler.js';
 import express from 'express';
 import request from 'supertest';
 
 describe('System Configuration Integration', () => {
     let app;
-    let redisClient;
-    let openai;
     let sandbox;
     let processEnvBackup;
 
@@ -23,7 +19,7 @@ describe('System Configuration Integration', () => {
         // Backup current process.env
         processEnvBackup = { ...process.env };
         sandbox = sinon.createSandbox();
-        
+
         // Create Express app for testing error handlers
         app = express();
         app.use(express.json());
@@ -35,65 +31,50 @@ describe('System Configuration Integration', () => {
         sandbox.restore();
     });
 
+    // Previously called validateSystem({ redisClient, openai }) with mock
+    // clients. That function does not exist in src/config/environment.js -
+    // the current module only exports validateEnvironment (which validates
+    // process.env against a Zod schema, no client injection) plus
+    // getEnvironmentConfig/isProduction/isDevelopment/isTest. There is no
+    // current equivalent that takes live service clients, so this exercises
+    // the real validateEnvironment instead.
     describe('System Startup Validation', () => {
         beforeEach(() => {
-            // Set required environment variables
             process.env.REDIS_URL = 'redis://localhost:6379';
-            process.env.OPENAI_API_KEY = 'sk-test123';
+            process.env.OPENAI_API_KEY = `sk-${'a'.repeat(20)}`;
             process.env.NODE_ENV = 'test';
-
-            // Create mock clients
-            redisClient = {
-                ping: sandbox.stub().resolves('PONG'),
-                info: sandbox.stub().resolves(
-                    'module:name=JSON\nmodule:name=search\nmodule:name=timeseries'
-                )
-            };
-
-            openai = {
-                embeddings: {
-                    create: sandbox.stub().resolves({
-                        data: [{ embedding: new Array(1536).fill(0.1) }]
-                    })
-                }
-            };
         });
 
-        it('should validate complete system configuration', async () => {
-            const result = await validateSystem({
-                redisClient,
-                openai
-            });
+        it('should validate complete system configuration', () => {
+            const config = validateEnvironment();
 
-            expect(result.environment.success).to.be.true;
-            expect(result.redis.success).to.be.true;
-            expect(result.openai.success).to.be.true;
-            expect(result.config).to.have.property('REDIS_URL');
-            expect(result.config).to.have.property('OPENAI_API_KEY');
+            expect(config).to.have.property('REDIS_URL', 'redis://localhost:6379');
+            expect(config).to.have.property('OPENAI_API_KEY');
+            expect(config).to.have.property('NODE_ENV', 'test');
         });
 
-        it('should handle missing Redis modules', async () => {
-            redisClient.info = sandbox.stub().resolves('module:name=JSON');
+        // KNOWN RUNTIME BUG (not fixed here - see PR body): the catch block
+        // at src/config/environment.js:81 does `error.errors.forEach(...)`,
+        // but zod 4.6.1's ZodError only exposes `.issues`, not `.errors`.
+        // That line throws a TypeError before process.exit(1) is reached, so
+        // invalid env vars crash the boot instead of exiting cleanly. These
+        // assert the actual current behavior, not the intended one.
+        it('throws a TypeError instead of exiting cleanly on an invalid REDIS_URL', () => {
+            process.env.REDIS_URL = 'not-a-url';
+            sandbox.stub(process, 'exit');
+            sandbox.stub(console, 'error');
+            sandbox.stub(console, 'log');
 
-            try {
-                await validateSystem({ redisClient, openai });
-                expect.fail('Should have thrown error');
-            } catch (error) {
-                expect(error.message).to.include('Required Redis modules missing');
-            }
+            expect(() => validateEnvironment()).to.throw(TypeError);
         });
 
-        it('should handle OpenAI API errors', async () => {
-            openai.embeddings.create = sandbox.stub().rejects(
-                new Error('Invalid API key')
-            );
+        it('throws a TypeError instead of exiting cleanly on an invalid OPENAI_API_KEY', () => {
+            process.env.OPENAI_API_KEY = 'sk-short';
+            sandbox.stub(process, 'exit');
+            sandbox.stub(console, 'error');
+            sandbox.stub(console, 'log');
 
-            try {
-                await validateSystem({ redisClient, openai });
-                expect.fail('Should have thrown error');
-            } catch (error) {
-                expect(error.message).to.include('OpenAI API validation failed');
-            }
+            expect(() => validateEnvironment()).to.throw(TypeError);
         });
     });
 
