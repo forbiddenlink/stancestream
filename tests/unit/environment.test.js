@@ -95,51 +95,56 @@ describe('Environment Configuration', () => {
             expect(config.LOG_LEVEL).to.equal('trace');
         });
 
-        // KNOWN RUNTIME BUG (not fixed here - see PR body): on invalid input
-        // the catch block at src/config/environment.js:81 does
-        // `error.errors.forEach(...)`, but zod 4.6.1's ZodError exposes the
-        // issue list as `.issues`, not `.errors`. `error.errors` is
-        // therefore always undefined, so this line throws
-        // "TypeError: Cannot read properties of undefined (reading
-        // 'forEach')" before process.exit(1) is ever reached. The intended
-        // behavior (log a helpful message, exit(1)) is unreachable today -
-        // any invalid env var in a real deployment crashes with this
-        // TypeError instead. These tests assert the actual current
-        // behavior; they are not asserting the intended behavior.
-        it('throws a TypeError instead of exiting cleanly on an invalid REDIS_URL', () => {
+        // validateEnvironment does not throw on invalid input: it logs each bad
+        // field and calls process.exit(1). exit is stubbed here so the test
+        // process survives, which means validateEnvironment returns undefined
+        // and execution continues past the exit call.
+        it('reports REDIS_URL and exits 1 on an invalid REDIS_URL', () => {
             process.env.REDIS_URL = 'not-a-url';
-            sandbox.stub(process, 'exit');
-            sandbox.stub(console, 'error');
+            const exit = sandbox.stub(process, 'exit');
+            const error = sandbox.stub(console, 'error');
             sandbox.stub(console, 'log');
 
-            expect(() => validateEnvironment()).to.throw(TypeError);
+            validateEnvironment();
+
+            expect(exit.calledWith(1)).to.equal(true);
+            expect(error.args.flat().join(' ')).to.include('REDIS_URL');
         });
 
-        it('throws a TypeError instead of exiting cleanly on a too-short OPENAI_API_KEY', () => {
+        it('reports OPENAI_API_KEY and exits 1 on a too-short OPENAI_API_KEY', () => {
             process.env.OPENAI_API_KEY = 'sk-short';
-            sandbox.stub(process, 'exit');
-            sandbox.stub(console, 'error');
+            const exit = sandbox.stub(process, 'exit');
+            const error = sandbox.stub(console, 'error');
             sandbox.stub(console, 'log');
 
-            expect(() => validateEnvironment()).to.throw(TypeError);
+            validateEnvironment();
+
+            expect(exit.calledWith(1)).to.equal(true);
+            expect(error.args.flat().join(' ')).to.include('OPENAI_API_KEY');
         });
 
-        it('throws a TypeError instead of exiting cleanly on an OPENAI_API_KEY missing the sk- prefix', () => {
+        it('reports OPENAI_API_KEY and exits 1 on an OPENAI_API_KEY missing the sk- prefix', () => {
             process.env.OPENAI_API_KEY = `xx-${'a'.repeat(20)}`;
-            sandbox.stub(process, 'exit');
-            sandbox.stub(console, 'error');
+            const exit = sandbox.stub(process, 'exit');
+            const error = sandbox.stub(console, 'error');
             sandbox.stub(console, 'log');
 
-            expect(() => validateEnvironment()).to.throw(TypeError);
+            validateEnvironment();
+
+            expect(exit.calledWith(1)).to.equal(true);
+            expect(error.args.flat().join(' ')).to.include('OPENAI_API_KEY');
         });
 
-        it('throws a TypeError instead of exiting cleanly on an invalid NODE_ENV', () => {
+        it('reports NODE_ENV and exits 1 on an invalid NODE_ENV', () => {
             process.env.NODE_ENV = 'staging';
-            sandbox.stub(process, 'exit');
-            sandbox.stub(console, 'error');
+            const exit = sandbox.stub(process, 'exit');
+            const error = sandbox.stub(console, 'error');
             sandbox.stub(console, 'log');
 
-            expect(() => validateEnvironment()).to.throw(TypeError);
+            validateEnvironment();
+
+            expect(exit.calledWith(1)).to.equal(true);
+            expect(error.args.flat().join(' ')).to.include('NODE_ENV');
         });
     });
 

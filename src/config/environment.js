@@ -78,7 +78,7 @@ export function validateEnvironment() {
         console.error('');
         
         if (error instanceof z.ZodError) {
-            error.errors.forEach((err) => {
+            error.issues.forEach((err) => {
                 const field = err.path.join('.');
                 console.error(`   ${field}: ${err.message}`);
             });
