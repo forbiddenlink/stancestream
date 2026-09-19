@@ -5,13 +5,12 @@ for live intelligent applications. Node/Express + WebSocket backend, React 19/Vi
 
 ## Stack
 
-- Backend: Node 20 (ESM), Express 4, `ws` WebSocketServer bound to the same HTTP server,
+- Backend: Node 20 (ESM), Express 5, `ws` WebSocketServer bound to the same HTTP server,
   `ioredis`/`redis` v6, Socket.IO, Zod env validation, Winston + Pino logging, Prometheus
   (`prom-client`), Sentry, Langfuse, PostHog, Trigger.dev.
 - AI: OpenAI SDK, `@ai-sdk/google`, LangChain/LangGraph.
 - Frontend: `stancestream-frontend/` - React 19 + Vite, own `pnpm` scripts.
-- Tests: Mocha + Chai + Sinon + Supertest, `c8` for coverage, Artillery for load tests,
-  `promptfoo` for prompt evals.
+- Tests: Mocha + Chai + Sinon + Supertest, `c8` for coverage, Artillery for load tests.
 - TypeScript is present (`tsconfig.json`, `lib/`, `src/`) alongside plain JS; `build:ts`/
   `typecheck` compile/check the TS portions only.
 - Package manager: pnpm (`packageManager` pin + `pnpm-lock.yaml`).
@@ -25,7 +24,7 @@ pnpm -C stancestream-frontend dev # Vite dev server (port 5173)
 pnpm build                        # frontend production build (cd + pnpm build)
 pnpm build:ts / build:ts:watch    # compile lib/**/*.ts, src/**/*.ts
 pnpm typecheck                    # tsc --noEmit
-pnpm biome:check / biome:fix      # lint + format (actually enforced)
+pnpm biome:check / biome:fix      # lint + format (has a working biome.json config)
 pnpm test                         # mocha, all tests/**/*.test.js
 pnpm test:unit / test:integration / test:coverage (c8)
 pnpm exec mocha tests/unit/<file>.test.js         # single file
@@ -86,6 +85,9 @@ Frontend: `VITE_API_URL`.
 
 ## Gotchas
 
-- `.env.example` documents the full set; copy to `.env` before first run.
+- `.env.example` covers the two required vars plus a few optional integrations
+  (LangGraph, LangSmith, GNews); copy to `.env` before first run. It does not list
+  every var read from `process.env` in the codebase (e.g. `SENTRY_DSN`,
+  `LANGFUSE_*`, `RESEND_*`, `CORS_ALLOWLIST`).
 - `docker-compose.yml` runs `redis/redis-stack:latest` (RedisInsight on 8001) - plain Redis
   without the Stack modules will not support the JSON/TimeSeries/Vector calls above.

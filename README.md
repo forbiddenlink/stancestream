@@ -107,7 +107,8 @@ TS.ADD debate:live_debate:agent:senatorbot:stance:climate_policy * 0.6
 ## Environment variables
 
 Required: `REDIS_URL` (valid URL), `OPENAI_API_KEY` (starts with `sk-`, at least 20 chars).
-See `.env.example` for the full set with defaults, and `CLAUDE.md` for the complete list.
+See `.env.example` for these plus a few optional integrations, and `CLAUDE.md` for the
+Zod-validated optional vars with their defaults.
 
 ## License
 
