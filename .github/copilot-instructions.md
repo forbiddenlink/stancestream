@@ -195,12 +195,12 @@ cd stancestream-frontend; pnpm dev  # Frontend (port 5173)
 ### Development Commands
 ```bash
 # Development mode
-npm run dev          # Start backend in development mode
+pnpm dev          # Start backend in development mode
 cd stancestream-frontend && pnpm dev  # Start frontend dev server
 
 # Production build
 cd stancestream-frontend && pnpm build  # Build frontend
-npm run start       # Start production server
+pnpm start       # Start production server
 
 # Testing
 node tests/production-refinement-orchestrator.js  # Run all test suites
