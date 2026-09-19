@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/forbiddenlink/stancestream/compare/v1.0.5...v1.0.6) (2026-09-19)
+
+
+### Bug Fixes
+
+* **deps:** patch csv-parse for GHSA-8cw4-87c7-c6xx ([#108](https://github.com/forbiddenlink/stancestream/issues/108)) ([68f7aff](https://github.com/forbiddenlink/stancestream/commit/68f7affa3b08e1bedb5d7ae8ee1e1d25d6ce619f))
+
 ## [1.0.5](https://github.com/forbiddenlink/stancestream/compare/v1.0.4...v1.0.5) (2026-09-09)
 
 
