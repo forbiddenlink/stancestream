@@ -46,7 +46,7 @@ jobs:
         run: pnpm lint || true # Don't fail on lint errors initially
         
       - name: Run backend tests
-        run: pnpm test:unit || true # Don't fail initially
+        run: pnpm test:unit
         env:
           REDIS_URL: redis://localhost:6379
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || 'sk-test' }}

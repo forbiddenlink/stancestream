@@ -13,11 +13,16 @@ import {
 } from '../../metrics.js';
 
 describe('Metrics System', () => {
-    before(() => {
-        // Reset metrics before tests
-        register.clear();
-    });
-
+    // Note: this suite used to call register.clear() in before(), which
+    // deregisters every metric from prom-client's default registry
+    // (cacheHitsTotal, httpRequestDuration, etc. are registered once at
+    // module load). That left the registry empty for the rest of this
+    // file, so the "should export metrics in Prometheus format" test
+    // below always failed - the metric objects still accept .observe()/
+    // .inc() calls after being cleared, but register.metrics() has
+    // nothing left to serialize. This was a test-authoring bug, not a
+    // runtime bug in metrics.js: the clear() was clearing state this very
+    // file still needed. Only clear after this suite's assertions run.
     after(() => {
         register.clear();
     });
