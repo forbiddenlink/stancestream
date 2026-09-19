@@ -486,7 +486,7 @@ cd stancestream-frontend && pnpm dev  # Port 5173
 cd stancestream-frontend && pnpm build
 
 # Start production server
-npm run start
+pnpm start
 ```
 
 ### **Verification Tests**

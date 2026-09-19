@@ -7,10 +7,10 @@
 ### Development Setup
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm dev
 
 # Open browser to http://localhost:5173
 ```
@@ -58,16 +58,16 @@ src/
 
 ```bash
 # Development
-npm run dev
+pnpm dev
 
 # Production build
-npm run build
+pnpm build
 
 # Preview production build
-npm run preview
+pnpm preview
 
 # Linting
-npm run lint
+pnpm lint
 ```
 
 ## 🌐 Environment Variables

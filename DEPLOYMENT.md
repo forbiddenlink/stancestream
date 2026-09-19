@@ -35,11 +35,11 @@ git clone https://github.com/forbiddenlink/mindchain.git
 cd stancestream
 
 # Install backend dependencies
-npm install
+pnpm install
 
 # Install frontend dependencies
 cd stancestream-frontend
-npm install
+pnpm install
 cd ..
 ```
 
@@ -69,7 +69,7 @@ node server.js
 
 # Terminal 2: Start frontend
 cd stancestream-frontend
-npm run dev
+pnpm dev
 ```
 
 ### 5. Verify Installation
@@ -110,13 +110,13 @@ VITE_API_URL=https://your-backend-domain.com
 #### 1. Build Frontend
 ```bash
 cd stancestream-frontend
-npm run build
+pnpm build
 ```
 
 #### 2. Prepare Backend
 ```bash
 # Install production dependencies only
-npm ci --only=production
+pnpm install --frozen-lockfile --prod
 
 # Initialize Redis (one-time setup)
 node setup.js
@@ -125,7 +125,7 @@ node setup.js
 #### 3. Start Production Server
 ```bash
 # Using PM2 (recommended)
-npm install -g pm2
+pnpm add -g pm2
 pm2 start server.js --name stancestream-backend
 
 # Or using Node directly
@@ -144,7 +144,7 @@ NODE_ENV=production node server.js
 3. Configure build and start commands:
    ```bash
    # Build Command
-   npm install && node setup.js
+   pnpm install && node setup.js
    
    # Start Command  
    node server.js
@@ -154,7 +154,7 @@ NODE_ENV=production node server.js
 
 #### Frontend Deployment
 1. Create new Static Site in Render
-2. Set build command: `cd stancestream-frontend && npm run build`
+2. Set build command: `cd stancestream-frontend && pnpm build`
 3. Set publish directory: `stancestream-frontend/dist`
 4. Add environment variable: `VITE_API_URL=https://your-backend.onrender.com`
 
@@ -163,7 +163,7 @@ NODE_ENV=production node server.js
 #### Frontend (Vercel)
 ```bash
 # Install Vercel CLI
-npm install -g vercel
+pnpm add -g vercel
 
 # Deploy from frontend directory
 cd stancestream-frontend
@@ -181,10 +181,11 @@ vercel --prod
 #### Backend (Container/VM)
 ```dockerfile
 # Dockerfile
-FROM node:18-alpine
+FROM node:20-alpine
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --only=production
+RUN corepack enable
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
 COPY . .
 RUN node setup.js
 EXPOSE 3001
@@ -194,7 +195,7 @@ CMD ["node", "server.js"]
 #### Frontend (CDN/Static Hosting)
 ```bash
 # Build and upload to S3/Azure Blob/GCS
-npm run build
+pnpm build
 # Upload dist/ folder to static hosting
 ```
 
