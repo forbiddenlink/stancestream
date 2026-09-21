@@ -66,9 +66,9 @@
     "zod": "^4.5.4"
   },
   "devDependencies": {
-    "@babel/core": "8.0.1",
-    "@babel/preset-env": "8.0.2",
-    "@babel/register": "8.0.1",
+    "@babel/core": "8.0.5",
+    "@babel/preset-env": "8.0.5",
+    "@babel/register": "8.0.5",
     "@biomejs/biome": "2.5.12",
     "@trigger.dev/build": "4.5.16",
     "@types/express": "5.0.6",
@@ -82,7 +82,7 @@
     "jest": "30.5.1",
     "mocha": "11.8.0",
     "nodemon": "3.1.14",
-    "prettier": "3.9.6",
+    "prettier": "3.9.8",
     "sinon": "22.1.0",
     "supertest": "7.2.2",
     "tsx": "4.23.13",
