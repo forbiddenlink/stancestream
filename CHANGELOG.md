@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.6](https://github.com/forbiddenlink/stancestream/compare/v1.0.5...v1.0.6) (2026-09-21)
+
+
+### Bug Fixes
+
+* **config:** print which env var is invalid instead of crashing ([#113](https://github.com/forbiddenlink/stancestream/issues/113)) ([70a03d6](https://github.com/forbiddenlink/stancestream/commit/70a03d6e7e0c1c50ba1680d54fb10d154a8c0106))
+* **config:** restore env validation API dropped by zod rewrite ([#112](https://github.com/forbiddenlink/stancestream/issues/112)) ([eb370f7](https://github.com/forbiddenlink/stancestream/commit/eb370f7e1c9a0c18d356e0f68e8e01b16c7b3cad))
+* **deps:** patch csv-parse for GHSA-8cw4-87c7-c6xx ([#108](https://github.com/forbiddenlink/stancestream/issues/108)) ([68f7aff](https://github.com/forbiddenlink/stancestream/commit/68f7affa3b08e1bedb5d7ae8ee1e1d25d6ce619f))
+
 ## [1.0.5](https://github.com/forbiddenlink/stancestream/compare/v1.0.4...v1.0.5) (2026-09-09)
 
 
