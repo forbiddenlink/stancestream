@@ -41,10 +41,17 @@ function getRoundMessages(state: StanceState): DebateMessage[] {
   return debateMessages.filter((m) => m.round === round);
 }
 
-function parseScores(content: string): { proScore: number; conScore: number } {
-  // Try to extract scores from various formats
-  const proMatch = content.match(/pro[:\s]*(\d+(?:\.\d+)?)/i);
-  const conMatch = content.match(/con[:\s]*(\d+(?:\.\d+)?)/i);
+export function parseScores(content: string): { proScore: number; conScore: number } {
+  // Match the "PRO SCORE: n" lines the prompt asks for (and the short "PRO: n").
+  // Anchored to line start so words like "improved 3" or "proof 9" in the
+  // reasoning can't be read as a score. The old unanchored pattern also broke on
+  // the word SCORE itself, so every round silently parsed as 5-5.
+  const proMatch = content.match(/^\s*pro(?:\s+score)?\s*[:=-]?\s*(\d+(?:\.\d+)?)/im);
+  const conMatch = content.match(/^\s*con(?:\s+score)?\s*[:=-]?\s*(\d+(?:\.\d+)?)/im);
+
+  if (!proMatch || !conMatch) {
+    console.warn("Scorer: could not parse a score from the model output; defaulting the missing side to 5.");
+  }
 
   let proScore = proMatch ? parseFloat(proMatch[1]) : 5;
   let conScore = conMatch ? parseFloat(conMatch[1]) : 5;
