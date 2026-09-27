@@ -8,7 +8,10 @@
  * was a 5-5 tie no matter what the model said.
  */
 import { expect } from 'chai';
-import { parseScores } from '../../lib/agents/scorer.ts';
+import { tsImport } from 'tsx/esm/api';
+
+// CI runs Node 20, which cannot import .ts directly; tsx loads it on any version.
+const { parseScores } = await tsImport('../../lib/agents/scorer.ts', import.meta.url);
 
 describe('Scorer parseScores', () => {
     it('reads the exact format the scorer prompt asks for', () => {
