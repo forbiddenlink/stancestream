@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.7](https://github.com/forbiddenlink/stancestream/compare/v1.0.6...v1.0.7) (2026-09-28)
+
+
+### Bug Fixes
+
+* **scorer:** parse the PRO SCORE/CON SCORE format the prompt asks for ([#115](https://github.com/forbiddenlink/stancestream/issues/115)) ([4c4572a](https://github.com/forbiddenlink/stancestream/commit/4c4572ab6d0b9fc97c016310edf717b8eafa729a))
+
 ## [1.0.6](https://github.com/forbiddenlink/stancestream/compare/v1.0.5...v1.0.6) (2026-09-21)
 
 
