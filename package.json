@@ -126,7 +126,7 @@
       "protobufjs": "^7.6.1",
       "qs": ">=6.16.0 <7",
       "rollup": ">=4.59.0",
-      "serialize-javascript": ">=7.0.5",
+      "serialize-javascript": ">=7.1.2 <8",
       "seroval": ">=1.4.1",
       "shell-quote": ">=1.8.4",
       "socket.io-parser": ">=4.2.7 <5",
@@ -136,7 +136,9 @@
       "vite": ">=7.3.2",
       "ws": ">=8.21.0 <9",
       "yaml": ">=2.8.3",
-      "csv-parse": ">=7.0.2 <8"
+      "csv-parse": ">=7.0.2 <8",
+      "@grpc/grpc-js": ">=1.14.5 <2",
+      "moment": ">=2.31.0 <3"
     }
   },
   "engines": {
