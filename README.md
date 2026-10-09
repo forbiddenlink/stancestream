@@ -104,6 +104,27 @@ TS.ADD debate:live_debate:agent:senatorbot:stance:climate_policy * 0.6
 | `fact:{hash}` | Fact with vector embedding | Vector + Hash |
 | `cache:prompt:{hash}` | Cached AI response with embedding | Vector + Hash |
 
+## LLM evals (promptfoo)
+
+`promptfoo/` holds per-agent prompt evals (routing/assertion cases) and red-team
+cases (prompt-injection, system-prompt-extraction, role-hijack attempts) for the
+four agent prompts in `lib/agents/{pro,con,moderator,scorer}.ts`.
+
+- Requires `OPENAI_API_KEY` in the environment (same var the app uses, see `.env.example`).
+- **Running an eval calls the real OpenAI API and costs money** - it's opt-in, not part of CI.
+- Validate config only (no API calls, no cost): `pnpm run eval:validate`
+- Run the full suite (costs money): `pnpm run eval`
+- Run one agent: `pnpm exec promptfoo eval -c promptfoo/pro.promptfooconfig.yaml`
+- View results in the local UI after a run: `pnpm exec promptfoo view`
+- `promptfoo/redteam.promptfooconfig.yaml` is a native-plugin red-team example
+  (not wired into `eval`/`eval:validate`) - running it needs its own two-step
+  `promptfoo redteam generate -c promptfoo/redteam.promptfooconfig.yaml` (this
+  step itself calls an LLM to synthesize adversarial cases) followed by
+  `promptfoo redteam eval -c promptfoo/redteam.promptfooconfig.yaml`.
+- The prompt templates in `promptfoo/prompts/*.json` are manual mirrors of each
+  agent's `SYSTEM_PROMPT` + user-prompt template - update them if the source
+  `lib/agents/*.ts` files change.
+
 ## Environment variables
 
 Required: `REDIS_URL` (valid URL), `OPENAI_API_KEY` (starts with `sk-`, at least 20 chars).
