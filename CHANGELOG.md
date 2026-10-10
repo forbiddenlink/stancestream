@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/forbiddenlink/stancestream/compare/v1.0.7...v1.1.0) (2026-10-10)
+
+
+### Features
+
+* add opt-in promptfoo evals for the four debate agent prompts ([#125](https://github.com/forbiddenlink/stancestream/issues/125)) ([f22c243](https://github.com/forbiddenlink/stancestream/commit/f22c243f7db64492ce8588dca6a43977fcbdaad7))
+
+
+### Bug Fixes
+
+* **deps:** apply override fix plan ([#120](https://github.com/forbiddenlink/stancestream/issues/120)) ([0d58993](https://github.com/forbiddenlink/stancestream/commit/0d5899387f190d7bca2f7d2a6a6657f2deab69b8))
+* **deps:** raise stale override floors ([#119](https://github.com/forbiddenlink/stancestream/issues/119)) ([5fa5e53](https://github.com/forbiddenlink/stancestream/commit/5fa5e53fb4362228b841b1d2b225c355c3f5ad0b))
+
 ## [1.0.7](https://github.com/forbiddenlink/stancestream/compare/v1.0.6...v1.0.7) (2026-09-28)
 
 
