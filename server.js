@@ -55,6 +55,8 @@ import {
   clampDemoDuration,
   validateDebateStartBody,
   validateMultiStartBody,
+  validateKeyMomentBody,
+  debugRoutesGate,
   validateBody,
   createSpendGuard,
 } from "./src/middleware/spendGuard.js";
@@ -1908,7 +1910,12 @@ app.get("/api/key-moments/all", async (req, res) => {
 });
 
 // Manually trigger key moment detection for testing
-app.post("/api/debug/key-moment", async (req, res) => {
+app.post(
+  "/api/debug/key-moment",
+  debugRoutesGate(),
+  validateBody(validateKeyMomentBody, spendConfig),
+  aiCallGuard,
+  async (req, res) => {
   try {
     const { debateId, agentId, message, factCheckScore, stance } = req.body;
 
@@ -1948,7 +1955,8 @@ app.post("/api/debug/key-moment", async (req, res) => {
       created: false,
     });
   }
-});
+  },
+);
 
 // 🔧 ENHANCED METRICS FUNCTION
 function getEnhancedMetrics() {

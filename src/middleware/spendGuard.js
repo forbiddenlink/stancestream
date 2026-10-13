@@ -33,6 +33,7 @@ export function readSpendConfig(env = process.env) {
       globalDailyLimit: positiveInt(env.AI_CALL_GLOBAL_DAILY_LIMIT, 500),
     },
     maxRounds: positiveInt(env.DEBATE_MAX_ROUNDS, 5),
+    maxMessageLength: positiveInt(env.DEBATE_MAX_MESSAGE_LENGTH, 1000),
     maxTopicLength: positiveInt(env.DEBATE_MAX_TOPIC_LENGTH, 200),
     maxAgents: positiveInt(env.DEBATE_MAX_AGENTS, 2),
     maxMultiTopics: positiveInt(env.DEBATE_MAX_MULTI_TOPICS, 3),
@@ -244,4 +245,37 @@ export function validateBody(validator, cfg) {
     req.validated = result.value;
     return next();
   };
+}
+
+/**
+ * Debug routes are off in production unless ENABLE_DEBUG_ROUTES=true.
+ * Reads env per request so it can be tested and flipped without a reload.
+ */
+export function debugRoutesGate(env = process.env) {
+  return (_req, res, next) => {
+    const enabled =
+      env.ENABLE_DEBUG_ROUTES === "true" || env.NODE_ENV !== "production";
+    if (!enabled) return res.status(404).json({ error: "Not found" });
+    return next();
+  };
+}
+
+/** Validate the manual key-moment body: strings only, message length capped. */
+export function validateKeyMomentBody(body, cfg = readSpendConfig()) {
+  const b = body && typeof body === "object" && !Array.isArray(body) ? body : {};
+  if (typeof b.message !== "string" || b.message.trim().length === 0) {
+    return { ok: false, error: "message is required" };
+  }
+  if (b.message.length > cfg.maxMessageLength) {
+    return {
+      ok: false,
+      error: `message must be at most ${cfg.maxMessageLength} characters`,
+    };
+  }
+  for (const k of ["debateId", "agentId"]) {
+    if (b[k] !== undefined && (typeof b[k] !== "string" || b[k].length > 64)) {
+      return { ok: false, error: `${k} must be a string up to 64 characters` };
+    }
+  }
+  return { ok: true, value: b };
 }

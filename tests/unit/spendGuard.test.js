@@ -11,6 +11,8 @@ import {
   validateMultiStartBody,
   validateBody,
   createSpendGuard,
+  debugRoutesGate,
+  validateKeyMomentBody,
 } from '../../src/middleware/spendGuard.js';
 
 // Minimal in-memory stand-in for the node-redis calls the guard uses.
@@ -255,6 +257,38 @@ describe('spendGuard', () => {
       });
       expect(c.debate.perIpLimit).to.equal(7);
       expect(c.debate.globalDailyLimit).to.equal(50);
+    });
+  });
+
+  describe('debug routes', () => {
+    const appFor = (env) => {
+      const app = express();
+      app.use(express.json());
+      app.post(
+        '/api/debug/key-moment',
+        debugRoutesGate(env),
+        validateBody(validateKeyMomentBody, cfg),
+        (_req, res) => res.json({ ok: true }),
+      );
+      return app;
+    };
+    it('404 in production by default', async () => {
+      await request(appFor({ NODE_ENV: 'production' }))
+        .post('/api/debug/key-moment').send({ message: 'hi' }).expect(404);
+    });
+    it('allowed in production with ENABLE_DEBUG_ROUTES=true', async () => {
+      await request(appFor({ NODE_ENV: 'production', ENABLE_DEBUG_ROUTES: 'true' }))
+        .post('/api/debug/key-moment').send({ message: 'hi' }).expect(200);
+    });
+    it('allowed outside production', async () => {
+      await request(appFor({ NODE_ENV: 'development' }))
+        .post('/api/debug/key-moment').send({ message: 'hi' }).expect(200);
+    });
+    it('rejects missing or oversized message', async () => {
+      const app = appFor({ NODE_ENV: 'development' });
+      await request(app).post('/api/debug/key-moment').send({}).expect(400);
+      await request(app).post('/api/debug/key-moment')
+        .send({ message: 'x'.repeat(cfg.maxMessageLength + 1) }).expect(400);
     });
   });
 });
