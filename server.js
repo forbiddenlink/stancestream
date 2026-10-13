@@ -49,6 +49,15 @@ import platformMetricsEngine, {
 } from "./platformMetricsEngine.js";
 import { PlatformMetricsDashboard } from "./platformLiveMetrics.js";
 import testEndpoints from "./src/routes/test-endpoints.js";
+import {
+  readSpendConfig,
+  clampRounds,
+  clampDemoDuration,
+  validateDebateStartBody,
+  validateMultiStartBody,
+  validateBody,
+  createSpendGuard,
+} from "./src/middleware/spendGuard.js";
 import enhancedEndpoints from "./src/routes/enhanced-endpoints.js";
 
 // New imports for improvements
@@ -70,6 +79,31 @@ import {
 const env = validateEnvironment();
 
 const app = express();
+
+// Per-IP limits need the real client address. Render terminates TLS at a proxy
+// and forwards the caller in X-Forwarded-For; without this every caller shares
+// the proxy's IP. TRUST_PROXY_HOPS is the number of proxies in front of us.
+app.set("trust proxy", Number.parseInt(process.env.TRUST_PROXY_HOPS, 10) || 1);
+
+// Spend protection for every route that can trigger an OpenAI call.
+const spendConfig = readSpendConfig();
+const getSpendClient = () => redisManager.getClient();
+const debateStartGuard = createSpendGuard({
+  getClient: getSpendClient,
+  scope: "debate",
+  ...spendConfig.debate,
+});
+const multiDebateStartGuard = createSpendGuard({
+  getClient: getSpendClient,
+  scope: "debate",
+  ...spendConfig.debate,
+  cost: (req) => req.validated.topics.length,
+});
+const aiCallGuard = createSpendGuard({
+  getClient: getSpendClient,
+  scope: "ai",
+  ...spendConfig.ai,
+});
 const server = createServer(app);
 
 // Security enhancements - production ready
@@ -224,6 +258,8 @@ app.use(
       path: req.path,
     });
   },
+  // These call the model, so they share the AI spend guard
+  aiCallGuard,
   // Mount the router
   testEndpoints,
 );
@@ -644,13 +680,18 @@ function sanitizeInput(input) {
 }
 
 // Start a new debate - ENHANCED FOR MULTI-DEBATE SUPPORT
-app.post("/api/debate/start", async (req, res) => {
+app.post(
+  "/api/debate/start",
+  validateBody(validateDebateStartBody, spendConfig),
+  debateStartGuard,
+  async (req, res) => {
   try {
     const {
       debateId = `debate_${Date.now()}`,
-      topic = "climate change policy",
-      agents = ["senatorbot", "reformerbot"],
-    } = req.body;
+      topic,
+      agents,
+      rounds,
+    } = req.validated;
 
     // Sanitize inputs to prevent XSS attacks
     const sanitizedTopic = sanitizeInput(topic);
@@ -735,8 +776,14 @@ app.post("/api/debate/start", async (req, res) => {
           sanitizedAgents,
           sanitizedTopic,
           debateProcess,
+          rounds,
         )
-      : runDebateRounds(uniqueDebateId, sanitizedAgents, sanitizedTopic);
+      : runDebateRounds(
+          uniqueDebateId,
+          sanitizedAgents,
+          sanitizedTopic,
+          rounds,
+        );
 
     debateRunner.finally(() => {
       // Remove from active debates when finished
@@ -768,7 +815,8 @@ app.post("/api/debate/start", async (req, res) => {
     console.error("Error starting debate:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+  },
+);
 
 // Stop a running debate
 app.post("/api/debate/:id/stop", async (req, res) => {
@@ -1085,13 +1133,13 @@ app.get("/api/agents", async (req, res) => {
 });
 
 // Start multiple debates simultaneously (CONTEST FEATURE)
-app.post("/api/debates/start-multiple", async (req, res) => {
+app.post(
+  "/api/debates/start-multiple",
+  validateBody(validateMultiStartBody, spendConfig),
+  multiDebateStartGuard,
+  async (req, res) => {
   try {
-    const { topics = [], agents = ["senatorbot", "reformerbot"] } = req.body;
-
-    if (!topics.length) {
-      return res.status(400).json({ error: "At least one topic is required" });
-    }
+    const { topics, agents } = req.validated;
 
     console.log(`🚀 Starting ${topics.length} concurrent debates`);
 
@@ -1165,17 +1213,22 @@ app.post("/api/debates/start-multiple", async (req, res) => {
     console.error("Error starting multiple debates:", error);
     res.status(500).json({ error: "Internal server error" });
   }
-});
+  },
+);
 
 // LangGraph-specific debate endpoint - always uses LangGraph regardless of feature flag
-app.post("/api/debate/langgraph/start", async (req, res) => {
+app.post(
+  "/api/debate/langgraph/start",
+  validateBody(validateDebateStartBody, spendConfig),
+  debateStartGuard,
+  async (req, res) => {
   try {
     const {
       debateId = `langgraph_${Date.now()}`,
-      topic = "climate change policy",
-      agents = ["senatorbot", "reformerbot"],
-      rounds = 5,
-    } = req.body;
+      topic,
+      agents,
+      rounds,
+    } = req.validated;
 
     // Sanitize inputs
     const sanitizedTopic = sanitizeInput(topic);
@@ -1310,7 +1363,8 @@ app.post("/api/debate/langgraph/start", async (req, res) => {
       .status(500)
       .json({ error: "Internal server error", message: error.message });
   }
-});
+  },
+);
 
 // Get LangGraph orchestration status
 app.get("/api/orchestration/status", (req, res) => {
@@ -1946,7 +2000,9 @@ function getEnhancedMetrics() {
 }
 
 // Debate simulation function - ENHANCED WITH METRICS TRACKING
-async function runDebateRounds(debateId, agents, topic, rounds = 5) {
+async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
+  // Server-side cap, independent of whatever the caller asked for.
+  const rounds = clampRounds(requestedRounds, spendConfig.maxRounds);
   console.log(`🎯 Starting debate simulation for: ${topic} (${debateId})`);
   console.log(
     `📊 Active debates at start: ${Array.from(activeDebates.keys()).join(", ")}`,
@@ -2639,8 +2695,10 @@ async function runLangGraphDebateWithBroadcast(
   agents,
   topic,
   debateProcess,
-  rounds = 5,
+  requestedRounds = 5,
 ) {
+  // Server-side cap, independent of whatever the caller asked for.
+  const rounds = clampRounds(requestedRounds, spendConfig.maxRounds);
   console.log(`LangGraph debate starting: ${debateId} on "${topic}"`);
   console.log(`Using LangGraph orchestration for multi-agent workflow`);
 
@@ -3065,7 +3123,7 @@ process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 // 🔬 Advanced Fact Checking API - Multi-source verification system
-app.post("/api/fact-check/advanced", async (req, res) => {
+app.post("/api/fact-check/advanced", aiCallGuard, async (req, res) => {
   try {
     const { statement, context } = req.body;
 
@@ -3383,7 +3441,7 @@ function determineOverallHealth(
 // 🏆 CONTEST ENHANCEMENT APIs - Additional endpoints for contest demo
 
 // 📊 Intelligent Agent API - Uses new intelligent agent system
-app.post("/api/agent/:agentId/intelligent-message", async (req, res) => {
+app.post("/api/agent/:agentId/intelligent-message", aiCallGuard, async (req, res) => {
   try {
     const { agentId } = req.params;
     const { debateId, topic, conversationHistory } = req.body;
@@ -3582,10 +3640,16 @@ app.post("/api/demo/cache-hit", async (req, res) => {
 });
 
 // 🎯 Contest Demo API - Automated demo scenarios
-app.post("/api/contest/demo/:scenario", async (req, res) => {
+app.post("/api/contest/demo/:scenario", aiCallGuard, async (req, res) => {
   try {
     const { scenario } = req.params;
-    const { duration = 30, agents = ["senatorbot", "reformerbot"] } = req.body;
+    const duration = clampDemoDuration(req.body?.duration, spendConfig);
+    const requestedAgents = Array.isArray(req.body?.agents)
+      ? req.body.agents.filter((a) => spendConfig.allowedAgents.includes(a))
+      : [];
+    const agents = requestedAgents.length
+      ? requestedAgents.slice(0, spendConfig.maxAgents)
+      : spendConfig.allowedAgents;
 
     let demoResult;
 
@@ -3675,10 +3739,16 @@ app.get("/api/analytics/contest-metrics", async (req, res) => {
 // 🏢 Platform API Endpoints - Professional aliases for contest endpoints
 // These provide the same functionality with enterprise-friendly naming
 
-app.post("/api/platform/demo/:scenario", async (req, res) => {
+app.post("/api/platform/demo/:scenario", aiCallGuard, async (req, res) => {
   try {
     const { scenario } = req.params;
-    const { duration = 30, agents = ["senatorbot", "reformerbot"] } = req.body;
+    const duration = clampDemoDuration(req.body?.duration, spendConfig);
+    const requestedAgents = Array.isArray(req.body?.agents)
+      ? req.body.agents.filter((a) => spendConfig.allowedAgents.includes(a))
+      : [];
+    const agents = requestedAgents.length
+      ? requestedAgents.slice(0, spendConfig.maxAgents)
+      : spendConfig.allowedAgents;
 
     let demoResult;
 
