@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/forbiddenlink/stancestream/compare/v1.1.0...v1.1.1) (2026-10-17)
+
+
+### Bug Fixes
+
+* **deps:** clear transitive CVEs with bounded overrides ([#131](https://github.com/forbiddenlink/stancestream/issues/131)) ([7052b68](https://github.com/forbiddenlink/stancestream/commit/7052b686bd695a6cad99409b1bdb8e15ad9181f5))
+
 ## [1.1.0](https://github.com/forbiddenlink/stancestream/compare/v1.0.7...v1.1.0) (2026-10-13)
 
 
