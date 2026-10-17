@@ -11,7 +11,8 @@ overrides:
   '@trigger.dev/core': '>=4.5.6 <5'
   basic-ftp: '>=5.3.1'
   body-parser@1: '>=1.20.6 <2'
-  brace-expansion: '>=1.1.12'
+  brace-expansion@1: '>=1.1.21 <2.0.0'
+  brace-expansion@5: '>=5.0.12 <6.0.0'
   braces: '>=3.0.3'
   browserslist: '>=4.28.7 <5'
   cookie: '>=0.7.0 <2.0.0'
@@ -3821,8 +3822,8 @@ packages:
   bowser@2.14.1:
     resolution: {integrity: sha512-tzPjzCxygAKWFOJP011oxFHs57HzIhOEracIgAePE4pqB3LikALKnSzUyU4MGs9/iCEUuHlAJTjTc5M+u7YEGg==}
 
-  brace-expansion@5.0.9:
-    resolution: {integrity: sha512-ScQ4IuvIEF1TMlP7Zt+vjJ//9zlPb2SDcxWxM3bk8s6t6GGdJ7KO1dCcTidOPJKePW30LE/2cT7wCyPho9/Wxg==}
+  brace-expansion@5.0.12:
+    resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
     engines: {node: 20 || >=22}
 
   braces@3.0.3:
@@ -11820,7 +11821,7 @@ snapshots:
 
   bowser@2.14.1: {}
 
-  brace-expansion@5.0.9:
+  brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
 
@@ -13963,7 +13964,7 @@ snapshots:
 
   minimatch@10.2.6:
     dependencies:
-      brace-expansion: 5.0.9
+      brace-expansion: 5.0.12
 
   minimist@1.2.8: {}
 
