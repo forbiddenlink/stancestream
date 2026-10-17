@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.0](https://github.com/forbiddenlink/stancestream/compare/v1.0.7...v1.1.0) (2026-10-13)
+
+
+### Features
+
+* add opt-in promptfoo evals for the four debate agent prompts ([#125](https://github.com/forbiddenlink/stancestream/issues/125)) ([f22c243](https://github.com/forbiddenlink/stancestream/commit/f22c243f7db64492ce8588dca6a43977fcbdaad7))
+
+
+### Bug Fixes
+
+* **api:** cap OpenAI spend from unauthenticated debate routes ([#130](https://github.com/forbiddenlink/stancestream/issues/130)) ([f7fdb7a](https://github.com/forbiddenlink/stancestream/commit/f7fdb7a507a8e8b90d3deac91febcfbdc8b8605d))
+* **deps:** apply override fix plan ([#120](https://github.com/forbiddenlink/stancestream/issues/120)) ([0d58993](https://github.com/forbiddenlink/stancestream/commit/0d5899387f190d7bca2f7d2a6a6657f2deab69b8))
+* **deps:** raise shell-quote floor to 1.11.0 and pin proxy-addr &gt;=2.0.8 ([#128](https://github.com/forbiddenlink/stancestream/issues/128)) ([441eb4a](https://github.com/forbiddenlink/stancestream/commit/441eb4a6d6a1fa4a06d54a42675a35b529beedd9))
+* **deps:** raise stale override floors ([#119](https://github.com/forbiddenlink/stancestream/issues/119)) ([5fa5e53](https://github.com/forbiddenlink/stancestream/commit/5fa5e53fb4362228b841b1d2b225c355c3f5ad0b))
+
 ## [1.0.7](https://github.com/forbiddenlink/stancestream/compare/v1.0.6...v1.0.7) (2026-09-28)
 
 
