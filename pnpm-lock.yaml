@@ -23,12 +23,14 @@ overrides:
   engine.io: '>=6.6.10 <7'
   esbuild: '>=0.28.1'
   express>path-to-regexp: ^8.0.0
+  fast-copy: '>=4.1.0 <5'
   fast-xml-builder: '>=1.1.7'
   fast-xml-parser: '>=5.10.1 <6'
   flatted: '>=3.4.2'
   form-data: '>=4.0.4'
   glob: '>=10.5.0'
   ip-address: '>=10.7.1 <11'
+  joi: '>=17.13.8 <18'
   js-yaml: '>=5.2.1 <6'
   langsmith: '>=0.4.6'
   lodash: ^4.18.1
@@ -4746,8 +4748,8 @@ packages:
     resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
     engines: {node: '>=8.0.0'}
 
-  fast-copy@4.0.2:
-    resolution: {integrity: sha512-ybA6PDXIXOXivLJK/z9e+Otk7ve13I4ckBvGO5I2RRmBU1gMHLVDJYEuJYhGwez7YNlYji2M2DvVU+a9mSFDlw==}
+  fast-copy@4.2.0:
+    resolution: {integrity: sha512-WSlnvPXaMdUjFdgxPkovE4e5aslybVod4TNKrEKKyoA8GoHZzbDLlhDXZOvqjtFgjtOHd9TYCstkUcGXy1+SEA==}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -5450,8 +5452,8 @@ packages:
     resolution: {integrity: sha512-9FzQjJ7MATs1tSpnco1K6ayiYE3figslrXA72G2HQ/n76RzvYlofyi5QM+iX4YRs/pu3yzxlVQSST23+dMDknw==}
     engines: {node: '>= 0.6.0'}
 
-  joi@17.13.7:
-    resolution: {integrity: sha512-MF80Dm5Y2veNy8QWVx9Bj3ui4mo7+VPSPsR1M+oaHXV0Gx6zGX9a2F+OZG3Blby9tOlzU9Rs5FUimlEhbKtfnQ==}
+  joi@17.13.8:
+    resolution: {integrity: sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw==}
 
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
@@ -11654,7 +11656,7 @@ snapshots:
       hpagent: 0.1.2
       https-proxy-agent: 5.0.1
       jmespath: 0.16.0
-      joi: 17.13.7
+      joi: 17.13.8
       js-yaml: 5.4.1
       jsonpath-plus: 10.4.0
       jsonwebtoken: 9.0.3
@@ -12733,7 +12735,7 @@ snapshots:
     dependencies:
       pure-rand: 6.1.0
 
-  fast-copy@4.0.2: {}
+  fast-copy@4.2.0: {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -13671,7 +13673,7 @@ snapshots:
 
   jmespath@0.16.0: {}
 
-  joi@17.13.7:
+  joi@17.13.8:
     dependencies:
       '@hapi/hoek': 9.3.0
       '@hapi/topo': 5.1.0
@@ -14549,7 +14551,7 @@ snapshots:
     dependencies:
       colorette: 2.0.20
       dateformat: 4.6.3
-      fast-copy: 4.0.2
+      fast-copy: 4.2.0
       fast-safe-stringify: 2.1.1
       help-me: 5.0.0
       joycon: 3.1.1
