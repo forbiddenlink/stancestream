@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/forbiddenlink/stancestream/compare/v1.1.2...v1.1.3) (2026-10-20)
+
+
+### Bug Fixes
+
+* **deps:** override follow-redirects to 1.16.1 to clear two high advisories ([#140](https://github.com/forbiddenlink/stancestream/issues/140)) ([f7f7cd9](https://github.com/forbiddenlink/stancestream/commit/f7f7cd9c21eb5f2ef82de5c63894156de3dec222))
+
 ## [1.1.2](https://github.com/forbiddenlink/stancestream/compare/v1.1.1...v1.1.2) (2026-10-20)
 
 
