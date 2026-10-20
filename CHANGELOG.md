@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/forbiddenlink/stancestream/compare/v1.1.1...v1.1.2) (2026-10-20)
+
+
+### Bug Fixes
+
+* **deps:** cap unbounded pnpm overrides at the next major ([#138](https://github.com/forbiddenlink/stancestream/issues/138)) ([1b5e5bc](https://github.com/forbiddenlink/stancestream/commit/1b5e5bc55e232bf149ea4dcd439ac6481dfc52f3))
+* **deps:** override http-cache-semantics to 4.3.0 for GHSA-ch52-4w7c-c8xp ([#136](https://github.com/forbiddenlink/stancestream/issues/136)) ([1243b5f](https://github.com/forbiddenlink/stancestream/commit/1243b5f1249d841d357e1b9903b2c5082c38867b))
+
 ## [1.1.1](https://github.com/forbiddenlink/stancestream/compare/v1.1.0...v1.1.1) (2026-10-19)
 
 
