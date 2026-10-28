@@ -71,7 +71,7 @@
     "@babel/core": "8.0.7",
     "@babel/preset-env": "8.0.7",
     "@babel/register": "8.0.6",
-    "@biomejs/biome": "2.5.15",
+    "@biomejs/biome": "2.6.3",
     "@trigger.dev/build": "^4.8.1",
     "@types/express": "5.0.6",
     "@types/node": "26.6.5",
