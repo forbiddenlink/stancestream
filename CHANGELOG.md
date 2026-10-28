@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.4](https://github.com/forbiddenlink/stancestream/compare/v1.1.3...v1.1.4) (2026-10-27)
+
+
+### Bug Fixes
+
+* **deps:** move trigger.dev to 4.8.1 and patch body-parser 2 and deepmerge-ts ([#148](https://github.com/forbiddenlink/stancestream/issues/148)) ([fb9e017](https://github.com/forbiddenlink/stancestream/commit/fb9e0171ffa8948d434982e3b351ca250685c372))
+* **deps:** raise transitive override floors to patched versions ([#146](https://github.com/forbiddenlink/stancestream/issues/146)) ([ccd16f3](https://github.com/forbiddenlink/stancestream/commit/ccd16f36170067236ff8100017873f088f4cb370))
+
 ## [1.1.3](https://github.com/forbiddenlink/stancestream/compare/v1.1.2...v1.1.3) (2026-10-20)
 
 
