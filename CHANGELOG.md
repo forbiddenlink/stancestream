@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.5](https://github.com/forbiddenlink/stancestream/compare/v1.1.4...v1.1.5) (2026-10-29)
+
+
+### Bug Fixes
+
+* **deps:** raise qs override floor to 6.16.1 ([#150](https://github.com/forbiddenlink/stancestream/issues/150)) ([ef370d8](https://github.com/forbiddenlink/stancestream/commit/ef370d857a6335129609109d4e7944c0a58f949c))
+* **deps:** raise systeminformation and @hono/node-server override floors ([#152](https://github.com/forbiddenlink/stancestream/issues/152)) ([2f3579a](https://github.com/forbiddenlink/stancestream/commit/2f3579ac98de39df87a125ca6b2f70e8292bb19a))
+
 ## [1.1.4](https://github.com/forbiddenlink/stancestream/compare/v1.1.3...v1.1.4) (2026-10-27)
 
 
