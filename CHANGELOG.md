@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.6](https://github.com/forbiddenlink/stancestream/compare/v1.1.5...v1.1.6) (2026-10-31)
+
+
+### Bug Fixes
+
+* **dashboard:** remove invented uptime tile and random module metrics ([#153](https://github.com/forbiddenlink/stancestream/issues/153)) ([93e80ec](https://github.com/forbiddenlink/stancestream/commit/93e80ecd1d245651c3fa8eaac03752ed9123f94f))
+* **dashboard:** show real metrics or an unavailable state, never invented numbers ([#155](https://github.com/forbiddenlink/stancestream/issues/155)) ([733685e](https://github.com/forbiddenlink/stancestream/commit/733685ebdb9fa120fb37ab4317f5623aeb0a1790))
+* drop the enterprise-grade label from the cache line ([#156](https://github.com/forbiddenlink/stancestream/issues/156)) ([690ae20](https://github.com/forbiddenlink/stancestream/commit/690ae20beb13ebd0a22cbcbdab68ea519b448610))
+
 ## [1.1.5](https://github.com/forbiddenlink/stancestream/compare/v1.1.4...v1.1.5) (2026-10-29)
 
 
