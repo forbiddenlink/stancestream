@@ -344,7 +344,7 @@ export default function EnhancedPerformanceDashboard() {
                             </div>
                             <div className="mt-2 flex items-center justify-between text-xs">
                                 <span className="text-green-400/80 font-mono">
-                                    ENTERPRISE-GRADE SEMANTIC CACHING REDUCING API DEPENDENCIES
+                                    SEMANTIC CACHING REDUCING API DEPENDENCIES
                                 </span>
                                 {hitPercent !== null && (
                                     <span className={`px-2 py-1 rounded-full border font-mono ${hitPercent > 70
