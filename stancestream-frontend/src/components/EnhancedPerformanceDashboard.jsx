@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import Icon from './Icon';
+import { show, toPercent, assertLiveStats } from '../utils/dashboardMetrics';
 import {
     Card,
     CardHeader,
@@ -18,138 +19,22 @@ import {
     DataTable
 } from './ui';
 
-// Calculate performance metrics for each Redis module
-const calculateModulePerformance = (stats, module) => {
-    if (!stats || !stats.operations || !stats.keyCount) return null;
-
-    const baseMetrics = {};
-
-    switch (module) {
-        case 'json':
-            return {
-                ...baseMetrics,
-                opsPerSecond: stats.operations.json ?? null,
-                storageEfficiency: 0.95,
-                compressionRatio: 2.4
-            };
-        case 'streams':
-            return {
-                ...baseMetrics,
-                messagesPerSecond: stats.operations.streams ?? null,
-                avgMessageSize: '1.2KB',
-                retentionPeriod: '24h'
-            };
-        case 'timeseries':
-            return {
-                ...baseMetrics,
-                pointsPerSecond: stats.operations.timeseries ?? null,
-                retentionPolicy: '7d',
-                compressionRatio: 4.2
-            };
-        case 'vector':
-            return {
-                ...baseMetrics,
-                searchesPerSecond: stats.operations.vector ?? null,
-                avgDistance: 0.15,
-                dimensionality: 1536
-            };
-        default:
-            return baseMetrics;
-    }
-};
-
 async function loadEnhancedMetrics() {
-        try {
+    const [redisStats, cacheResponse] = await Promise.all([
+        api.getRedisStats(),
+        api.getCacheMetrics().catch(() => ({ metrics: null }))
+    ]);
 
-            // Try the enhanced Redis stats endpoint with contest metrics
-            try {
-                // Parallel requests for faster updates
-                const [redisStats, cacheResponse, businessAnalytics, contestMetrics] = await Promise.all([
-                    api.getRedisStats(),
-                    api.getCacheMetrics().catch(() => ({ metrics: null })),
-                    api.getBusinessAnalytics().catch(() => null),
-                    api.getContestMetrics().catch(() => ({
-                        multiModalScore: 40,
-                        technicalScore: 29,
-                        innovationScore: 28,
-                        totalScore: 97,
-                        lastUpdated: new Date().toISOString()
-                    }))
-                ]);
+    return { metrics: assertLiveStats(redisStats), cacheMetrics: cacheResponse?.metrics };
+}
 
-
-
-                // Combine all metrics for contest showcase
-                const enhancedMetrics = {
-                    ...redisStats,
-                    business: businessAnalytics,
-                    contest: contestMetrics,
-                    timestamp: new Date().toISOString(),
-                    modulePerformance: {
-                        json: calculateModulePerformance(redisStats, 'json'),
-                        streams: calculateModulePerformance(redisStats, 'streams'),
-                        timeseries: calculateModulePerformance(redisStats, 'timeseries'),
-                        vector: calculateModulePerformance(redisStats, 'vector')
-                    }
-                };
-
-                return { metrics: enhancedMetrics, cacheMetrics: cacheResponse?.metrics };
-
-            } catch {
-                console.log('Enhanced stats not available, using fallback');
-            }
-
-            // Fallback to simulated data
-            const fallbackMetrics = {
-                operations: { json: 5, streams: 12, timeseries: 8, vector: 25 },
-                keyCount: { json: 2, streams: 4, timeseries: 4, vector: 15 },
-                performance: {
-                    avgResponseTime: Math.floor(Math.random() * 10) + 5,
-                    peakMemoryUsage: '12.5MB',
-                    totalConnections: 3,
-                    memoryUsed: '8.2MB',
-                    commandsProcessed: 1250
-                },
-                realtime: {
-                    messagesPerSecond: Math.floor(Math.random() * 50) + 10,
-                    factChecksPerSecond: Math.floor(Math.random() * 20) + 5,
-                    concurrentOperations: Math.floor(Math.random() * 100) + 50
-                },
-                benchmark: {
-                    multiModalScore: {
-                        score: 100,
-                        activeModules: 4,
-                        totalOperations: 50,
-                        rating: 'PERFECT'
-                    },
-                    realTimePerformance: {
-                        score: 95,
-                        responseTimeMs: 8,
-                        throughput: 45,
-                        rating: 'EXCELLENT'
-                    },
-                    scalabilityIndex: {
-                        score: 88,
-                        totalKeys: 25,
-                        concurrentOperations: 75,
-                        rating: 'HIGHLY SCALABLE'
-                    },
-                    systemReadiness: 'PRODUCTION READY'
-                },
-                system: {
-                    status: 'connected',
-                    timestamp: new Date().toISOString()
-                },
-                fallback: true
-            };
-
-            return { metrics: fallbackMetrics };
-
-        } catch (error) {
-            console.error('Failed to fetch any metrics:', error);
-            throw error;
-        }
-    };
+// Key counts come from the backend key patterns in advancedMetrics.js countKeysByType().
+const REDIS_MODULES = [
+    { key: 'json', label: 'REDISJSON', unit: 'KEYS', note: 'AGENT PROFILES + KEY MOMENTS', dot: 'bg-blue-500' },
+    { key: 'streams', label: 'STREAMS', unit: 'STREAMS', note: 'REAL-TIME DEBATE MESSAGING', dot: 'bg-blue-400' },
+    { key: 'timeseries', label: 'TIMESERIES', unit: 'SERIES', note: 'STANCE + SENTIMENT TRACKING', dot: 'bg-blue-300' },
+    { key: 'vector', label: 'VECTOR SEARCH', unit: 'VECTORS', note: 'FACTS + SEMANTIC CACHE', dot: 'bg-blue-600' }
+];
 
 export default function EnhancedPerformanceDashboard() {
     const [metrics, setMetrics] = useState(null);
@@ -164,7 +49,7 @@ export default function EnhancedPerformanceDashboard() {
         if (result.cacheMetrics) setCacheMetrics(result.cacheMetrics);
         setIsLoading(false);
     }).catch(() => {
-        setError('Failed to load metrics');
+        setError('The stats service did not return live data.');
         setIsLoading(false);
     });
 
@@ -209,7 +94,7 @@ export default function EnhancedPerformanceDashboard() {
             <Card className="border-red-500/30 bg-gradient-to-br from-red-900/20 to-red-800/20">
                 <CardContent className="text-center p-8">
                     <Icon name="alert-circle" size={32} className="text-red-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-red-300 mb-2">Failed to Load Metrics</h3>
+                    <h3 className="text-lg font-semibold text-red-300 mb-2">Metrics unavailable</h3>
                     <p className="text-slate-400 mb-4">{error}</p>
                     <button
                         onClick={fetchEnhancedMetrics}
@@ -223,7 +108,12 @@ export default function EnhancedPerformanceDashboard() {
         );
     }
 
-    // redisModules available via metrics?.redisModules if needed
+    const cache = cacheMetrics ?? metrics.cache ?? null;
+    const hitPercent = toPercent(cache?.hit_ratio);
+    const responseMs = metrics.performance?.avgResponseTime;
+    const activeModules = metrics.keyCount
+        ? REDIS_MODULES.filter(({ key }) => metrics.keyCount[key] > 0).length
+        : null;
 
     return (
         <Card className="border-green-500/30 bg-gradient-to-br from-black/90 to-gray-900/90 shadow-lg shadow-green-500/10">
@@ -269,51 +159,48 @@ export default function EnhancedPerformanceDashboard() {
                 <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
                     <MetricCard
                         title="Active Sessions"
-                        value={metrics.debate?.concurrentDebates || metrics.realtime?.concurrentOperations || 0}
-                        subtitle="Multi-session capable"
+                        value={show(metrics.debate?.concurrentDebates)}
+                        subtitle="Concurrent debates"
                         icon="users"
-                        trend="up"
                         color="purple"
                     />
 
                     <MetricCard
-                        title="Msg/sec"
-                        value={metrics.debate?.messagesGenerated || metrics.realtime?.messagesPerSecond || 0}
-                        subtitle="Real-time processing"
+                        title="Messages"
+                        value={show(metrics.debate?.messagesGenerated)}
+                        subtitle="Total generated"
                         icon="message-circle"
-                        trend="up"
                         color="green"
                     />
 
                     <MetricCard
                         title="Fact Checks"
-                        value={metrics.debate?.factChecksPerformed || metrics.realtime?.factChecksPerSecond || 0}
-                        subtitle="AI verification"
+                        value={show(metrics.debate?.factChecksPerformed)}
+                        subtitle="Total performed"
                         icon="shield-check"
                         color="blue"
                     />
 
                     <MetricCard
                         title="Response Time"
-                        value={`${metrics.performance?.avgResponseTime || 'N/A'}ms`}
-                        subtitle={(metrics.performance?.avgResponseTime || 100) < 50 ? 'Excellent' :
-                            (metrics.performance?.avgResponseTime || 100) < 100 ? 'Good' : 'Acceptable'}
+                        value={show(responseMs, 'ms')}
+                        subtitle="Redis INFO query"
                         icon="zap"
                         color="cyan"
                     />
 
                     <MetricCard
                         title="Memory Usage"
-                        value={metrics.performance?.memoryUsed || 'N/A'}
-                        subtitle={`${metrics.connectionsCount || 0} connections`}
+                        value={show(metrics.performance?.memoryUsed)}
+                        subtitle={`${show(metrics.performance?.totalConnections)} connections`}
                         icon="cpu"
                         color="green"
                     />
 
                     <MetricCard
                         title="System Status"
-                        value={metrics.benchmark?.systemReadiness || 'READY'}
-                        subtitle="Production ready"
+                        value={metrics.system?.status ? metrics.system.status.toUpperCase() : '-'}
+                        subtitle="Stats API"
                         icon="check-circle"
                         color="violet"
                     />
@@ -343,154 +230,37 @@ export default function EnhancedPerformanceDashboard() {
                     </h3>
                     {/* Contest-Focused Real-Time Metrics */}
                     <div className="mb-4 p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg shadow-lg">
-                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div className="text-center">
-                                <div className="text-xs text-blue-400 font-mono mb-1">CONTEST SCORE</div>
-                                <div className="text-2xl font-bold text-blue-300 font-mono">
-                                    {metrics.contestMetrics?.overallScore || 97}/100
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="text-xs text-blue-400 font-mono mb-1">MODULE USAGE</div>
-                                <div className="text-2xl font-bold text-blue-300 font-mono">
-                                    4/4 <span className="text-xs">ACTIVE</span>
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="text-xs text-blue-400 font-mono mb-1">OPERATIONS/SEC</div>
-                                <div className="text-2xl font-bold text-blue-300 font-mono">
-                                    {metrics.performance?.opsPerSecond || 245}
-                                </div>
-                            </div>
-                            <div className="text-center">
-                                <div className="text-xs text-blue-400 font-mono mb-1">INNOVATION</div>
-                                <div className="text-2xl font-bold text-blue-300 font-mono">
-                                    {metrics.contestMetrics?.innovationScore || 95}%
-                                </div>
+                        <div className="text-center">
+                            <div className="text-xs text-blue-400 font-mono mb-1">MODULE USAGE</div>
+                            <div className="text-2xl font-bold text-blue-300 font-mono">
+                                {activeModules === null ? '-' : `${activeModules}/4`} <span className="text-xs">WITH DATA</span>
                             </div>
                         </div>
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        {/* RedisJSON */}
-                        <div className="bg-gradient-to-br from-green-600/10 to-blue-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                    <span className="text-sm font-bold text-blue-300 font-mono">REDISJSON</span>
-                                </div>
-                                <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
-                                    ACTIVE
-                                </span>
-                            </div>
-                            <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
-                                {metrics.keyCount?.json || metrics.operations?.json || 'N/A'}
-                                <span className="text-xs text-blue-400/80">KEYS</span>
-                            </div>
-                            <div className="flex justify-between items-center mt-2">
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">OPERATIONS/SEC</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.json?.opsPerSecond ?? '-'}
+                        {REDIS_MODULES.map(({ key, label, unit, note, dot }) => (
+                            <div key={key} className="bg-gradient-to-br from-green-600/10 to-blue-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className={`w-3 h-3 ${dot} rounded-full`}></div>
+                                        <span className="text-sm font-bold text-blue-300 font-mono">{label}</span>
                                     </div>
+                                    <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
+                                        {metrics.keyCount?.[key] > 0 ? 'ACTIVE' : 'NO DATA'}
+                                    </span>
                                 </div>
-                            </div>
-                            <div className="text-xs text-blue-400/60 font-mono mt-2">AGENT PROFILES + KEY MOMENTS</div>
-                        </div>
-
-                        {/* Redis Streams */}
-                        <div className="bg-gradient-to-br from-green-600/10 to-blue-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                                    <span className="text-sm font-bold text-blue-300 font-mono">STREAMS</span>
+                                <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
+                                    {show(metrics.keyCount?.[key])}
+                                    <span className="text-xs text-blue-400/80">{unit}</span>
                                 </div>
-                                <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
-                                    ACTIVE
-                                </span>
+                                <div className="text-xs text-blue-400/60 font-mono mt-2">{note}</div>
                             </div>
-                            <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
-                                {metrics.keyCount?.streams || metrics.operations?.streams || 'N/A'}
-                                <span className="text-xs text-blue-400/80">STREAMS</span>
-                            </div>
-                            <div className="flex justify-between items-center mt-2">
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">MSG/SEC</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.streams?.messagesPerSecond ?? '-'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">LATENCY</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">1.2ms</div>
-                                </div>
-                            </div>
-                            <div className="text-xs text-blue-400/60 font-mono mt-2">REAL-TIME DEBATE MESSAGING</div>
-                        </div>
-
-                        {/* RedisTimeSeries */}
-                        <div className="bg-gradient-to-br from-green-600/10 to-blue-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-blue-300 rounded-full"></div>
-                                    <span className="text-sm font-bold text-blue-300 font-mono">TIMESERIES</span>
-                                </div>
-                                <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
-                                    ACTIVE
-                                </span>
-                            </div>
-                            <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
-                                {metrics.keyCount?.timeseries || metrics.operations?.timeseries || 'N/A'}
-                                <span className="text-xs text-blue-400/80">SERIES</span>
-                            </div>
-                            <div className="flex justify-between items-center mt-2">
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">POINTS/SEC</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.timeseries?.pointsPerSecond ?? '-'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">RETENTION</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">24h</div>
-                                </div>
-                            </div>
-                            <div className="text-xs text-blue-400/60 font-mono mt-2">STANCE + SENTIMENT TRACKING</div>
-                        </div>
-
-                        {/* Redis Vector */}
-                        <div className="bg-gradient-to-br from-green-600/10 to-blue-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex items-center justify-between mb-2">
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
-                                    <span className="text-sm font-bold text-blue-300 font-mono">VECTOR SEARCH</span>
-                                </div>
-                                <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
-                                    ACTIVE
-                                </span>
-                            </div>
-                            <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
-                                {metrics.keyCount?.vector || metrics.operations?.vector || 'N/A'}
-                                <span className="text-xs text-blue-400/80">VECTORS</span>
-                            </div>
-                            <div className="flex justify-between items-center mt-2">
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">SEARCH/SEC</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.vector?.searchesPerSecond ?? '-'}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">AVG DIST</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">0.15</div>
-                                </div>
-                            </div>
-                            <div className="text-xs text-blue-400/60 font-mono mt-2">FACTS + SEMANTIC CACHE</div>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
                 {/* Semantic Cache Performance - SHOWCASE FEATURE */}
-                {(cacheMetrics || metrics.cache) && (
+                {cache && (
                     <div className="mb-4">
                         <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
                             <Icon name="zap" size={18} className="mr-2 text-green-400" />
@@ -498,7 +268,7 @@ export default function EnhancedPerformanceDashboard() {
                             <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
                                 INNOVATION SHOWCASE
                             </span>
-                            {(cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) > 70 && (
+                            {hitPercent > 70 && (
                                 <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
                                     HIGH EFFICIENCY
                                 </span>
@@ -512,10 +282,10 @@ export default function EnhancedPerformanceDashboard() {
                                     <span className="text-sm font-bold text-green-300 font-mono">HIT RATE</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
-                                    {((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0).toFixed(1)}%
+                                    {show(hitPercent?.toFixed(1), '%')}
                                 </div>
                                 <div className="text-xs text-green-400/80 font-mono">
-                                    {(cacheMetrics?.cache_hits || metrics.cache?.cache_hits) || 0}/{(cacheMetrics?.total_requests || metrics.cache?.total_requests) || 0} REQUESTS
+                                    {show(cache.cache_hits)}/{show(cache.total_requests)} REQUESTS
                                 </div>
                                 <div className="text-xs text-green-400 font-mono">AI RESPONSE CACHING</div>
                             </div>
@@ -527,10 +297,10 @@ export default function EnhancedPerformanceDashboard() {
                                     <span className="text-sm font-bold text-green-300 font-mono">COST SAVED</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
-                                    ${((cacheMetrics?.estimated_cost_saved || metrics.cache?.estimated_cost_saved) || 0).toFixed(3)}
+                                    {typeof cache.estimated_cost_saved === 'number' ? `$${cache.estimated_cost_saved.toFixed(3)}` : '-'}
                                 </div>
                                 <div className="text-xs text-green-400/80 font-mono">
-                                    {(cacheMetrics?.total_tokens_saved || 0).toLocaleString()} TOKENS SAVED
+                                    {show(cache.total_tokens_saved?.toLocaleString())} TOKENS SAVED
                                 </div>
                                 <div className="text-xs text-green-400 font-mono">OPENAI API SAVINGS</div>
                             </div>
@@ -542,7 +312,7 @@ export default function EnhancedPerformanceDashboard() {
                                     <span className="text-sm font-bold text-green-300 font-mono">SIMILARITY</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
-                                    {((cacheMetrics?.average_similarity || 0) * 100).toFixed(1)}%
+                                    {typeof cache.average_similarity === 'number' ? `${(cache.average_similarity * 100).toFixed(1)}%` : '-'}
                                 </div>
                                 <div className="text-xs text-green-400/80 font-mono">AVERAGE MATCH QUALITY</div>
                                 <div className="text-xs text-green-400 font-mono">VECTOR SIMILARITY</div>
@@ -555,7 +325,7 @@ export default function EnhancedPerformanceDashboard() {
                                     <span className="text-sm font-bold text-green-300 font-mono">CACHED</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
-                                    {(cacheMetrics?.total_cache_entries || metrics.cache?.total_cache_entries) || 0}
+                                    {show(cache.total_cache_entries)}
                                 </div>
                                 <div className="text-xs text-green-400/80 font-mono">RESPONSES STORED</div>
                                 <div className="text-xs text-green-400 font-mono">SEMANTIC VECTORS</div>
@@ -568,28 +338,24 @@ export default function EnhancedPerformanceDashboard() {
                                 <div className="flex items-center gap-2">
                                     <Icon name="trending-up" size={16} className="text-green-400" />
                                     <span className="text-sm font-bold text-green-300 font-mono">
-                                        CACHE EFFICIENCY: {((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0).toFixed(1)}% -
-                                        MONTHLY ROI: ${((cacheMetrics?.estimated_cost_saved || metrics.cache?.estimated_cost_saved) * 30 || 47).toFixed(0)}
+                                        CACHE EFFICIENCY: {show(hitPercent?.toFixed(1), '%')}
                                     </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-xs text-green-400/80 font-mono">
-                                    <Icon name="target" size={12} />
-                                    <span>85% SIMILARITY THRESHOLD</span>
                                 </div>
                             </div>
                             <div className="mt-2 flex items-center justify-between text-xs">
                                 <span className="text-green-400/80 font-mono">
                                     ENTERPRISE-GRADE SEMANTIC CACHING REDUCING API DEPENDENCIES
                                 </span>
-                                <span className={`px-2 py-1 rounded-full border font-mono ${((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0) > 70
-                                    ? 'bg-green-500/20 text-green-400 border-green-500/30'
-                                    : ((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0) > 50
-                                        ? 'bg-green-400/20 text-green-300 border-green-400/30'
-                                        : 'bg-green-300/20 text-green-200 border-green-300/30'
-                                    }`}>
-                                    {((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0) > 70 ? 'EXCELLENT' :
-                                        ((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 0) > 50 ? 'GOOD' : 'BUILDING'}
-                                </span>
+                                {hitPercent !== null && (
+                                    <span className={`px-2 py-1 rounded-full border font-mono ${hitPercent > 70
+                                        ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                                        : hitPercent > 50
+                                            ? 'bg-green-400/20 text-green-300 border-green-400/30'
+                                            : 'bg-green-300/20 text-green-200 border-green-300/30'
+                                        }`}>
+                                        {hitPercent > 70 ? 'EXCELLENT' : hitPercent > 50 ? 'GOOD' : 'BUILDING'}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -600,65 +366,23 @@ export default function EnhancedPerformanceDashboard() {
                     <div className="border-t border-green-500/30 pt-4">
                         <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
                             💼 BUSINESS PERFORMANCE METRICS
-                            <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                                {metrics.benchmark.systemReadiness}
-                            </span>
                         </h3>
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="text-lg font-bold text-green-300 font-mono">
-                                    {metrics.benchmark.multiModalScore?.score || 'N/A'}%
+                                    {show(metrics.benchmark.multiModalScore?.score, '%')}
                                 </div>
                                 <div className="text-sm text-green-200 font-mono">ARCHITECTURE EFFICIENCY</div>
                                 <div className="text-xs text-green-400 font-mono">
-                                    {metrics.benchmark.multiModalScore?.activeModules || 0}/4 DATA MODELS ACTIVE
+                                    {show(metrics.benchmark.multiModalScore?.activeModules)}/4 DATA MODELS ACTIVE
                                 </div>
                             </div>
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="text-lg font-bold text-green-300 font-mono">
-                                    {metrics.benchmark.realTimePerformance?.score || 'N/A'}%
+                                    {show(responseMs, 'MS')}
                                 </div>
-                                <div className="text-sm text-green-200 font-mono">RESPONSE PERFORMANCE</div>
-                                <div className="text-xs text-green-400 font-mono">
-                                    {metrics.benchmark.realTimePerformance?.responseTimeMs || 'N/A'}MS AVERAGE RESPONSE
-                                </div>
-                            </div>
-                            <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
-                                <div className="text-lg font-bold text-green-300 font-mono">
-                                    {metrics.benchmark.scalabilityIndex?.score || 'N/A'}%
-                                </div>
-                                <div className="text-sm text-green-200 font-mono">SCALABILITY RATING</div>
-                                <div className="text-xs text-green-400 font-mono">
-                                    {metrics.benchmark.scalabilityIndex?.rating || 'ENTERPRISE READY'}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* ROI and Business Value Indicators */}
-                        <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Icon name="trending-up" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">COST EFFICIENCY</span>
-                                </div>
-                                <div className="text-xl font-bold text-green-200 font-mono">
-                                    ${((cacheMetrics?.estimated_cost_saved || metrics.cache?.estimated_cost_saved) * 30 || 47).toFixed(0)}/MO
-                                </div>
-                                <div className="text-xs text-green-400/80 font-mono">
-                                    PROJECTED MONTHLY SAVINGS THROUGH SEMANTIC CACHING
-                                </div>
-                            </div>
-                            <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Icon name="zap" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">SYSTEM EFFICIENCY</span>
-                                </div>
-                                <div className="text-xl font-bold text-green-200 font-mono">
-                                    {((cacheMetrics?.hit_ratio || metrics.cache?.hit_ratio) || 66.7).toFixed(1)}%
-                                </div>
-                                <div className="text-xs text-green-400/80 font-mono">
-                                    CACHE HIT RATE REDUCING COMPUTATIONAL OVERHEAD
-                                </div>
+                                <div className="text-sm text-green-200 font-mono">RESPONSE TIME</div>
+                                <div className="text-xs text-green-400 font-mono">REDIS INFO QUERY</div>
                             </div>
                         </div>
                     </div>
@@ -693,7 +417,6 @@ export default function EnhancedPerformanceDashboard() {
                                         <div>📋 TOPIC: {info.topic}</div>
                                         <div className="flex items-center justify-between">
                                             <span>💬 {info.messageCount || 0} MESSAGES</span>
-                                            <span>⏱️ {info.duration || 'REAL-TIME'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -702,88 +425,10 @@ export default function EnhancedPerformanceDashboard() {
                     </div>
                 )}
 
-                {/* Redis Challenge Scoring - CONTEST FEATURE */}
-                <div className="border-t border-blue-500/30 pt-4 mt-4">
-                    <h3 className="text-sm font-bold text-blue-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
-                        <Icon name="trophy" size={18} className="text-blue-400" />
-                        REDIS CHALLENGE SCORING
-                        <span className="text-xs bg-blue-500/20 px-2 py-1 rounded-full text-blue-400 border border-blue-500/30 font-mono">
-                            CONTEST SUBMISSION
-                        </span>
-                    </h3>
-                    
-                    {/* Score Breakdown */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
-                        {/* Multi-Modal Usage */}
-                        <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex justify-between items-center mb-2">
-                                <div className="text-sm font-bold text-blue-300 font-mono">MULTI-MODAL</div>
-                                <div className="text-lg font-bold text-blue-200 font-mono">40/40</div>
-                            </div>
-                            <div className="flex justify-between text-xs text-blue-400/80 font-mono">
-                                <span>ALL MODULES ACTIVE</span>
-                                <span>100% UTILIZED</span>
-                            </div>
-                            <div className="mt-2 h-2 bg-blue-900/20 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" style={{ width: '100%' }}></div>
-                            </div>
-                        </div>
-
-                        {/* Technical Score */}
-                        <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex justify-between items-center mb-2">
-                                <div className="text-sm font-bold text-blue-300 font-mono">TECHNICAL</div>
-                                <div className="text-lg font-bold text-blue-200 font-mono">29/30</div>
-                            </div>
-                            <div className="flex justify-between text-xs text-blue-400/80 font-mono">
-                                <span>HIGH PERFORMANCE</span>
-                                <span>96.7% SCORE</span>
-                            </div>
-                            <div className="mt-2 h-2 bg-blue-900/20 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" style={{ width: '96.7%' }}></div>
-                            </div>
-                        </div>
-
-                        {/* Innovation Score */}
-                        <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                            <div className="flex justify-between items-center mb-2">
-                                <div className="text-sm font-bold text-blue-300 font-mono">INNOVATION</div>
-                                <div className="text-lg font-bold text-blue-200 font-mono">28/30</div>
-                            </div>
-                            <div className="flex justify-between text-xs text-blue-400/80 font-mono">
-                                <span>SEMANTIC CACHE</span>
-                                <span>93.3% SCORE</span>
-                            </div>
-                            <div className="mt-2 h-2 bg-blue-900/20 rounded-full overflow-hidden">
-                                <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" style={{ width: '93.3%' }}></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Overall Score Card */}
-                    <div className="bg-gradient-to-br from-blue-600/10 to-purple-600/10 border border-blue-500/30 rounded-lg p-4 shadow-lg">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <div className="text-sm font-bold text-blue-300 font-mono">TOTAL CONTEST SCORE</div>
-                                <div className="text-xs text-blue-400/80 font-mono mt-1">REDIS CHALLENGE 2025</div>
-                            </div>
-                            <div className="text-3xl font-bold text-blue-200 font-mono">97/100</div>
-                        </div>
-                        <div className="mt-3 h-3 bg-blue-900/20 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-fuchsia-500 rounded-full" style={{ width: '97%' }}></div>
-                        </div>
-                        <div className="flex justify-between text-xs text-blue-400/80 font-mono mt-2">
-                            <span>PRODUCTION READY</span>
-                            <span>WINNER QUALITY</span>
-                            <span>97% COMPLETE</span>
-                        </div>
-                    </div>
-                </div>
-
                 {/* Metric Update Info */}
                 <div className="text-xs text-blue-400/60 text-center mt-6 font-mono">
                     LAST UPDATED: {new Date(metrics.timestamp).toLocaleTimeString()} •
-                    {metrics.fallback ? ' [SIMULATION MODE] • ' : ' [LIVE DATA] • '}
+                    [LIVE DATA] •
                     REDIS CHALLENGE ANALYTICS 🏆
                 </div>
             </CardContent>

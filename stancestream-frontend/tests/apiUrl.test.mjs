@@ -130,3 +130,18 @@ for (const method of ['get', 'post']) {
     });
   });
 }
+
+test('default fetch is called with the global receiver, not the api instance', async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = function stubFetch() {
+    // A browser throws "Illegal invocation" when fetch runs with any other receiver.
+    assert.ok(this === undefined || this === globalThis, 'fetch called with a foreign receiver');
+    return Promise.resolve(makeResponse({ ok: true }));
+  };
+  try {
+    const api = new StanceStreamAPI();
+    assert.deepEqual(await api.get('/health', { retry: false }), { ok: true });
+  } finally {
+    globalThis.fetch = realFetch;
+  }
+});
