@@ -22,39 +22,34 @@ import {
 const calculateModulePerformance = (stats, module) => {
     if (!stats || !stats.operations || !stats.keyCount) return null;
 
-    const baseMetrics = {
-        opsPerSecond: Math.floor(Math.random() * 50) + 25, // Fallback
-        latencyMs: Math.random() * 2 + 0.5,
-        errorRate: Math.random() * 0.1,
-        uptime: 99.9
-    };
+    const baseMetrics = {};
 
     switch (module) {
         case 'json':
             return {
                 ...baseMetrics,
-                opsPerSecond: stats.operations.json || baseMetrics.opsPerSecond,
+                opsPerSecond: stats.operations.json ?? null,
                 storageEfficiency: 0.95,
                 compressionRatio: 2.4
             };
         case 'streams':
             return {
                 ...baseMetrics,
-                messagesPerSecond: stats.operations.streams || baseMetrics.opsPerSecond,
+                messagesPerSecond: stats.operations.streams ?? null,
                 avgMessageSize: '1.2KB',
                 retentionPeriod: '24h'
             };
         case 'timeseries':
             return {
                 ...baseMetrics,
-                pointsPerSecond: stats.operations.timeseries || baseMetrics.opsPerSecond,
+                pointsPerSecond: stats.operations.timeseries ?? null,
                 retentionPolicy: '7d',
                 compressionRatio: 4.2
             };
         case 'vector':
             return {
                 ...baseMetrics,
-                searchesPerSecond: stats.operations.vector || baseMetrics.opsPerSecond,
+                searchesPerSecond: stats.operations.vector ?? null,
                 avgDistance: 0.15,
                 dimensionality: 1536
             };
@@ -395,12 +390,8 @@ export default function EnhancedPerformanceDashboard() {
                                 <div>
                                     <div className="text-xs text-blue-400/80 font-mono">OPERATIONS/SEC</div>
                                     <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerfomance?.json?.opsPerSecond || 45}
+                                        {metrics.modulePerformance?.json?.opsPerSecond ?? '-'}
                                     </div>
-                                </div>
-                                <div>
-                                    <div className="text-xs text-blue-400/80 font-mono">UPTIME</div>
-                                    <div className="text-sm font-bold text-blue-300 font-mono">99.9%</div>
                                 </div>
                             </div>
                             <div className="text-xs text-blue-400/60 font-mono mt-2">AGENT PROFILES + KEY MOMENTS</div>
@@ -425,7 +416,7 @@ export default function EnhancedPerformanceDashboard() {
                                 <div>
                                     <div className="text-xs text-blue-400/80 font-mono">MSG/SEC</div>
                                     <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.streams?.messagesPerSecond || 78}
+                                        {metrics.modulePerformance?.streams?.messagesPerSecond ?? '-'}
                                     </div>
                                 </div>
                                 <div>
@@ -455,7 +446,7 @@ export default function EnhancedPerformanceDashboard() {
                                 <div>
                                     <div className="text-xs text-blue-400/80 font-mono">POINTS/SEC</div>
                                     <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.timeseries?.pointsPerSecond || 34}
+                                        {metrics.modulePerformance?.timeseries?.pointsPerSecond ?? '-'}
                                     </div>
                                 </div>
                                 <div>
@@ -485,7 +476,7 @@ export default function EnhancedPerformanceDashboard() {
                                 <div>
                                     <div className="text-xs text-blue-400/80 font-mono">SEARCH/SEC</div>
                                     <div className="text-sm font-bold text-blue-300 font-mono">
-                                        {metrics.modulePerformance?.vector?.searchesPerSecond || 25}
+                                        {metrics.modulePerformance?.vector?.searchesPerSecond ?? '-'}
                                     </div>
                                 </div>
                                 <div>
