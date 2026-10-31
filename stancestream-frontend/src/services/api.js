@@ -38,7 +38,7 @@ const withRetry = async (fn, maxRetries = 2, delay = 1000) => {
 
 export class StanceStreamAPI {
     constructor({ fetchImpl, abortSignalImpl } = {}) {
-        this.fetchImpl = fetchImpl || fetch;
+        this.fetchImpl = fetchImpl || ((...args) => fetch(...args));
         this.abortSignalImpl = abortSignalImpl || AbortSignal;
     }
 
