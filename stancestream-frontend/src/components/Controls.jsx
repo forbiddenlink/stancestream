@@ -112,6 +112,14 @@ const Controls = () => {
         }
     };
 
+    // The summary is model output and the popup shares our origin, so it must be text, not markup.
+    const escapeHtml = (value) => String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
     const handleSummarize = async () => {
         setLoading(prev => ({ ...prev, summarize: true }));
         try {
@@ -129,11 +137,11 @@ const Controls = () => {
                             <h1>📊 StanceStream Debate Summary</h1>
                             <div style="background: #334155; padding: 20px; border-radius: 10px; margin: 20px 0;">
                                 <h2>Key Points</h2>
-                                <pre style="white-space: pre-wrap; background: #475569; padding: 15px; border-radius: 5px;">${result.summary}</pre>
+                                <pre style="white-space: pre-wrap; background: #475569; padding: 15px; border-radius: 5px;">${escapeHtml(result.summary ?? '')}</pre>
                             </div>
                             <div style="background: #334155; padding: 20px; border-radius: 10px;">
                                 <h2>Metadata</h2>
-                                <p><strong>Messages Analyzed:</strong> ${result.metadata?.messageCount || 'N/A'}</p>
+                                <p><strong>Messages Analyzed:</strong> ${escapeHtml(result.metadata?.messageCount || 'N/A')}</p>
                                 <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
                             </div>
                         </body>
