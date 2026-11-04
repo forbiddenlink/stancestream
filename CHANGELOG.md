@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/forbiddenlink/stancestream/compare/v1.1.6...v1.2.0) (2026-11-04)
+
+
+### Features
+
+* **ui:** redesign around a live stance rail in vermilion on oxblood ([#161](https://github.com/forbiddenlink/stancestream/issues/161)) ([e052d1b](https://github.com/forbiddenlink/stancestream/commit/e052d1b8148630551c7ee0b16723d11561a66ab9))
+
+
+### Bug Fixes
+
+* **deps:** raise follow-redirects floor to patched 1.16.2 ([#157](https://github.com/forbiddenlink/stancestream/issues/157)) ([2041049](https://github.com/forbiddenlink/stancestream/commit/20410495ab5a793bda596a8cf8089e1e781cc220))
+* **security:** escape the debate summary before writing it into the popup ([#162](https://github.com/forbiddenlink/stancestream/issues/162)) ([9adf60d](https://github.com/forbiddenlink/stancestream/commit/9adf60d98c916a353aa364850a866f9330601340))
+
 ## [1.1.6](https://github.com/forbiddenlink/stancestream/compare/v1.1.5...v1.1.6) (2026-10-31)
 
 
