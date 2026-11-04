@@ -342,7 +342,7 @@ export default function EnhancedControls({
                                 />
                                 <span className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 font-bold text-center min-w-0">
                                     <Icon name={topic.icon} size={14} className="flex-shrink-0 sm:size-4 text-green-400" />
-                                    <span className="truncate text-xs sm:text-sm leading-tight">{topic.name.toUpperCase()}</span>
+                                    <span className="text-xs sm:text-sm leading-tight text-center tracking-tight">{topic.name.toUpperCase()}</span>
                                 </span>
                             </label>
                         ))}

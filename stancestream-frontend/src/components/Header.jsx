@@ -122,7 +122,7 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                         </div>
 
                         {/* Mobile Status Indicator - Only for very small screens */}
-                        <div className="md:hidden flex items-center space-x-1.5">
+                        <div className="hidden sm:flex md:hidden items-center space-x-1.5">
                             <div className={`w-2.5 h-2.5 rounded-full ${getStatusDot(connectionStatus)}`}></div>
                             <div className={`w-2.5 h-2.5 rounded-full ${getStatusDot(backendHealth)}`}></div>
                         </div>
