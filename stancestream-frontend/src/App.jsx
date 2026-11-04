@@ -483,12 +483,7 @@ export default function App() {
   return (
     <ToastProvider>
       <ErrorBoundary componentName="StanceStream Main Application">
-        <div className="min-h-screen bg-black text-green-300 flex flex-col animate-fade-in-up overflow-x-hidden font-mono">
-        {/* Matrix Rain Background Effect */}
-        <div className="fixed inset-0 opacity-5 pointer-events-none z-0">
-          <div className="matrix-rain"></div>
-        </div>
-
+        <div className="min-h-screen bg-stage text-slate-100 flex flex-col animate-fade-in-up overflow-x-hidden font-sans">
         <Header
           connectionStatus={connectionStatus}
           backendHealth={connectionHealth}

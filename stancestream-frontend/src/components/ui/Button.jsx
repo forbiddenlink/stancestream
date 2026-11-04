@@ -37,7 +37,7 @@ export const Button = ({
 
     return (
         <button
-            className={`${baseClasses} ${variantClass} ${sizeClass} ${className} ${disabled || loading ? 'opacity-50 cursor-not-allowed' : ''
+            className={`${baseClasses} ${variantClass} ${sizeClass} ${className} ${disabled || loading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
             disabled={disabled || loading}
             {...props}

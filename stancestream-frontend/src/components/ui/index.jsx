@@ -125,10 +125,10 @@ export const sizeVariants = {
 export const theme = {
     colors: {
         primary: {
-            50: '#eff6ff',
-            500: '#3b82f6',
-            600: '#2563eb',
-            700: '#1d4ed8'
+            50: '#fff1f3',
+            500: '#dc566c',
+            600: '#b83a50',
+            700: '#8f2b3f'
         },
         purple: {
             500: '#8b5cf6',
@@ -138,16 +138,16 @@ export const theme = {
             300: '#cbd5e1',
             400: '#94a3b8',
             500: '#64748b',
-            600: '#475569',
-            700: '#334155',
-            800: '#1e293b',
-            900: '#0f172a'
+            600: '#927770',
+            700: '#5b413c',
+            800: '#382321',
+            900: '#230f0e'
         },
         status: {
-            success: '#10b981',
-            warning: '#f59e0b',
-            error: '#ef4444',
-            info: '#3b82f6'
+            success: '#ff7a55',
+            warning: '#e9bb80',
+            error: '#ea4560',
+            info: '#dc566c'
         }
     },
     shadows: {

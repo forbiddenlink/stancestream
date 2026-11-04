@@ -32,25 +32,27 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
     return (
         <header className="bg-surface-elevated border-b border-green-500/20 shadow-elevated sticky top-0 z-50 animate-slide-in-down backdrop-blur-sm">
             <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4 lg:px-8">
-                <Flex justify="between" align="center" className="h-14 sm:h-16 lg:h-20">
+                <Flex justify="between" align="center" className="min-h-[4.5rem] lg:min-h-[5.75rem] py-2">
                     {/* Matrix Logo and Title */}
                     <Flex align="center" gap="gap-2 sm:gap-3 lg:gap-4" className="min-w-0 flex-1 sm:flex-none">
-                        <div className="relative flex-shrink-0">
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center justify-center shadow-glow transform hover:scale-105 transition-all duration-150">
-                                <Icon name="activity" size={20} className="text-green-400 sm:hidden" />
-                                <Icon name="activity" size={24} className="text-green-400 hidden sm:block" />
-                            </div>
-                            {/* Matrix glow effect */}
-                            <div className="absolute inset-0 bg-green-500/20 rounded-xl opacity-40 blur-lg -z-10"></div>
+                        <div className="relative flex-shrink-0" aria-hidden="true">
+                            <svg viewBox="0 0 56 56" className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14" fill="none">
+                                <rect x="1" y="1" width="54" height="54" rx="10" fill="#1b0d0c" stroke="#3a1c1a" strokeWidth="2" />
+                                <path d="M10 20H46M10 36H46" stroke="#5b413c" strokeWidth="2" strokeLinecap="round" />
+                                <circle cx="22" cy="20" r="6" fill="#f4cfc6" />
+                                <circle cx="40" cy="20" r="6" fill="#ff6a45" />
+                                <circle cx="35" cy="36" r="6" fill="#f4cfc6" />
+                                <circle cx="17" cy="36" r="6" fill="#ff6a45" />
+                            </svg>
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent font-mono tracking-wider">
+                            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black text-slate-50 uppercase tracking-[0.06em] leading-none">
                                 STANCESTREAM
                             </h1>
-                            <p className="text-gray-400 text-xs sm:text-sm lg:text-base font-medium font-mono">
+                            <p className="text-slate-300 text-[11px] sm:text-xs lg:text-sm font-semibold font-mono tracking-[0.16em] mt-1">
                                 LIVE AI DEBATE INTELLIGENCE PLATFORM
                             </p>
-                            <p className="text-gray-500 text-[10px] sm:text-xs font-medium font-mono">
+                            <p className="hidden sm:block text-slate-400 text-[10px] sm:text-xs font-medium font-mono">
                                 By StanceStream Editorial Team • <time dateTime="2026-02-07">Updated February 7, 2026</time>
                             </p>
                         </div>
@@ -120,7 +122,7 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                         </div>
 
                         {/* Mobile Status Indicator - Only for very small screens */}
-                        <div className="md:hidden flex items-center space-x-1.5">
+                        <div className="hidden sm:flex md:hidden items-center space-x-1.5">
                             <div className={`w-2.5 h-2.5 rounded-full ${getStatusDot(connectionStatus)}`}></div>
                             <div className={`w-2.5 h-2.5 rounded-full ${getStatusDot(backendHealth)}`}></div>
                         </div>

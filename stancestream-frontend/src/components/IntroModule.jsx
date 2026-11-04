@@ -1,6 +1,7 @@
 // IntroModule.jsx - Professional User Onboarding Experience
 import React, { useState } from 'react';
 import Icon from './Icon';
+import StanceRail from './StanceRail';
 import { Button, Modal, ModalHeader, ModalContent, Card, CardHeader, CardContent } from './ui';
 
 const IntroModule = ({ onComplete, showIntro = false }) => {
@@ -20,11 +21,11 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
       content: (
         <div className="text-center">
           <div className="mb-6">
-            <Icon name="zap" className="w-16 h-16 mx-auto text-green-400 mb-4" />
-            <h3 className="text-2xl font-bold text-white mb-2">Enterprise AI Debate Platform</h3>
-            <p className="text-gray-300 text-lg">
+            <h3 className="font-display text-3xl font-black uppercase tracking-[0.04em] text-white mb-2">Enterprise AI Debate Platform</h3>
+            <p className="text-gray-300 text-lg mb-5">
               Experience real-time AI agents powered by all 4 Redis modules working together
             </p>
+            <StanceRail compact />
           </div>
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
@@ -40,7 +41,6 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
           </div>
         </div>
       ),
-      icon: "home",
       color: "green"
     },
     {

@@ -146,14 +146,14 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
             <div className={`flex-1 p-6 bg-black/80 min-h-[240px] ${isExpanded ? 'min-h-96' : 'min-h-64'}`}>
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 60 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#22c55e" opacity={0.2} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="#ff7a55" opacity={0.2} />
                         <XAxis
                             dataKey="timeLabel"
-                            stroke="#22c55e"
+                            stroke="#ff7a55"
                             fontSize={12}
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fill: '#22c55e', fontFamily: 'monospace' }}
+                            tick={{ fill: '#ff7a55', fontFamily: 'monospace' }}
                             angle={-45}
                             textAnchor="end"
                             height={80}
@@ -161,30 +161,30 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
                         />
                         <YAxis
                             domain={['dataMin - 0.1', 'dataMax + 0.1']}
-                            stroke="#22c55e"
+                            stroke="#ff7a55"
                             fontSize={12}
                             tickLine={false}
                             axisLine={false}
-                            tick={{ fill: '#22c55e', fontFamily: 'monospace' }}
+                            tick={{ fill: '#ff7a55', fontFamily: 'monospace' }}
                             tickFormatter={(value) => value.toFixed(2)}
                         />
                         <Tooltip content={<CustomTooltip />} />
                         <Line
                             type="monotone"
                             dataKey="senatorbot"
-                            stroke="#22c55e"
+                            stroke="#ff7a55"
                             strokeWidth={3}
-                            dot={{ fill: '#22c55e', strokeWidth: 2, r: 4 }}
-                            activeDot={{ r: 6, stroke: '#22c55e', strokeWidth: 2, fill: '#16a34a' }}
+                            dot={{ fill: '#ff7a55', strokeWidth: 2, r: 4 }}
+                            activeDot={{ r: 6, stroke: '#ff7a55', strokeWidth: 2, fill: '#cf3a16' }}
                             name="SENATORBOT"
                         />
                         <Line
                             type="monotone"
                             dataKey="reformerbot"
-                            stroke="#4ade80"
+                            stroke="#ff7a55"
                             strokeWidth={3}
-                            dot={{ fill: '#4ade80', strokeWidth: 2, r: 4 }}
-                            activeDot={{ r: 6, stroke: '#4ade80', strokeWidth: 2, fill: '#22c55e' }}
+                            dot={{ fill: '#ff7a55', strokeWidth: 2, r: 4 }}
+                            activeDot={{ r: 6, stroke: '#ff7a55', strokeWidth: 2, fill: '#ff7a55' }}
                             name="REFORMERBOT"
                         />
                     </LineChart>

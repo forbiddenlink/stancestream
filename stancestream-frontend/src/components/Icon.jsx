@@ -172,6 +172,7 @@ const iconMap = {
     'leader': Crown,
 
     // Stance indicators
+    'x': X,
     'against': X,
     'neutral': Circle,
     'support': CheckCircle
