@@ -156,7 +156,7 @@
 }
 
 .hover-glow:hover {
-    box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 20px rgba(220, 86, 108, 0.5);
 }
 
 .hover-rotate {
@@ -261,7 +261,7 @@ html {
 }
 
 .focus-ring:focus {
-    outline-color: #3b82f6;
+    outline-color: #dc566c;
 }
 
 /* Morphing Backgrounds */

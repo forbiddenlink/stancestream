@@ -2,16 +2,16 @@
 export const enhancedColors = {
     // Primary palette with more sophistication
     primary: {
-        50: '#eff6ff',
-        100: '#dbeafe',
+        50: '#fff1f3',
+        100: '#ffe0e5',
         200: '#bfdbfe',
         300: '#93c5fd',
         400: '#60a5fa',
-        500: '#3b82f6',
-        600: '#2563eb',
-        700: '#1d4ed8',
+        500: '#dc566c',
+        600: '#b83a50',
+        700: '#8f2b3f',
         800: '#1e40af',
-        900: '#1e3a8a',
+        900: '#451520',
         950: '#172554'
     },
 
@@ -47,9 +47,9 @@ export const enhancedColors = {
     // Professional surface colors
     surface: {
         'card-light': 'rgba(248, 250, 252, 0.95)',
-        'card-dark': 'rgba(15, 23, 42, 0.95)',
+        'card-dark': 'rgba(21, 8, 8, 0.95)',
         'panel-light': 'rgba(241, 245, 249, 0.90)',
-        'panel-dark': 'rgba(30, 41, 59, 0.90)',
+        'panel-dark': 'rgba(35, 17, 16, 0.90)',
         'overlay': 'rgba(0, 0, 0, 0.50)',
         'glass-light': 'rgba(255, 255, 255, 0.10)',
         'glass-dark': 'rgba(0, 0, 0, 0.20)'
@@ -59,27 +59,27 @@ export const enhancedColors = {
     status: {
         success: {
             50: '#f0fdf4',
-            500: '#22c55e',
-            600: '#16a34a',
+            500: '#ff7a55',
+            600: '#cf3a16',
             900: '#14532d'
         },
         warning: {
             50: '#fffbeb',
-            500: '#f59e0b',
+            500: '#e9bb80',
             600: '#d97706',
             900: '#78350f'
         },
         error: {
             50: '#fef2f2',
-            500: '#ef4444',
-            600: '#dc2626',
+            500: '#ea4560',
+            600: '#c62f49',
             900: '#7f1d1d'
         },
         info: {
-            50: '#eff6ff',
-            500: '#3b82f6',
-            600: '#2563eb',
-            900: '#1e3a8a'
+            50: '#fff1f3',
+            500: '#dc566c',
+            600: '#b83a50',
+            900: '#451520'
         }
     }
 };
@@ -87,10 +87,10 @@ export const enhancedColors = {
 export const enhancedGradients = {
     // Hero gradients for major sections
     hero: {
-        primary: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        primary: 'linear-gradient(135deg, #ff6a45 0%, #b83a2a 100%)',
         secondary: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
         success: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-        dark: 'linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%)'
+        dark: 'linear-gradient(135deg, #120707 0%, #1a1a1a 50%, #120707 100%)'
     },
 
     // Card backgrounds
@@ -98,14 +98,14 @@ export const enhancedGradients = {
         glass: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
         darkGlass: 'linear-gradient(145deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%)',
         subtle: 'linear-gradient(145deg, rgba(248,250,252,0.95) 0%, rgba(241,245,249,0.95) 100%)',
-        darkSubtle: 'linear-gradient(145deg, rgba(15,23,42,0.95) 0%, rgba(30,41,59,0.95) 100%)'
+        darkSubtle: 'linear-gradient(145deg, rgba(21,8,8,0.95) 0%, rgba(35,17,16,0.95) 100%)'
     },
 
     // Interactive elements
     interactive: {
-        button: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        button: 'linear-gradient(135deg, #ff6a45 0%, #b83a2a 100%)',
         buttonHover: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
-        accent: 'linear-gradient(90deg, #ff6b6b 0%, #ffa500 100%)'
+        accent: 'linear-gradient(90deg, #ff6a45 0%, #e9bb80 100%)'
     }
 };
 
@@ -181,8 +181,8 @@ export const shadows = {
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
 
     // Special effects
-    glow: '0 0 20px rgba(59, 130, 246, 0.3)',
-    glowHover: '0 0 30px rgba(59, 130, 246, 0.4)',
+    glow: '0 0 20px rgba(220, 86, 108, 0.3)',
+    glowHover: '0 0 30px rgba(220, 86, 108, 0.4)',
     inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)'
 };
 

@@ -1,0 +1,108 @@
+/* Shared style for the static /about, /contact and /privacy-policy pages.
+   Mirrors the app: oxblood-black ground, vermilion and blush stance markers. */
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap');
+
+:root {
+  --ground: #120707;
+  --raised: #1b0d0c;
+  --line: #3a1c1a;
+  --ink: #f3e6e0;
+  --ink-soft: #d3b9af;
+  --vermilion: #ff6a45;
+  --blush: #f4cfc6;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--ground); }
+
+body {
+  margin: 0 auto;
+  max-width: 46rem;
+  padding: 2.5rem 1.25rem 4rem;
+  font-family: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--ink);
+  background:
+    linear-gradient(to right, rgba(255, 106, 69, 0.045) 1px, transparent 1px) 0 0 / 48px 48px,
+    linear-gradient(to bottom, rgba(255, 106, 69, 0.045) 1px, transparent 1px) 0 0 / 48px 48px,
+    var(--ground);
+  min-height: 100vh;
+}
+
+header { margin-bottom: 1.5rem; }
+
+h1 {
+  margin: 0;
+  font-family: 'Big Shoulders Display', 'Hanken Grotesk', system-ui, sans-serif;
+  font-weight: 900;
+  font-size: clamp(2.6rem, 9vw, 4.25rem);
+  line-height: 0.95;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #fbf3ef;
+}
+
+/* the stance tape: a rule with one blush and one vermilion marker */
+h1::after {
+  content: '';
+  display: block;
+  height: 14px;
+  max-width: 21rem;
+  margin: 1.1rem 0 0.9rem;
+  background:
+    radial-gradient(circle at 74% 50%, var(--vermilion) 0 6px, transparent 6.5px),
+    radial-gradient(circle at 28% 50%, var(--blush) 0 6px, transparent 6.5px),
+    linear-gradient(rgba(255, 106, 69, 0.5), rgba(255, 106, 69, 0.5)) 28% 50% / 46% 4px no-repeat,
+    linear-gradient(var(--line), var(--line)) 0 50% / 100% 2px no-repeat;
+}
+
+header p {
+  margin: 0;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+}
+
+header p strong { font-weight: 500; }
+
+nav, footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+nav { padding: 0.75rem 0; border-top: 1px dashed var(--line); border-bottom: 1px dashed var(--line); margin-bottom: 1.5rem; }
+footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px dashed var(--line); }
+
+nav a, footer a { margin: 0; padding: 0.25rem 0; text-decoration: none; color: var(--blush); }
+nav a:hover, footer a:hover { color: var(--vermilion); text-decoration: underline; }
+
+main p { margin: 0 0 1.15rem; color: var(--ink); max-width: 40rem; }
+main h2, main h3 {
+  font-family: 'Big Shoulders Display', 'Hanken Grotesk', system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fbf3ef;
+  margin: 2rem 0 0.5rem;
+}
+main ul, main ol { color: var(--ink); padding-left: 1.25rem; max-width: 40rem; }
+main li { margin-bottom: 0.4rem; }
+
+main a { color: #ff9a7b; text-underline-offset: 3px; }
+main a:hover { color: #ffc5ae; }
+
+a:focus-visible {
+  outline: 3px solid var(--vermilion);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+::selection { background: var(--vermilion); color: #120707; }

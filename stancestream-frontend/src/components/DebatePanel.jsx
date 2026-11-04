@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import Icon from './Icon';
 import SentimentBadge from './SentimentBadge';
 import TranscriptTicker from './TranscriptTicker';
+import StanceRail from './StanceRail';
 
 /**
  * DebatePanel — Broadcast Versus-Arena
@@ -132,7 +133,7 @@ const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => 
             <div className="flex-1 overflow-y-auto scrollbar-thin min-h-0 px-3 py-4 space-y-3">
                 {messages.length === 0 ? (
                     <div className="h-full min-h-[140px] flex items-center justify-center text-center px-4">
-                        <p className="font-mono text-[11px] tracking-widest text-slate-600">
+                        <p className="font-mono text-[11px] tracking-widest text-slate-500">
                             AWAITING OPENING STATEMENT
                         </p>
                     </div>
@@ -192,7 +193,7 @@ const CenterSpine = ({ scoreA, scoreB, hasData }) => {
 
     return (
         <div className="hidden md:flex flex-col items-center justify-between py-2 px-1 select-none">
-            <div className="font-display font-black text-slate-600 text-sm tracking-widest">VS</div>
+            <div className="font-display font-black text-slate-500 text-sm tracking-widest">VS</div>
 
             {hasData ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-2 w-14">
@@ -285,20 +286,17 @@ const DebatePanel = ({ messages = [] }) => {
 
             {/* Versus stage */}
             {messages.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-center text-center px-6 gap-5">
-                    <div className="flex items-center gap-6">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-arena-a to-arena-a-deep flex items-center justify-center shadow-glow">
-                            <Icon name="user" size={28} className="text-stage" />
-                        </div>
-                        <span className="font-display font-black text-2xl text-slate-600">VS</span>
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-arena-b to-arena-b-deep flex items-center justify-center shadow-glow-strong">
-                            <Icon name="zap" size={28} className="text-stage" />
-                        </div>
-                    </div>
-                    <h3 className="font-display text-xl font-bold text-slate-200">Ready for the Arena</h3>
-                    <p className="font-sans text-slate-400 max-w-md leading-relaxed">
+                <div className="flex-1 flex flex-col items-center justify-start text-center px-4 sm:px-6 pt-8 pb-8 gap-4">
+                    <h3 className="font-display text-3xl sm:text-5xl font-black uppercase tracking-[0.04em] text-slate-50 leading-none">
+                        Ready for the Arena
+                    </h3>
+                    <p className="font-sans text-slate-300 max-w-md leading-relaxed">
                         Select a topic and start a debate. Two AI agents take opposite corners with
                         live fact-checking, memory, and stance evolution.
+                    </p>
+                    <StanceRail />
+                    <p className="font-mono text-[11px] tracking-wide text-slate-400 max-w-md">
+                        Opening stances as seeded in the repo. Start a debate to watch them move.
                     </p>
                 </div>
             ) : (
