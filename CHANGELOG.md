@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/forbiddenlink/stancestream/compare/v1.2.0...v1.2.1) (2026-11-05)
+
+
+### Bug Fixes
+
+* **deps:** add node-forge &gt;=1.4.1 &lt;2 override ([#163](https://github.com/forbiddenlink/stancestream/issues/163)) ([b47f114](https://github.com/forbiddenlink/stancestream/commit/b47f114c38b0008fd87139e70ef289f960856cbb))
+
 ## [1.2.0](https://github.com/forbiddenlink/stancestream/compare/v1.1.6...v1.2.0) (2026-11-04)
 
 
