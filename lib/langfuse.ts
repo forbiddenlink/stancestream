@@ -1,29 +1,6 @@
-import { Langfuse } from "langfuse";
-
-let langfuseInstance: Langfuse | null = null;
-
-export function getLangfuse(): Langfuse | null {
-  if (langfuseInstance) return langfuseInstance;
-
-  const secretKey = process.env.LANGFUSE_SECRET_KEY;
-  const publicKey = process.env.LANGFUSE_PUBLIC_KEY;
-
-  if (!secretKey || !publicKey) return null;
-
-  langfuseInstance = new Langfuse({
-    secretKey,
-    publicKey,
-    baseUrl: process.env.LANGFUSE_HOST ?? "https://cloud.langfuse.com",
-  });
-
-  return langfuseInstance;
-}
-
-export async function flushLangfuse(): Promise<void> {
-  if (langfuseInstance) {
-    await langfuseInstance.flushAsync();
-  }
-}
+// Single implementation lives in src/utils/langfuse.js so the process has one
+// Langfuse tracer provider (the v6 SDK registers its provider globally per module).
+export { getLangfuse, flushLangfuse } from "../src/utils/langfuse.js";
 
 export function isLangfuseConfigured(): boolean {
   return Boolean(
