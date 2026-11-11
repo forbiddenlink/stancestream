@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.2](https://github.com/forbiddenlink/stancestream/compare/v1.2.1...v1.2.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* **deps:** pin patched transitive versions for open Dependabot alerts ([#167](https://github.com/forbiddenlink/stancestream/issues/167)) ([f388978](https://github.com/forbiddenlink/stancestream/commit/f38897804f4e7737e894ee42eaef6a5af92c0b47))
+* **observability:** move Langfuse tracing to SDK v6 before v4 cutover ([#165](https://github.com/forbiddenlink/stancestream/issues/165)) ([ce16b65](https://github.com/forbiddenlink/stancestream/commit/ce16b65c458f3a991feeb52587d91c8a052468af))
+
 ## [1.2.1](https://github.com/forbiddenlink/stancestream/compare/v1.2.0...v1.2.1) (2026-11-05)
 
 
