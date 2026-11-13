@@ -125,29 +125,29 @@ export const sizeVariants = {
 export const theme = {
     colors: {
         primary: {
-            50: '#fff1f3',
-            500: '#dc566c',
-            600: '#b83a50',
-            700: '#8f2b3f'
+            50: '#faeee8',
+            500: '#b32f12',
+            600: '#a22d12',
+            700: '#8f2410'
         },
         purple: {
-            500: '#8b5cf6',
-            600: '#7c3aed'
+            500: '#8f3558',
+            600: '#7c2c4a'
         },
         slate: {
-            300: '#cbd5e1',
-            400: '#94a3b8',
-            500: '#64748b',
-            600: '#927770',
-            700: '#5b413c',
-            800: '#382321',
-            900: '#230f0e'
+            300: '#33423a',
+            400: '#3f4f46',
+            500: '#4a5a51',
+            600: '#66776e',
+            700: '#a9b6ae',
+            800: '#c9d3cd',
+            900: '#eef2ef'
         },
         status: {
-            success: '#ff7a55',
-            warning: '#e9bb80',
-            error: '#ea4560',
-            info: '#dc566c'
+            success: '#a22d12',
+            warning: '#8a5b14',
+            error: '#8f1f33',
+            info: '#24505f'
         }
     },
     shadows: {

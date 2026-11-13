@@ -9,97 +9,73 @@ module.exports = {
         extend: {
             fontFamily: {
                 'sans': ['Hanken Grotesk', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-                'mono': ['JetBrains Mono', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', 'monospace'],
-                'display': ['Big Shoulders Display', 'Hanken Grotesk', 'system-ui', 'sans-serif']
+                'mono': ['Hanken Grotesk', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+                'display': ['Source Serif 4', 'Iowan Old Style', 'Georgia', 'serif'],
+                'serif': ['Source Serif 4', 'Iowan Old Style', 'Georgia', 'serif']
             },
 
             colors: {
-                // Matrix Green - Primary brand color
+                // Rust: primary brand colour (side B)
                 matrix: {
-                    50: '#fff3ee',
-                    100: '#ffe2d6',
-                    200: '#ffc5ae',
-                    300: '#ffa586',
-                    400: '#ff7a55',
-                    500: '#f2502a',
-                    600: '#cf3a16',
-                    700: '#a22d12',
-                    800: '#75220f',
-                    900: '#4a160c',
+                    50: '#3a0f06', 100: '#5c1709', 200: '#7a1f0c', 300: '#8f2410', 400: '#a22d12',
+                    500: '#b32f12', 600: '#c9603f', 700: '#dd9a82', 800: '#ecc4b4', 900: '#f4ddd3',
                 },
-                // Accent - Cyan for interactive highlights
+                // Accent: deep teal (side A)
                 accent: {
-                    400: '#f2c0b0',
-                    500: '#dca391',
-                    600: '#b98270',
+                    400: '#1d4656',
+                    500: '#24505f',
+                    600: '#5d8190',
                 },
-                // Neutral grays (replacing slate)
+                // Neutrals: grey-green, ink (50) to paper (900)
                 neutral: {
-                    50: '#fbf3ef',
-                    100: '#f3e6e0',
-                    200: '#e6d2ca',
-                    300: '#d3b9af',
-                    400: '#bba096',
-                    500: '#a58a80',
-                    600: '#927770',
-                    700: '#5b413c',
-                    800: '#382321',
-                    900: '#230f0e',
+                    50: '#131a16', 100: '#17201b', 200: '#243029', 300: '#33423a', 400: '#3f4f46',
+                    500: '#4a5a51', 600: '#66776e', 700: '#a9b6ae', 800: '#c9d3cd', 900: '#eef2ef',
                 },
-                // Surface levels for cards/panels
+                // Surface levels for cards/panels: paper, raised paper, deeper paper
                 surface: {
-                    base: '#120707',
-                    card: '#1b0d0c',
-                    elevated: '#231110',
-                    overlay: '#2e1816',
+                    base: '#e3e9e5',
+                    card: '#eef2ef',
+                    elevated: '#f4f7f5',
+                    overlay: '#d3dcd6',
                 },
-                // Legacy support (keeping primary for gradual migration)
+                // Legacy support (kept for gradual migration): rose ramp, ink to paper
                 primary: {
-                    50: '#fff1f3',
-                    100: '#ffe0e5',
-                    200: '#ffc2cc',
-                    300: '#fba5b3',
-                    400: '#f27d90',
-                    500: '#dc566c',
-                    600: '#b83a50',
-                    700: '#8f2b3f',
-                    800: '#66202e',
-                    900: '#451520',
-                    950: '#2b0c14'
+                    50: '#2b0c14', 100: '#451520', 200: '#66202e', 300: '#7a2535', 400: '#8f2b3f',
+                    500: '#a8344a', 600: '#c7788a', 700: '#dba5b1', 800: '#ecd0d6', 900: '#f4e2e6',
+                    950: '#faf0f2'
                 },
             },
 
             backgroundImage: {
-                'hero-gradient': 'linear-gradient(135deg, #ff6a45 0%, #b83a2a 100%)',
-                'card-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
-                'button-gradient': 'linear-gradient(135deg, #ff6a45 0%, #b83a2a 100%)',
-                'glass-gradient': 'linear-gradient(145deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.1) 100%)'
+                'hero-gradient': 'linear-gradient(135deg, #b32f12 0%, #8f2410 100%)',
+                'card-gradient': 'linear-gradient(145deg, rgba(23,32,27,0.04) 0%, rgba(23,32,27,0.02) 100%)',
+                'button-gradient': 'linear-gradient(135deg, #b32f12 0%, #8f2410 100%)',
+                'glass-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 100%)'
             },
 
             boxShadow: {
-                // Broadcast versus-arena glow system - two-hue (cool A / hot B)
-                'glow': '0 0 24px rgba(244, 207, 198, 0.4)',        // arena-a (cool)
-                'glow-hover': '0 0 34px rgba(244, 207, 198, 0.5)',
-                'glow-strong': '0 0 32px rgba(255, 106, 69, 0.5)', // arena-b (hot)
-                // Card shadows for dark surfaces
-                'card': '0 4px 24px rgba(0, 0, 0, 0.5)',
-                'card-hover': '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(244, 207, 198, 0.15)',
-                'elevated': '0 8px 32px rgba(0, 0, 0, 0.8)',
-                'modal': '0 16px 48px rgba(0, 0, 0, 0.9), 0 0 30px rgba(244, 207, 198, 0.12)',
-                // Status glows
-                'glow-success': '0 0 20px rgba(255, 122, 85, 0.4)',
-                'glow-warning': '0 0 20px rgba(233, 187, 128, 0.4)',
-                'glow-error': '0 0 20px rgba(234, 69, 96, 0.4)',
-                'glow-info': '0 0 20px rgba(242, 192, 176, 0.4)',
+                // Flat paper: rules do the work, shadows stay faint. Names kept so
+                // existing utilities (shadow-card, shadow-glow...) keep resolving.
+                'glow': '0 0 0 1px rgba(36, 80, 95, 0.35)',
+                'glow-hover': '0 0 0 1px rgba(36, 80, 95, 0.5)',
+                'glow-strong': '0 0 0 1px rgba(179, 47, 18, 0.5)',
+                'card': '0 1px 0 rgba(23, 32, 27, 0.08)',
+                'card-hover': '0 1px 0 rgba(23, 32, 27, 0.2)',
+                'elevated': '0 1px 0 rgba(23, 32, 27, 0.12)',
+                'modal': '0 12px 32px rgba(23, 32, 27, 0.25)',
+                'glow-success': '0 0 0 1px rgba(162, 45, 18, 0.4)',
+                'glow-warning': '0 0 0 1px rgba(138, 91, 20, 0.4)',
+                'glow-error': '0 0 0 1px rgba(143, 31, 51, 0.4)',
+                'glow-info': '0 0 0 1px rgba(36, 80, 95, 0.4)',
             },
 
-            // Border radius - unified to 12px
+            // Border radius: square-cornered, like the record's rules
             borderRadius: {
-                'card': '12px',
-                'button': '8px',
-                'input': '8px',
-                'badge': '6px',
-                'modal': '16px',
+                'card': '2px',
+                'button': '2px',
+                'input': '2px',
+                'badge': '2px',
+                'modal': '2px',
             },
 
             animation: {
