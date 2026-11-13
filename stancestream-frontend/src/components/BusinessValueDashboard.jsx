@@ -1,267 +1,68 @@
-// Business Value Dashboard - Real-time ROI and Performance Analytics
-import { useState, useEffect, memo, useCallback } from 'react';
+// Business view: only what the backend measured from the semantic cache.
+// The backend (costCalculator.js) also derives dollar savings, annual figures and
+// enterprise projections from an assumed token price and an assumed 500 tokens per
+// request, and prints fixed claims ("10x faster", "technical moat"). None of that is
+// measured, so none of it is shown here.
+import { useState, useEffect, memo } from 'react';
 import api from '../services/api';
-import Icon from './Icon';
+
+const Stat = ({ label, value, note }) => (
+    <div className="stat">
+        <dt>{label}</dt>
+        <dd>{value}</dd>
+        {note && <p>{note}</p>}
+    </div>
+);
 
 const BusinessValueDashboard = memo(function BusinessValueDashboard() {
-    const [businessData, setBusinessData] = useState(null);
-    const [cacheMetrics, setCacheMetrics] = useState(null);
+    const [metrics, setMetrics] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [_refreshInterval, _setRefreshInterval] = useState(null);
 
-    const fetchBusinessMetrics = useCallback(async () => {
-        try {
-            setError(null);
-
-            // Get business summary and cache metrics
-            const [businessResponse, cacheResponse] = await Promise.all([
-                api.getBusinessSummary(),
-                api.getCacheMetrics()
-            ]);
-
-            if (businessResponse.success) {
-                setBusinessData(businessResponse);
-            }
-
-            if (cacheResponse.success) {
-                setCacheMetrics(cacheResponse);
-            }
-
-        } catch (error) {
-            console.error('Business metrics fetch error:', error);
-            setError('Failed to load business metrics');
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+    const [tick, setTick] = useState(0);
 
     useEffect(() => {
-        fetchBusinessMetrics();
-
-        // Automatic polling disabled to reduce server load
-        // const interval = setInterval(fetchBusinessMetrics, 30000);
-        // setRefreshInterval(interval);
-
-        return () => {
-            // No cleanup needed since polling is disabled
-        };
-    }, [fetchBusinessMetrics]);
-
-    if (isLoading) {
-        return (
-            <div className="bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10 p-8">
-                <div className="flex items-center justify-center">
-                    <Icon name="loader-2" className="w-8 h-8 animate-spin text-green-400" />
-                    <span className="ml-3 text-green-300 font-mono">Loading business analytics...</span>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="bg-black/80 border border-red-500/30 rounded-xl p-6">
-                <div className="flex items-center">
-                    <Icon name="alert-circle" className="w-6 h-6 text-red-400" />
-                    <span className="ml-3 text-red-300 font-mono">{error}</span>
-                </div>
-            </div>
-        );
-    }
-
-    const businessMetrics = businessData?.detailed_metrics;
-    const executiveSummary = businessData?.executive_summary;
-    const currentUsage = businessMetrics?.current_usage;
-    const performance = businessMetrics?.performance_impact;
-    const enterpriseProjections = businessMetrics?.enterprise_projections;
+        let live = true;
+        api.getBusinessSummary()
+            .then((res) => {
+                if (!live) return;
+                if (res.success) { setMetrics(res.detailed_metrics); setError(null); }
+                else setError('The server answered, but sent no cache measurements.');
+            })
+            .catch((e) => {
+                console.error('Business metrics fetch error:', e);
+                if (live) setError('The cache measurements could not be loaded. The server is not reachable or did not answer.');
+            })
+            .finally(() => { if (live) setIsLoading(false); });
+        return () => { live = false; };
+    }, [tick]);
 
     return (
-        <div className="space-y-6">
-            {/* Executive Summary Header - Matrix Style */}
-            {executiveSummary && (
-                <div className="bg-gradient-to-r from-surface-base/95 to-surface-card/95 border border-green-500/20 rounded-xl p-6 shadow-lg shadow-green-500/10">
-                    <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center justify-center">
-                            <Icon name="trending-up" className="w-6 h-6 text-green-400" />
-                        </div>
-                        <div className="flex-1">
-                            <h2 className="text-xl font-bold text-green-400 mb-2 font-mono">
-                                Business impact summary
-                            </h2>
-                            <p className="text-lg text-green-300 font-medium mb-3 font-mono">
-                                {executiveSummary.headline}
-                            </p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {executiveSummary.key_benefits?.map((benefit, index) => (
-                                    <div key={index} className="flex items-center gap-2">
-                                        <Icon name="check-circle" className="w-4 h-4 text-green-400 flex-shrink-0" />
-                                        <span className="text-green-200 text-sm font-mono">{benefit}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <section className="view-pane" aria-labelledby="biz-title">
+            <h2 id="biz-title" style={{ fontFamily: 'var(--serif)', fontSize: 28, fontWeight: 600, margin: '0 0 8px' }}>
+                Cache measurements
+            </h2>
+            <p className="section-note">
+                What the semantic cache measured on this server: how often a similar question was
+                answered from the cache instead of the AI provider.
+            </p>
+
+            {isLoading && <p role="status">Loading the cache measurements.</p>}
+            {error && <p role="status">{error}</p>}
+
+            {metrics?.current_usage && (
+                <dl className="stat-list">
+                    <Stat label="Cache hit rate" value={metrics.current_usage.cache_efficiency} />
+                    <Stat label="AI calls avoided" value={(metrics.performance_impact?.api_calls_eliminated ?? 0).toLocaleString()} note="Cache hits counted by the server." />
+                </dl>
             )}
 
-            {/* Current Performance Metrics */}
-            {currentUsage && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-500">
-                        <div className="flex items-center justify-between mb-2">
-                            <Icon name="dollar-sign" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-neutral-400 font-mono">Monthly savings</span>
-                        </div>
-                        <div className="text-2xl font-bold text-green-300 font-mono">
-                            ${currentUsage.monthly_savings}
-                        </div>
-                        <div className="text-sm text-green-400 mt-1 font-mono">
-                            ${currentUsage.annual_savings}/YEAR PROJECTED
-                        </div>
-                    </div>
-
-                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-400">
-                        <div className="flex items-center justify-between mb-2">
-                            <Icon name="zap" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-neutral-400 font-mono">Cache efficiency</span>
-                        </div>
-                        <div className="text-2xl font-bold text-green-300 font-mono">
-                            {currentUsage.cache_efficiency}
-                        </div>
-                        <div className="text-sm text-green-400 mt-1 font-mono">
-                            API cost reduction
-                        </div>
-                    </div>
-
-                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-300">
-                        <div className="flex items-center justify-between mb-2">
-                            <Icon name="cpu" className="w-6 h-6 text-green-300" />
-                            <span className="text-sm text-neutral-400 font-mono">Tokens saved</span>
-                        </div>
-                        <div className="text-2xl font-bold text-green-300 font-mono">
-                            {currentUsage.daily_tokens_saved?.toLocaleString() || '0'}
-                        </div>
-                        <div className="text-sm text-green-400 mt-1 font-mono">
-                            Daily processing saved
-                        </div>
-                    </div>
-
-                    <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-200">
-                        <div className="flex items-center justify-between mb-2">
-                            <Icon name="activity" className="w-6 h-6 text-green-200" />
-                            <span className="text-sm text-neutral-400 font-mono">System status</span>
-                        </div>
-                        <div className="text-lg font-bold text-green-300 font-mono">
-                            {performance?.system_efficiency || 'Optimizing'}
-                        </div>
-                        <div className="text-sm text-green-400 mt-1 font-mono">
-                            {performance?.production_readiness || 'Scaling'}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Scaling projections, extrapolated from measured savings - Matrix Style */}
-            {enterpriseProjections && (
-                <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
-                    <div className="flex items-center gap-3 mb-6">
-                        <Icon name="building" className="w-6 h-6 text-green-400" />
-                        <h3 className="text-xl font-bold text-green-300 font-mono">Scaling projections</h3>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {Object.entries(enterpriseProjections).map(([scale, data]) => (
-                            <div key={scale} className="bg-surface-elevated/50 border border-green-500/20 rounded-xl p-4">
-                                <div className="text-lg font-bold text-green-300 mb-1 font-mono">
-                                    {data.requests_per_day} requests/DAY
-                                </div>
-                                <div className="text-green-400 font-semibold font-mono">
-                                    ${data.annual_savings?.toLocaleString()}/YEAR SAVINGS
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Real-time Performance Indicators - Matrix Style */}
-            {cacheMetrics?.dashboard && (
-                <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-3">
-                            <Icon name="monitor" className="w-6 h-6 text-green-400" />
-                            <h3 className="text-xl font-bold text-green-300 font-mono">Real-time operations</h3>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm text-green-300 font-mono">Live</span>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {Object.entries(cacheMetrics.dashboard.primary_kpis).map(([key, value]) => (
-                            <div key={key} className="text-center bg-surface-elevated/50 border border-green-500/20 rounded-xl p-3">
-                                <div className="text-lg font-bold text-green-300 font-mono">{value}</div>
-                                <div className="text-sm text-green-400 font-mono">{key.replace(/_/g, ' ')}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* Business Case Highlight - Matrix Style */}
-            {executiveSummary?.business_case && (
-                <div className="bg-gradient-to-r from-surface-base/90 to-surface-card/90 border border-green-500/20 rounded-xl p-6 shadow-lg shadow-green-500/10">
-                    <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-xl flex items-center justify-center">
-                            <Icon name="briefcase" className="w-6 h-6 text-green-400" />
-                        </div>
-                        <div className="flex-1">
-                            <h3 className="text-lg font-bold text-green-300 mb-3 font-mono">Business case</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Immediate value</h4>
-                                    <p className="text-green-200 text-sm font-mono">
-                                        {executiveSummary.business_case.immediate_value}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Scalability</h4>
-                                    <p className="text-green-200 text-sm font-mono">
-                                        {executiveSummary.business_case.scalability}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Competitive advantage</h4>
-                                    <p className="text-green-200 text-sm font-mono">
-                                        {executiveSummary.business_case.competitive_advantage}
-                                    </p>
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Technical moat</h4>
-                                    <p className="text-green-200 text-sm font-mono">
-                                        {executiveSummary.business_case.technical_moat}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Last Updated - Matrix Style */}
-            <div className="text-center text-sm text-neutral-400 bg-surface-card border border-green-500/20 rounded-xl p-3">
-                <span className="font-mono">Last updated: {new Date().toLocaleTimeString()}</span>
-                <span className="mx-2 text-green-500">•</span>
-                <button
-                    onClick={fetchBusinessMetrics}
-                    className="text-green-400 hover:text-green-300 transition-colors duration-150 font-mono"
-                >
-                    Refresh
-                </button>
-            </div>
-        </div>
+            <p className="section-note">
+                Dollar savings and enterprise projections are not shown. The server computes them from an
+                assumed token price and an assumed request size, so they are estimates, not measurements.
+            </p>
+            <button type="button" className="btn-plain" onClick={() => setTick((t) => t + 1)}>Refresh</button>
+        </section>
     );
 });
 
