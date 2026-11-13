@@ -1,12 +1,16 @@
-// IntroModule.jsx - Professional User Onboarding Experience
-import React, { useState } from 'react';
-import Icon from './Icon';
-import StanceRail from './StanceRail';
-import { Button, Modal, ModalHeader, ModalContent, Card, CardHeader, CardContent } from './ui';
+// How it works: a short numbered list shown in a dialog.
+import { useEffect, useRef, useState } from 'react';
+
+const STEPS = [
+  ['Pick a topic and start a debate.', 'Two AI bots, SenatorBot and ReformerBot, argue it in turns.'],
+  ['Read the record.', 'Each turn and each stance is recorded. A diamond marks a turn where a bot\'s stance moved by more than 0.3 on the 0 to 1 scale.'],
+  ['Check the facts.', 'Each message is checked against stored facts, and the match score is listed under Fact checks.'],
+  ['Look under the record.', 'Analytics shows what the stats service measured. Platform lists the four Redis data models. Tools has the operations list.'],
+];
 
 const IntroModule = ({ onComplete, showIntro = false }) => {
-  const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(showIntro);
+  const closeRef = useRef(null);
 
   const [previousShowIntro, setPreviousShowIntro] = useState(showIntro);
   if (previousShowIntro !== showIntro) {
@@ -14,281 +18,41 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
     setIsVisible(showIntro);
   }
 
-  const steps = [
-    {
-      title: "Welcome to StanceStream",
-      subtitle: "Redis-Powered AI Intelligence Platform",
-      content: (
-        <div className="text-center">
-          <div className="mb-6">
-            <h3 className="font-display text-3xl font-bold text-white mb-2">Live AI Debate Platform</h3>
-            <p className="text-gray-300 text-lg mb-5">
-              Experience real-time AI agents powered by all 4 Redis modules working together
-            </p>
-            <StanceRail compact />
-          </div>
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
-              <Icon name="database" className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <div className="text-sm font-bold text-green-300">Semantic caching</div>
-              <div className="text-xs text-gray-400">Reuses answers to similar prompts</div>
-            </div>
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
-              <Icon name="activity" className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <div className="text-sm font-bold text-green-300">Live metrics</div>
-              <div className="text-xs text-gray-400">Updates as debates run</div>
-            </div>
-          </div>
-        </div>
-      ),
-      color: "green"
-    },
-    {
-      title: "4 Redis Modules in Action",
-      subtitle: "Multi-Modal Database Excellence",
-      content: (
-        <div>
-          <p className="text-gray-300 mb-6">
-            StanceStream showcases all 4 Redis modules working together in a sophisticated AI application:
-          </p>
-          <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 bg-blue-900/20 rounded-lg border border-blue-500/30">
-              <Icon name="database" className="w-8 h-8 text-blue-400" />
-              <div>
-                <div className="font-bold text-blue-300">RedisJSON</div>
-                <div className="text-sm text-gray-400">Complex agent personalities & emotional states</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-purple-900/20 rounded-lg border border-purple-500/30">
-              <Icon name="message-circle" className="w-8 h-8 text-purple-400" />
-              <div>
-                <div className="font-bold text-purple-300">Redis Streams</div>
-                <div className="text-sm text-gray-400">Real-time messaging & memory formation</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-green-900/20 rounded-lg border border-green-500/30">
-              <Icon name="trending-up" className="w-8 h-8 text-green-400" />
-              <div>
-                <div className="font-bold text-green-300">RedisTimeSeries</div>
-                <div className="text-sm text-gray-400">Stance evolution & performance tracking</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-orange-900/20 rounded-lg border border-orange-500/30">
-              <Icon name="search" className="w-8 h-8 text-orange-400" />
-              <div>
-                <div className="font-bold text-orange-300">Redis Vector</div>
-                <div className="text-sm text-gray-400">Semantic caching & fact verification</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      ),
-      icon: "layers",
-      color: "blue"
-    },
-    {
-      title: "Navigation Modes",
-      subtitle: "4 Professional Views",
-      content: (
-        <div>
-          <p className="text-gray-300 mb-6">
-            Choose your view mode to explore different aspects of the platform:
-          </p>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-blue-900/20 rounded-lg p-4 border border-blue-500/30">
-              <Icon name="target" className="w-6 h-6 text-blue-400 mb-2" />
-              <div className="font-bold text-blue-300 mb-1">Standard</div>
-              <div className="text-xs text-gray-400">Single debate with fact-checking & stance evolution</div>
-            </div>
-            <div className="bg-purple-900/20 rounded-lg p-4 border border-purple-500/30">
-              <Icon name="layers" className="w-6 h-6 text-purple-400 mb-2" />
-              <div className="font-bold text-purple-300 mb-1">Multi-Debate</div>
-              <div className="text-xs text-gray-400">Concurrent debates with aggregated analytics</div>
-            </div>
-            <div className="bg-green-900/20 rounded-lg p-4 border border-green-500/30">
-              <Icon name="bar-chart-3" className="w-6 h-6 text-green-400 mb-2" />
-              <div className="font-bold text-green-300 mb-1">Analytics</div>
-              <div className="text-xs text-gray-400">Performance metrics & Redis optimization</div>
-            </div>
-            <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-500/30">
-              <Icon name="trending-up" className="w-6 h-6 text-orange-400 mb-2" />
-              <div className="font-bold text-orange-300 mb-1">Platform</div>
-              <div className="text-xs text-gray-400">Platform-wide metrics and estimated savings</div>
-            </div>
-          </div>
-        </div>
-      ),
-      icon: "navigation",
-      color: "purple"
-    },
-    {
-      title: "Semantic Caching Innovation",
-      subtitle: "The Heart of Cost Optimization",
-      content: (
-        <div>
-          <div className="bg-green-900/20 rounded-lg p-6 border border-green-500/30 mb-6">
-            <div className="text-center mb-4">
-              <Icon name="target" className="w-12 h-12 text-green-400 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-green-300">Semantic Cache</div>
-              <div className="text-sm text-gray-400">Live similarity matching, hit rate shown in Analytics</div>
-            </div>
-          </div>
-          <p className="text-gray-300 mb-4">
-            The semantic cache uses Redis Vector Search to:
-          </p>
-          <ul className="space-y-2 text-gray-300">
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Cache AI responses and reuse them for similar prompts</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Cut repeat OpenAI API calls</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Serve cached responses without a new model call</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Track hits, misses and estimated savings as you debate</span>
-            </li>
-          </ul>
-        </div>
-      ),
-      icon: "database",
-      color: "green"
-    },
-    {
-      title: "Get Started",
-      subtitle: "Ready to Experience AI-Powered Debates",
-      content: (
-        <div className="text-center">
-          <Icon name="play" className="w-16 h-16 mx-auto text-green-400 mb-4" />
-          <h3 className="text-xl font-bold text-white mb-4">You're Ready to Begin!</h3>
-          <p className="text-gray-300 mb-6">
-            Start exploring StanceStream's capabilities. Pick a topic and watch the agents debate.
-          </p>
-          <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
-            <h4 className="font-bold text-green-300 mb-2">Quick Start Tips:</h4>
-            <ul className="text-sm text-gray-400 space-y-1">
-              <li>• Try Standard mode first to see basic debate functionality</li>
-              <li>• Switch to Analytics to see Redis performance metrics</li>
-              <li>• Watch the Semantic Cache Engine for live cost savings</li>
-              <li>• Click Matrix button for Redis operations visualization</li>
-            </ul>
-          </div>
-        </div>
-      ),
-      icon: "rocket",
-      color: "green"
-    }
-  ];
-
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-    } else {
-      handleComplete();
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
   const handleComplete = () => {
     setIsVisible(false);
-    if (onComplete) {
-      onComplete();
-    }
+    if (onComplete) onComplete();
   };
 
-  const handleSkip = () => {
-    setIsVisible(false);
-    if (onComplete) {
-      onComplete();
-    }
-  };
+  useEffect(() => {
+    if (!isVisible) return undefined;
+    closeRef.current?.focus();
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setIsVisible(false);
+        if (onComplete) onComplete();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isVisible, onComplete]);
 
-  if (!isVisible) {
-    return null;
-  }
-
-  const currentStepData = steps[currentStep];
+  if (!isVisible) return null;
 
   return (
-    <Modal 
-      isOpen={isVisible} 
-      onClose={handleSkip} 
-      className="max-w-4xl max-h-[90vh]"
-      closeOnOverlay={true}
-    >
-      <ModalHeader
-        title={currentStepData.title}
-        subtitle={currentStepData.subtitle}
-        icon={currentStepData.icon}
-        onClose={handleSkip}
-      />
-
-      <ModalContent>
-        <div className="min-h-[400px] flex flex-col">
-          {/* Progress bar */}
-          <div className="mb-8">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-sm text-gray-400">Step {currentStep + 1} of {steps.length}</span>
-              <span className="text-sm text-gray-400">{Math.round(((currentStep + 1) / steps.length) * 100)}% Complete</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-green-500 to-blue-500 h-2 rounded-full transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
-              ></div>
-            </div>
-          </div>
-
-          {/* Step content */}
-          <div className="flex-1">
-            {currentStepData.content}
-          </div>
-
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-700">
-            <Button
-              variant="ghost"
-              onClick={handlePrevious}
-              disabled={currentStep === 0}
-              className="flex items-center gap-2"
-            >
-              <Icon name="arrow-left" className="w-4 h-4" />
-              Previous
-            </Button>
-
-            <div className="flex gap-2">
-              {steps.map((_, index) => (
-                <div
-                  key={index}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentStep ? 'bg-green-400' : 
-                    index < currentStep ? 'bg-green-600' : 'bg-gray-600'
-                  }`}
-                />
-              ))}
-            </div>
-
-            <Button
-              onClick={handleNext}
-              className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-500 hover:to-blue-500"
-            >
-              {currentStep === steps.length - 1 ? 'Get Started' : 'Next'}
-              <Icon name={currentStep === steps.length - 1 ? "play" : "arrow-right"} className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
-      </ModalContent>
-    </Modal>
+    <div className="arena-modal" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+      <div className="arena-modal-body">
+        <h2 id="intro-title" className="pane-title">How StanceStream works</h2>
+        <ol className="how-list">
+          {STEPS.map(([head, body]) => (
+            <li key={head}>
+              <p className="how-head">{head}</p>
+              <p className="how-body">{body}</p>
+            </li>
+          ))}
+        </ol>
+        <button type="button" className="btn-primary" onClick={handleComplete} ref={closeRef}>Got it</button>
+      </div>
+    </div>
   );
 };
 

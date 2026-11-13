@@ -1,63 +1,33 @@
-// Live Performance Metrics Overlay - Mission Control Dashboard Style
-// Enhanced to showcase StanceStream's Semantic Caching Business Value
+// Semantic cache measurements, shown in the Analytics view.
 import { useState, useEffect, useRef, useCallback } from 'react';
-import Icon from './Icon';
 import { buildApiUrl } from '../utils/url';
 import { normalizePerformanceMetrics } from '../utils/performanceMetrics';
 
-// Mission control metric component with enhanced styling
-// eslint-disable-next-line no-unused-vars
-const MetricDisplay = ({ label, value, unit, icon, color, trend, isLoading: metricLoading, pulse = false, celebration = false }) => (
-    <div className={`bg-black/80 border border-green-500/30 rounded-lg p-3 ${pulse ? 'animate-pulse' : ''} ${celebration ? 'animate-bounce border-green-400' : ''} hover:border-green-500/50 transition-all duration-300`}>
-        <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-                <Icon name={icon} className={`w-4 h-4 text-green-400 ${pulse ? 'animate-bounce' : ''}`} />
-                <span className="text-xs text-green-300 font-medium font-mono">{label}</span>
-            </div>
-        </div>
-        {trend && (
-            <div className={`flex items-center gap-1 text-xs ${trend > 0 ? 'text-green-400' : 'text-green-300'} animate-pulse mb-2`}>
-                <Icon name={trend > 0 ? 'trending-up' : 'trending-down'} className="w-3 h-3" />
-                <span className="font-mono">{Math.abs(trend).toFixed(1)}%</span>
-            </div>
-        )}
-        <div className="flex items-baseline gap-1">
-            {metricLoading ? (
-                <div className="animate-pulse bg-green-700/30 h-6 w-16 rounded"></div>
-            ) : (
+// One measurement as a labelled term and value.
+const MetricDisplay = ({ label, value, unit, isLoading: metricLoading }) => (
+    <div className="stat">
+        <dt>{label}</dt>
+        <dd>
+            {metricLoading ? '-' : (
                 <>
-                    <span className={`text-xl font-bold text-green-300 font-mono tracking-tight`}>
-                        {typeof value === 'number' ? (
-                            unit === '%' ? value.toFixed(1) :
-                            unit === '/mo' ? Math.floor(value) :
-                            unit === 's' ? value.toFixed(1) :
-                            Math.floor(value).toLocaleString()
-                        ) : (value ?? '—')}
-                    </span>
-                    <span className="text-xs text-gray-400 font-medium font-mono">{unit}</span>
+                    {typeof value === 'number' ? (
+                        unit === '%' ? value.toFixed(1) :
+                        unit === 's' ? value.toFixed(1) :
+                        Math.floor(value).toLocaleString()
+                    ) : (value ?? '-')}
+                    {unit && typeof value === 'number' && <span className="stat-unit"> {unit}</span>}
                 </>
             )}
-        </div>
+        </dd>
     </div>
 );
 
-// Cache Hit Celebration Component
+// Cache hit notice: a plain status line, announced to screen readers.
 const CacheHitCelebration = ({ showCelebration, celebrationRef, lastSimilarity }) => (
     showCelebration && (
-        <div
-            ref={celebrationRef}
-            className="fixed top-48 right-4 bg-green-500/95 backdrop-blur-sm border border-green-400 rounded-lg p-3 z-[9999] animate-bounce shadow-lg shadow-green-500/30"
-        >
-            <div className="flex items-center gap-2 text-black font-bold">
-                <span className="text-2xl">🎯</span>
-                <div>
-                    <div className="text-sm font-mono">Cache hit!</div>
-                    <div className="text-xs opacity-90 font-mono">
-                        {lastSimilarity > 0 ? `${(lastSimilarity * 100).toFixed(1)}% match` : 'Served from cache'}
-                    </div>
-                </div>
-            </div>
-        </div>
+        <p ref={celebrationRef} role="status" className="conn-line">
+            Cache hit. {lastSimilarity > 0 ? `${(lastSimilarity * 100).toFixed(1)}% match.` : 'Served from the cache.'}
+        </p>
     )
 );
 
@@ -340,87 +310,32 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
     };
 
     return (
-        <div className={`${getContainerClasses()} relative overflow-visible`}>
-            {/* Cache Hit Celebration Overlay */}
+        <div className={`${getContainerClasses()} relative`}>
             <CacheHitCelebration showCelebration={showCelebration} celebrationRef={celebrationRef} lastSimilarity={lastSimilarity} />
-            
-            {/* Matrix Mission Control Header */}
-            <div className="bg-gradient-to-r from-black/95 to-gray-900/95 backdrop-blur-sm border border-green-500/30 rounded-t-lg p-3 shadow-lg shadow-green-500/10">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <h3 className="text-sm font-bold text-green-400 font-mono">Semantic cache engine</h3>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400 ml-4">
-                        <Icon name="refresh-cw" className="w-3 h-3 animate-spin" />
-                        <span className="font-mono">{lastUpdate.toLocaleTimeString()}</span>
-                    </div>
-                    </div>
-            </div>
-
-            {/* Matrix Enhanced Metrics Grid - Responsive for embedded mode */}
-            <div className="bg-black/95 backdrop-blur-sm border-x border-b border-green-500/30 rounded-b-lg p-3 shadow-lg shadow-green-500/10">
-                {/* Primary Business Metrics - Responsive grid */}
-                <div className={`grid gap-2 ${position === 'embedded' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2'}`}>
-                    <MetricDisplay
-                        label="Cache hit rate"
-                        value={metrics.cacheHitRate}
-                        unit="%"
-                        icon="target"
-                        color="green"
-                        isLoading={isLoading}
-                        pulse={metrics.cacheHitRate > 85}
-                        celebration={showCelebration}
-                    />
-                    
-                    {position !== 'embedded' && (
-                        <>
-                            <MetricDisplay
-                                label="Similarity score"
-                                value={lastSimilarity * 100}
-                                unit="%"
-                                icon="search"
-                                color="purple"
-                                isLoading={isLoading}
-                                pulse={lastSimilarity > 0.85}
-                            />
-                            
-                            <MetricDisplay
-                                label="API calls saved"
-                                value={businessMetrics.performance_impact?.api_calls_eliminated}
-                                unit="calls"
-                                icon="zap"
-                                color="green"
-                                isLoading={isLoading}
-                                pulse={true}
-                            />
-                        </>
-                    )}
-                </div>
-
-                {/* Recent Cache Hits - Compact for embedded */}
-                {cacheHits.length > 0 && (
-                    <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
-                        <div className="flex items-center gap-2 mb-2">
-                            <Icon name="activity" className="w-3 h-3 text-green-400" />
-                            <span className="text-xs text-green-300 font-medium font-mono">Recent hits</span>
-                        </div>
-                        <div className="space-y-1 max-h-12 overflow-y-auto">
-                            {cacheHits.slice(-2).map((hit) => (
-                                <div key={hit.id} className="flex items-center justify-between text-xs">
-                                    <span className="text-green-300 font-mono">
-                                        {hit.timestamp.toLocaleTimeString()}
-                                    </span>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-green-200 font-mono">{(hit.similarity * 100).toFixed(0)}%</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+            <p className="section-note">Updated {lastUpdate.toLocaleTimeString()}.</p>
+            <dl className="stat-list">
+                <MetricDisplay label="Cache hit rate" value={metrics.cacheHitRate} unit="%" isLoading={isLoading} />
+                {position !== 'embedded' && (
+                    <>
+                        <MetricDisplay label="Similarity score" value={lastSimilarity * 100} unit="%" isLoading={isLoading} />
+                        <MetricDisplay label="API calls saved" value={businessMetrics.performance_impact?.api_calls_eliminated} unit="calls" isLoading={isLoading} />
+                    </>
                 )}
-
-            </div>
+            </dl>
+            {cacheHits.length > 0 && (
+                <table className="ledger">
+                    <caption>Recent cache hits</caption>
+                    <thead><tr><th scope="col">Time</th><th scope="col">Match</th></tr></thead>
+                    <tbody>
+                        {cacheHits.slice(-2).map((hit) => (
+                            <tr key={hit.id}>
+                                <th scope="row">{hit.timestamp.toLocaleTimeString()}</th>
+                                <td>{(hit.similarity * 100).toFixed(0)}%</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 }

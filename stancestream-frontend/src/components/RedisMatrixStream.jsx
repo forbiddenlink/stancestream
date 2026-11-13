@@ -1,12 +1,10 @@
-// Redis Operations Matrix Stream - "The Matrix" for Redis Data
-// Showcases all 4 Redis modules working together with flowing animations
+// Redis operations list. Rows marked Sample are canned lines played by this component;
+// rows marked From the debate server come from real events.
 import { useState, useEffect, useRef } from 'react';
-import Icon from './Icon';
 
 export default function RedisMatrixStream({ position = 'overlay', className = '' }) {
     const [operations, setOperations] = useState([]);
     const [isActive, setIsActive] = useState(true);
-    const containerRef = useRef(null);
     const operationIdRef = useRef(0);
 
     // Redis operation types with colors and animations
@@ -216,182 +214,59 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isActive]);
 
-    // Get phase styling
-    const getPhaseStyle = (phase, isReal = false) => {
-        const baseStyle = isReal ? 'ring-2 ring-green-400/50 ' : '';
-        
-        switch (phase) {
-            case 'starting':
-                return baseStyle + 'bg-gray-800/60 border-gray-600/30';
-            case 'processing':
-                return baseStyle + 'bg-green-900/40 border-green-500/40 animate-pulse';
-            case 'completing':
-                return baseStyle + 'bg-green-900/40 border-green-500/40';
-            case 'success':
-                return baseStyle + 'bg-emerald-900/60 border-emerald-400/60 animate-bounce';
-            default:
-                return baseStyle + 'bg-gray-800/60 border-gray-600/30';
-        }
-    };
-
-    // Progress bar color by type
-    const getProgressColor = (type, phase) => {
-        const colors = {
-            json: phase === 'success' ? 'bg-green-400' : 'bg-green-500',
-            streams: phase === 'success' ? 'bg-green-400' : 'bg-green-500',
-            timeseries: phase === 'success' ? 'bg-purple-400' : 'bg-purple-500',
-            vector: phase === 'success' ? 'bg-green-400' : 'bg-green-500'
-        };
-        return colors[type] || 'bg-gray-500';
-    };
-
-    // Container classes based on position
-    const getContainerClasses = () => {
-        if (position === 'embedded') {
-            return `w-full ${className}`;
-        }
-        return `fixed top-4 left-4 w-96 z-40 ${className}`;
-    };
+    const containerClasses = position === 'embedded' ? `w-full ${className}` : `w-full ${className}`;
 
     return (
-        <div className={getContainerClasses()}>
-            {/* Matrix Header */}
-            <div className="bg-gradient-to-r from-black/95 to-green-900/80 backdrop-blur-sm border border-green-500/30 rounded-t-lg p-3">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <h3 className="text-sm font-bold text-green-300 font-mono">
-                            Redis operations matrix
-                        </h3>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button
-                            onClick={() => setIsActive(!isActive)}
-                            className={`px-2 py-1 rounded text-xs font-bold transition-all ${
-                                isActive 
-                                    ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
-                                    : 'bg-red-600/20 text-red-300 border border-red-500/30'
-                            }`}
-                        >
-                            {isActive ? 'Live' : 'Paused'}
-                        </button>
-                    </div>
-                </div>
-                
-                {/* Module Status Row */}
-                <div className="grid grid-cols-4 gap-2 mt-2 text-xs">
-                    {Object.entries(operationTypes).map(([type, config]) => (
-                        <div key={type} className="flex items-center gap-1">
-                            <Icon name={config.icon} className={`w-3 h-3 text-${config.color}-400`} />
-                            <span className={`text-${config.color}-300 font-mono font-bold`}>
-                                {config.label}
-                            </span>
-                        </div>
-                    ))}
-                </div>
+        <section className={`matrix-list ${containerClasses}`} aria-labelledby="matrix-list-title">
+            <div className="pane-head">
+                <h3 id="matrix-list-title" className="pane-title">Operations</h3>
+                <button type="button" className="btn-plain" onClick={() => setIsActive(!isActive)} aria-pressed={!isActive}>
+                    {isActive ? 'Pause' : 'Resume'}
+                </button>
             </div>
+            <p className="section-note">
+                Rows marked Sample are made-up lines this page plays to show the shape of each Redis
+                model. Rows marked From the debate server come from events the server sent.
+            </p>
 
-            {/* Operations Stream */}
-            <div 
-                ref={containerRef}
-                className="bg-black/95 backdrop-blur-sm border-x border-b border-green-500/30 rounded-b-lg p-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-green-500"
-            >
-                <div className="space-y-2">
-                    {operations.length === 0 ? (
-                        <div className="text-center text-gray-500 font-mono text-xs py-4">
-                            Initializing Redis Matrix...
-                        </div>
-                    ) : (
-                        operations.map((op) => (
-                            <div
-                                key={op.id}
-                                className={`border rounded-lg p-2 transition-all duration-300 ${getPhaseStyle(op.phase, op.isReal)}`}
-                            >
-                                {/* Operation Header */}
-                                <div className="flex items-center justify-between mb-1">
-                                    <div className="flex items-center gap-2">
-                                        <Icon 
-                                            name={op.config.icon} 
-                                            className={`w-3 h-3 text-${op.config.color}-400 ${
-                                                op.phase === 'processing' ? 'animate-spin' : ''
-                                            }`} 
-                                        />
-                                        <span className={`text-xs font-bold text-${op.config.color}-300 font-mono`}>
-                                            {op.config.label}
-                                        </span>
-                                        {op.isReal && (
-                                            <span className="px-1 py-0.5 bg-green-600/30 border border-green-500/50 rounded text-xs text-green-300 font-bold">
-                                                Live
-                                            </span>
-                                        )}
-                                    </div>
-                                    <div className="flex items-center gap-2 text-xs">
-                                        {op.similarity && (
-                                            <span className="text-green-300 font-mono">
-                                                {op.similarity.toFixed(1)}%
-                                            </span>
-                                        )}
-                                        {op.value && (
-                                            <span className={`font-mono ${
-                                                parseFloat(op.value) > 0 ? 'text-green-300' : 'text-red-300'
-                                            }`}>
-                                                {op.value > 0 ? '+' : ''}{op.value}
-                                            </span>
-                                        )}
-                                        <span className="text-gray-400 font-mono">
-                                            {op.timestamp.toLocaleTimeString().split(':').slice(-2).join(':')}
-                                        </span>
-                                    </div>
-                                </div>
+            <table className="ledger">
+                <caption>Operation count by model, last 20 rows</caption>
+                <thead>
+                    <tr>{Object.entries(operationTypes).map(([type, config]) => <th scope="col" key={type}>{config.label}</th>)}</tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {Object.keys(operationTypes).map((type) => (
+                            <td key={type}>{operations.filter(op => op.type === type).length}</td>
+                        ))}
+                    </tr>
+                </tbody>
+            </table>
 
-                                {/* Operation Details */}
-                                <div className="text-xs text-gray-300 font-mono mb-2">
-                                    {op.operation}
-                                </div>
-
-                                {/* Progress Bar */}
-                                <div className="w-full bg-gray-700/50 rounded-full h-1">
-                                    <div
-                                        className={`h-1 rounded-full transition-all duration-300 ${getProgressColor(op.type, op.phase)}`}
-                                        style={{ width: `${op.progress}%` }}
-                                    ></div>
-                                </div>
-
-                                {/* Phase Status */}
-                                <div className={`text-xs mt-1 font-mono ${
-                                    op.phase === 'success' ? 'text-green-300' :
-                                    op.phase === 'completing' ? 'text-green-300' :
-                                    op.phase === 'processing' ? 'text-green-300' :
-                                    'text-gray-400'
-                                }`}>
-                                    {op.phase}
-                                    {op.phase === 'success' && ' ✓'}
-                                    {op.phase === 'processing' && ' ⟳'}
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
-
-            {/* Operation Summary */}
-            <div className="bg-gray-900/95 border border-green-500/30 rounded-b-lg -mt-px p-2">
-                <div className="grid grid-cols-4 gap-2 text-xs">
-                    {Object.entries(operationTypes).map(([type, config]) => {
-                        const count = operations.filter(op => op.type === type).length;
-                        return (
-                            <div key={type} className="text-center">
-                                <div className={`text-${config.color}-300 font-bold font-mono`}>
-                                    {count}
-                                </div>
-                                <div className="text-gray-400 text-xs">
-                                    {config.description}
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
-            </div>
-        </div>
+            {operations.length === 0 ? (
+                <p className="section-note" role="status">No operations yet.</p>
+            ) : (
+                <table className="ledger">
+                    <caption>Operations</caption>
+                    <thead>
+                        <tr><th scope="col">Time</th><th scope="col">Model</th><th scope="col">Operation</th><th scope="col">Value</th><th scope="col">Origin</th></tr>
+                    </thead>
+                    <tbody>
+                        {operations.map((op) => (
+                            <tr key={op.id}>
+                                <th scope="row">{op.timestamp.toLocaleTimeString()}</th>
+                                <td>{op.config.label}</td>
+                                <td><code>{op.operation}</code></td>
+                                <td>
+                                    {op.similarity ? `${op.similarity.toFixed(1)}% match` : ''}
+                                    {op.value ? `${op.value > 0 ? '+' : ''}${op.value}` : ''}
+                                </td>
+                                <td>{op.isReal ? 'From the debate server' : 'Sample'}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
+        </section>
     );
 }

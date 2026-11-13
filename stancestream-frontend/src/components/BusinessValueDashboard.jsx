@@ -9,8 +9,10 @@ import api from '../services/api';
 const Stat = ({ label, value, note }) => (
     <div className="stat">
         <dt>{label}</dt>
-        <dd>{value}</dd>
-        {note && <p>{note}</p>}
+        <dd>
+            {value}
+            {note && <span className="stat-note">{note}</span>}
+        </dd>
     </div>
 );
 

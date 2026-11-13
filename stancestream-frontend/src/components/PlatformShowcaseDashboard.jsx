@@ -1,6 +1,5 @@
-// System Showcase Dashboard - Premium Analytics and Demonstrations
+// Platform view: a plain reference of the four Redis data models, plus the server's own readings.
 import { useState, useEffect, memo, useCallback } from 'react';
-import Icon from './Icon';
 
 const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
     const [showcaseData, setShowcaseData] = useState(null);
@@ -81,372 +80,90 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
         }
     }, []);
 
+    const MODELS = [
+        { key: 'redisJSON', count: 'json', label: 'RedisJSON', holds: 'Agent profiles and cache metrics', fallback: 'agent:{id}:profile' },
+        { key: 'redisStreams', count: 'streams', label: 'Streams', holds: 'Debate messages and agent memory', fallback: 'debate:{id}:messages' },
+        { key: 'redisTimeSeries', count: 'timeseries', label: 'TimeSeries', holds: 'Stance over time', fallback: 'debate:{id}:agent:{agent}:stance:{topic_key}' },
+        { key: 'redisVector', count: 'vector', label: 'Vector search', holds: 'Fact store and semantic cache', fallback: null },
+    ];
+    const dash = (v) => (v === undefined || v === null ? '-' : v);
+    const stats = platformMetrics?.platformMetrics;
+    const opt = optimizationMetrics?.optimization;
+    const DEMOS = [
+        { id: 'multi-modal-showcase', title: 'Multi-modal showcase', description: 'Uses all 4 Redis models in sequence.' },
+        { id: 'performance-stress-test', title: 'Performance stress test', description: 'A high-throughput run of Redis operations.' },
+        { id: 'concurrent-debates', title: 'Concurrent debates', description: 'Several debates at once.' },
+        { id: 'cache-efficiency', title: 'Cache efficiency', description: 'Exercises the semantic cache.' },
+    ];
+
     return (
-        <div className="min-h-screen bg-black text-green-300 p-6 relative font-mono">
-            {/* Header */}
-            <div className="mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                    <Icon name="award" className="w-8 h-8 text-green-400" />
-                    <h1 className="text-4xl font-bold text-green-400">
-                        Platform showcase
-                    </h1>
-                </div>
-                <p className="text-xl text-green-300">
-                    Real-time demonstration of StanceStream's multi-modal Redis architecture
-                </p>
-            </div>
+        <section className="view-pane ledger-pane" aria-labelledby="plat-title">
+            <h2 id="plat-title" className="pane-title">Platform reference</h2>
+            <p className="section-note">
+                The four Redis data models StanceStream uses, and where each one lives. Counts and
+                operations come from the server when it answers; a dash means it did not.
+            </p>
 
-            {/* Platform Metrics Overview */}
-            {platformMetrics && (
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                    <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                            <Icon name="database" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">Active debates</span>
-                        </div>
-                        <div className="text-3xl font-bold text-green-200">
-                            {platformMetrics.platformMetrics?.debateStatistics?.activeDebates || 0}
-                        </div>
-                        <div className="text-sm text-green-400">Real-time concurrent processing</div>
-                    </div>
+            <table className="ledger">
+                <caption>Redis data models</caption>
+                <thead>
+                    <tr><th scope="col">Model</th><th scope="col">Holds</th><th scope="col">Key pattern</th><th scope="col">Keys</th><th scope="col">Operations</th></tr>
+                </thead>
+                <tbody>
+                    {MODELS.map((m) => {
+                        const info = showcaseData?.showcase?.[m.key];
+                        return (
+                            <tr key={m.key}>
+                                <th scope="row">{m.label}</th>
+                                <td>{m.holds}</td>
+                                <td><code>{info?.keyPattern ?? m.fallback ?? '-'}</code></td>
+                                <td>{dash(showcaseData?.summary?.activeKeys?.[m.count])}</td>
+                                <td>{info?.operations?.length ? info.operations.join(', ') : '-'}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
 
-                    <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                            <Icon name="message-circle" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">Total messages</span>
-                        </div>
-                        <div className="text-3xl font-bold text-green-200">
-                            {platformMetrics.platformMetrics?.debateStatistics?.totalMessages || 0}
-                        </div>
-                        <div className="text-sm text-green-400">Redis streams throughput</div>
-                    </div>
+            <table className="ledger">
+                <caption>Server readings</caption>
+                <thead><tr><th scope="col">Measure</th><th scope="col">Value</th></tr></thead>
+                <tbody>
+                    <tr><th scope="row">Active debates</th><td>{dash(stats?.debateStatistics?.activeDebates)}</td></tr>
+                    <tr><th scope="row">Total messages</th><td>{dash(stats?.debateStatistics?.totalMessages)}</td></tr>
+                    <tr><th scope="row">Cache hit rate</th><td>{stats?.semanticCache?.hit_ratio === undefined ? '-' : `${stats.semanticCache.hit_ratio}%`}</td></tr>
+                    <tr><th scope="row">Uptime</th><td>{typeof stats?.systemHealth?.uptime === 'number' ? `${Math.round(stats.systemHealth.uptime / 60)} minutes` : 'Not available'}</td></tr>
+                    <tr><th scope="row">Redis models holding data</th><td>{showcaseData?.summary?.totalModules === undefined ? '-' : `${showcaseData.summary.totalModules} of 4`}</td></tr>
+                    <tr><th scope="row">Optimizer status</th><td>{opt?.status ?? 'Not available'}</td></tr>
+                    <tr><th scope="row">Optimizer cycles</th><td>{dash(opt?.total_optimizations)}</td></tr>
+                    <tr><th scope="row">Average improvement per cycle</th><td>{typeof opt?.average_improvement === 'number' ? `${opt.average_improvement.toFixed(1)}%` : '-'}</td></tr>
+                    <tr><th scope="row">Last optimization</th><td>{opt?.last_optimization ? new Date(opt.last_optimization).toLocaleTimeString() : 'Pending'}</td></tr>
+                </tbody>
+            </table>
 
-                    <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                            <Icon name="zap" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">Cache hit rate</span>
-                        </div>
-                        <div className="text-3xl font-bold text-green-200">
-                            {platformMetrics.platformMetrics?.semanticCache?.hit_ratio || 0}%
-                        </div>
-                        <div className="text-sm text-green-400">Semantic vector caching</div>
-                    </div>
-
-                    <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                        <div className="flex items-center gap-3 mb-2">
-                            <Icon name="activity" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">System health</span>
-                        </div>
-                        <div className="text-3xl font-bold text-green-200">
-                            {Math.round((platformMetrics.platformMetrics?.systemHealth?.uptime || 0) / 60)}M
-                        </div>
-                        <div className="text-sm text-green-400">Uptime & stability</div>
-                    </div>
-                </div>
-            )}
-
-            {/* Redis Multi-Modal Showcase */}
-            {showcaseData && (
-                <div className="mb-8">
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
-                        <Icon name="layers" className="w-6 h-6 text-green-400" />
-                        Redis multi-modal architecture live demo
-                    </h2>
-
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* RedisJSON */}
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">RedisJSON</h3>
-                                <Icon name="file-text" className="w-5 h-5 text-green-400" />
-                            </div>
-                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisJSON?.example}</p>
-                            <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
-                                <code className="text-xs text-green-400">
-                                    Keys: {showcaseData.summary?.activeKeys?.json || 0} |
-                                    Pattern: {showcaseData.showcase?.redisJSON?.keyPattern}
-                                </code>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {showcaseData.showcase?.redisJSON?.operations?.map((op, i) => (
-                                    <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Redis Streams */}
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">Redis streams</h3>
-                                <Icon name="git-branch" className="w-5 h-5 text-green-400" />
-                            </div>
-                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisStreams?.example}</p>
-                            <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
-                                <code className="text-xs text-green-400">
-                                    Keys: {showcaseData.summary?.activeKeys?.streams || 0} |
-                                    Pattern: {showcaseData.showcase?.redisStreams?.keyPattern}
-                                </code>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {showcaseData.showcase?.redisStreams?.operations?.map((op, i) => (
-                                    <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* RedisTimeSeries */}
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">Redistimeseries</h3>
-                                <Icon name="trending-up" className="w-5 h-5 text-green-400" />
-                            </div>
-                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisTimeSeries?.example}</p>
-                            <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
-                                <code className="text-xs text-green-400">
-                                    Keys: {showcaseData.summary?.activeKeys?.timeseries || 0} |
-                                    Pattern: {showcaseData.showcase?.redisTimeSeries?.keyPattern}
-                                </code>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {showcaseData.showcase?.redisTimeSeries?.operations?.map((op, i) => (
-                                    <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Redis Vector */}
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">Redis vector search</h3>
-                                <Icon name="search" className="w-5 h-5 text-green-400" />
-                            </div>
-                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisVector?.example}</p>
-                            <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
-                                <code className="text-xs text-green-400">
-                                    Keys: {showcaseData.summary?.activeKeys?.vector || 0} |
-                                    Pattern: {showcaseData.showcase?.redisVector?.keyPattern}
-                                </code>
-                            </div>
-                            <div className="flex flex-wrap gap-2">
-                                {showcaseData.showcase?.redisVector?.operations?.map((op, i) => (
-                                    <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Performance Optimization Dashboard */}
-            {optimizationMetrics && (
-                <div className="mb-8">
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
-                        <Icon name="gauge" className="w-6 h-6 text-green-400" />
-                        Real-time performance optimization
-                    </h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Icon name="cpu" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">Optimization status</span>
-                            </div>
-                            <div className="text-2xl font-bold text-green-200 mb-2">
-                                {(optimizationMetrics.optimization?.status || 'Offline')}
-                            </div>
-                            <div className="text-sm text-green-400">
-                                {optimizationMetrics.optimization?.total_optimizations || 0} total optimizations
-                            </div>
-                        </div>
-
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Icon name="trending-up" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">Avg improvement</span>
-                            </div>
-                            <div className="text-2xl font-bold text-green-200 mb-2">
-                                {(optimizationMetrics.optimization?.average_improvement || 0).toFixed(1)}%
-                            </div>
-                            <div className="text-sm text-green-400">
-                                Performance gains per cycle
-                            </div>
-                        </div>
-
-                        <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Icon name="clock" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">Last optimization</span>
-                            </div>
-                            <div className="text-lg font-bold text-green-200 mb-2">
-                                {optimizationMetrics.optimization?.last_optimization ?
-                                    new Date(optimizationMetrics.optimization.last_optimization).toLocaleTimeString() :
-                                    'Pending'
-                                }
-                            </div>
-                            <div className="text-sm text-green-400">
-                                Continuous monitoring active
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Interactive Demo Scenarios */}
-            <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
-                    <Icon name="play-circle" className="w-6 h-6 text-green-400" />
-                    Interactive platform demonstrations
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {[
-                        {
-                            id: 'multi-modal-showcase',
-                            title: 'Multi-modal showcase',
-                            description: 'Demonstrate all 4 Redis modules in sequence',
-                            icon: 'layers',
-                            color: 'green'
-                        },
-                        {
-                            id: 'performance-stress-test',
-                            title: 'Performance stress test',
-                            description: 'High-throughput operations benchmark',
-                            icon: 'zap',
-                            color: 'green'
-                        },
-                        {
-                            id: 'concurrent-debates',
-                            title: 'Concurrent debates',
-                            description: 'Multiple simultaneous AI debates',
-                            icon: 'users',
-                            color: 'green'
-                        },
-                        {
-                            id: 'cache-efficiency',
-                            title: 'Cache efficiency',
-                            description: 'Semantic cache hit rate optimization',
-                            icon: 'database',
-                            color: 'green'
-                        }
-                    ].map((demo) => (
-                        <div key={demo.id} className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                            <div className="flex items-center gap-3 mb-3">
-                                <Icon
-                                    name={demo.icon}
-                                    className="w-5 h-5 text-green-400"
-                                />
-                                <span className="font-bold text-green-300">{demo.title}</span>
-                            </div>
-                            <p className="text-sm text-green-400 mb-4">{demo.description}</p>
-
-                            <button
-                                onClick={() => runDemo(demo.id)}
-                                disabled={demoRunning}
-                                className={`w-full px-4 py-2 rounded-lg font-bold transition-all border font-mono ${demoRunning && activeDemo === demo.id
-                                    ? 'bg-green-800/50 text-green-600 cursor-not-allowed border-green-800/50'
-                                    : 'bg-green-500/20 hover:bg-green-500/30 text-green-300 border-green-500/30 hover:border-green-500/50'
-                                    }`}
-                            >
-                                {demoRunning && activeDemo === demo.id ? (
-                                    <span className="flex items-center gap-2 justify-center">
-                                        <Icon name="loader-2" className="w-4 h-4 animate-spin" />
-                                        Running...
-                                    </span>
-                                ) : (
-                                    'Run demo'
-                                )}
-                            </button>
-
-                            {/* Demo Results */}
+            <h3 className="pane-sub">Server demo runs</h3>
+            <p className="section-note">Each run asks the server to exercise Redis for a short time and reports the operation count it saw.</p>
+            <ul className="demo-list">
+                {DEMOS.map((demo) => (
+                    <li key={demo.id}>
+                        <div>
+                            <p className="demo-title">{demo.title}</p>
+                            <p className="demo-desc">{demo.description}</p>
                             {demoResults[demo.id] && (
-                                <div className="mt-4 p-3 bg-black/60 rounded-lg border border-green-500/20">
-                                    <div className="text-xs text-green-400 mb-2 font-mono">Latest result:</div>
-                                    {demoResults[demo.id].success ? (
-                                        <div className="text-xs text-green-400 font-mono">
-                                            ✅ success - {demoResults[demo.id].result?.metrics?.totalOperations || 0} operations
-                                        </div>
-                                    ) : (
-                                        <div className="text-xs text-green-300 font-mono">
-                                            ❌ error: {demoResults[demo.id].error}
-                                        </div>
-                                    )}
-                                </div>
+                                <p role="status">
+                                    {demoResults[demo.id].success
+                                        ? `Finished. ${demoResults[demo.id].result?.metrics?.totalOperations || 0} operations.`
+                                        : `Failed: ${demoResults[demo.id].error}`}
+                                </p>
                             )}
                         </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* Real-time Activity Feed */}
-            <div>
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
-                    <Icon name="activity" className="w-6 h-6 text-green-400" />
-                    Live system activity
-                </h2>
-
-                <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
-                    <div className="space-y-3">
-                        {showcaseData && (
-                            <div className="flex items-center gap-3 text-sm">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-green-300 font-mono">
-                                    Redis modules active: {showcaseData.summary?.totalModules || 0}/4
-                                </span>
-                                <span className="text-slate-500 font-mono">
-                                    {new Date().toLocaleTimeString()}
-                                </span>
-                            </div>
-                        )}
-
-                        {platformMetrics && (
-                            <div className="flex items-center gap-3 text-sm">
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span className="text-green-300 font-mono">
-                                    Processing {platformMetrics.platformMetrics?.debateStatistics?.activeDebates || 0} concurrent debates
-                                </span>
-                                <span className="text-slate-500 font-mono">
-                                    {new Date().toLocaleTimeString()}
-                                </span>
-                            </div>
-                        )}
-
-                        {optimizationMetrics?.optimization?.status === 'active' && (
-                            <div className="flex items-center gap-3 text-sm">
-                                <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
-                                <span className="text-green-300 font-mono">
-                                    Performance optimizer running ({optimizationMetrics.optimization.total_optimizations} cycles completed)
-                                </span>
-                                <span className="text-slate-500 font-mono">
-                                    {new Date().toLocaleTimeString()}
-                                </span>
-                            </div>
-                        )}
-
-                        <div className="flex items-center gap-3 text-sm">
-                            <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
-                            <span className="text-green-300 font-mono">
-                                Semantic cache hit rate: {platformMetrics?.platformMetrics?.semanticCache?.hit_ratio || 0}%
-                            </span>
-                            <span className="text-slate-500 font-mono">
-                                {new Date().toLocaleTimeString()}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        <button type="button" className="btn-plain" onClick={() => runDemo(demo.id)} disabled={demoRunning}>
+                            {demoRunning && activeDemo === demo.id ? 'Running' : 'Run demo'}
+                        </button>
+                    </li>
+                ))}
+            </ul>
+        </section>
     );
 });
 

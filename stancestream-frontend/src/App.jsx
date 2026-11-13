@@ -17,8 +17,7 @@ const LivePerformanceOverlay = lazy(() => import('./components/LivePerformanceOv
 const RedisMatrixModal = lazy(() => import('./components/RedisMatrixModal'));
 const IntroModule = lazy(() => import('./components/IntroModule'));
 import ErrorBoundary from './components/ErrorBoundary';
-import Icon from './components/Icon';
-import { ViewModeSelector, ToastProvider, Container, Stack, Grid } from './components/ui';
+import { ToastProvider } from './components/ui';
 import wsManager from './services/websocketManager';
 import api from './services/api';
 import { getWebSocketUrl } from './utils/url';
@@ -549,121 +548,76 @@ export default function App() {
                 </div>
               </>
             ) : viewMode === 'multi-debate' ? (
-              /* Multi-Debate Layout - Matrix Style */
-              <div className="space-y-6 p-6 pb-32">
-                {/* Top row: Key Moments - Matrix Container */}
-                <div className="min-h-[400px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <KeyMomentsPanel viewMode="multi-debate" />
-                </div>
-
-                {/* Middle row: Multi-debate viewer and fact checker - Matrix Containers */}
-                <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
-                  {/* Main: Multi-Debate Viewer - Matrix Container */}
-                  <div className="flex-1 lg:flex-[7] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-left">
-                    <TrueMultiDebateViewer
-                      messages={debateMessages}
-                      activeDebates={activeDebates}
-                      onMetricsUpdate={handleMetricsUpdate}
-                    />
-                  </div>
-
-                  {/* Side Panel: Fact Checker - Matrix Container */}
-                  <div className="w-full lg:w-[450px] lg:flex-[3] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-right">
+              <>
+                <Suspense fallback={<PanelLoader />}>
+                  <TrueMultiDebateViewer
+                    messages={debateMessages}
+                    activeDebates={activeDebates}
+                    onMetricsUpdate={handleMetricsUpdate}
+                  />
+                </Suspense>
+                <div className="arena-sections">
+                  <section className="arena-section" aria-labelledby="km-title">
+                    <h2 id="km-title">Key moments</h2>
+                    <Suspense fallback={<PanelLoader />}>
+                      <KeyMomentsPanel viewMode="multi-debate" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="fc-title">
+                    <h2 id="fc-title">Fact checks</h2>
                     <FactChecker connected={connectionStatus === 'Connected'} factChecks={factChecks} />
-                  </div>
+                  </section>
+                  <section className="arena-section" aria-labelledby="st-title">
+                    <h2 id="st-title">Stance over time</h2>
+                    <Suspense fallback={<ChartLoader />}>
+                      <StanceEvolutionChart stanceData={stanceData} />
+                    </Suspense>
+                  </section>
                 </div>
-
-                {/* Bottom row: Stance Evolution Chart - Matrix Container */}
-                <div className="h-96 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <StanceEvolutionChart stanceData={stanceData} />
-                </div>
-              </div>
+              </>
             ) : viewMode === 'platform-showcase' ? (
               /* Platform Showcase - Premium Full Screen Experience */
-              <div className="animate-fade-in-up">
+              <Suspense fallback={<PanelLoader />}>
                 <PlatformShowcaseDashboard />
-              </div>
+              </Suspense>
             ) : viewMode === 'business' ? (
               /* Business Intelligence Dashboard */
-              <div className="space-y-6">
+              <Suspense fallback={<PanelLoader />}>
                 <BusinessValueDashboard />
-              </div>
+              </Suspense>
             ) : (
-              /* Analytics Dashboard Layout - Matrix Style */
-              <Stack spacing="space-y-6" className="animate-fade-in-up">
-                {/* Cache engine metrics live here, not in the record */}
-                <div className="w-full bg-surface-elevated border border-green-500/20 rounded-xl p-4">
-                  <Suspense fallback={<OverlayLoader />}>
-                    <LivePerformanceOverlay position="embedded" size="small" className="relative w-full" />
-                  </Suspense>
+              <section className="view-pane" aria-labelledby="an-title">
+                <h2 id="an-title" className="pane-title">Analytics</h2>
+                <dl className="stat-list">
+                  <div className="stat"><dt>Active debates</dt><dd>{activeDebates.size}</dd></div>
+                  <div className="stat"><dt>Messages this session</dt><dd>{debateMessages.length}</dd></div>
+                  <div className="stat"><dt>Fact checks this session</dt><dd>{factChecks.length}</dd></div>
+                </dl>
+                <p className="ctl-actions">
+                  <button type="button" className="btn-plain" onClick={handleMetricsUpdate}>Refresh</button>
+                  <button type="button" className="btn-plain" onClick={() => setViewMode('standard')}>Back to the record</button>
+                </p>
+                <div className="arena-sections">
+                  <section className="arena-section" aria-labelledby="an-cache">
+                    <h2 id="an-cache">Cache engine</h2>
+                    <Suspense fallback={<OverlayLoader />}>
+                      <LivePerformanceOverlay position="embedded" size="small" className="relative w-full" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="an-km">
+                    <h2 id="an-km">Key moments</h2>
+                    <Suspense fallback={<PanelLoader />}>
+                      <KeyMomentsPanel viewMode="analytics" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="an-sys">
+                    <h2 id="an-sys">System</h2>
+                    <Suspense fallback={<DashboardLoader />}>
+                      <EnhancedPerformanceDashboard key={metricsUpdateTrigger} />
+                    </Suspense>
+                  </section>
                 </div>
-
-                {/* Top Row: Key Moments Analytics - Matrix Style */}
-                <div className="w-full animate-slide-in-down stagger-1 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <KeyMomentsPanel viewMode="analytics" />
-                </div>
-
-                {/* Middle Row: Performance Dashboard - Matrix Style */}
-                <div className="w-full animate-scale-in stagger-2 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <EnhancedPerformanceDashboard key={metricsUpdateTrigger} />
-                </div>
-
-                {/* Bottom Row: Quick Actions and Stats - Matrix Grid */}
-                <Grid columns={2} gap="gap-6" className="animate-fade-in-up stagger-3">
-                  {/* Quick Actions - Matrix Style */}
-                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                    <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
-                      <Icon name="analytics" size={20} className="text-green-400" />
-                      Quick actions
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        onClick={() => setViewMode('multi-debate')}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="multi-debate" size={16} className="mr-1" />
-                        Multi-debate
-                      </button>
-                      <button
-                        onClick={() => setViewMode('standard')}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="target" size={16} className="mr-1" />
-                        Standard
-                      </button>
-                      <button
-                        onClick={handleMetricsUpdate}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="refresh" size={16} className="mr-1" />
-                        Refresh
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Live Stats - Matrix Style */}
-                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                    <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
-                      <Icon name="bar-chart" size={20} className="text-green-400" />
-                      Live statistics
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-400 font-mono">{activeDebates.size}</div>
-                        <div className="text-xs text-neutral-400">Active Debates</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-400 font-mono">{debateMessages.length}</div>
-                        <div className="text-xs text-neutral-400">Total Messages</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-accent-400 font-mono">{factChecks.length}</div>
-                        <div className="text-xs text-neutral-400">Fact Checks</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-              </Stack>
+              </section>
             )}
         </main>
 
