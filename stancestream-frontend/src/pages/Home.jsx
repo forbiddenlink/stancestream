@@ -56,6 +56,38 @@ function Track({ values }) {
     );
 }
 
+function BigTrack({ values }) {
+    const a = values?.senatorbot;
+    const b = values?.reformerbot;
+    const has = a !== undefined && b !== undefined;
+    return (
+        <div className={`big-track${has ? '' : ' is-empty'}`} aria-hidden="true">
+            <span className="big-rope" />
+            {TICKS.map((t) => (
+                <span key={t} className="big-tick" style={{ left: `${t * 100}%` }}>
+                    <span>{t === 0 ? '0' : t === 1 ? '1' : t}</span>
+                </span>
+            ))}
+            {has && (
+                <>
+                    <span
+                        className="big-gap"
+                        style={{ left: `${Math.min(a, b) * 100}%`, width: `${Math.abs(a - b) * 100}%` }}
+                    />
+                    <span className="big-dot dot-a" style={{ left: `${a * 100}%` }}>
+                        <span className="big-name">{AGENTS.senatorbot.name}</span>
+                        <span className="big-val">{a}</span>
+                    </span>
+                    <span className="big-dot dot-b" style={{ left: `${b * 100}%` }}>
+                        <span className="big-name">{AGENTS.reformerbot.name}</span>
+                        <span className="big-val">{b}</span>
+                    </span>
+                </>
+            )}
+        </div>
+    );
+}
+
 export default function Home() {
     const [topicId, setTopicId] = useState('climate');
     const topic = BASE_DEBATE_TOPICS.find((t) => t.id === topicId);
@@ -67,6 +99,7 @@ export default function Home() {
             <header className="home-nav">
                 <a className="home-brand" href="/">StanceStream</a>
                 <nav aria-label="Site">
+                    <a href="/arena">Arena</a>
                     <a href="/about">About</a>
                     <a href="/contact">Contact</a>
                 </nav>
@@ -80,6 +113,19 @@ export default function Home() {
                         Each turn goes on the record, and each bot&rsquo;s stance on a scale of 0 to 1 is
                         tracked as it moves.
                     </p>
+
+                    <figure className="hero-meter">
+                        <figcaption>Opening stances on {topic.name}, scale of 0 to 1</figcaption>
+                        <BigTrack values={seed} />
+                        {!seed && (
+                            <p className="hero-meter-empty">No opening stance is on file for this topic.</p>
+                        )}
+                        <p className="sr-only">
+                            {seed
+                                ? `SenatorBot ${seed.senatorbot}, ReformerBot ${seed.reformerbot}.`
+                                : 'No opening stance is on file for this topic.'}
+                        </p>
+                    </figure>
 
                     <fieldset className="topic-pick">
                         <legend>Choose the topic for the record</legend>
@@ -161,7 +207,7 @@ export default function Home() {
                                             <>
                                                 <p className="para-text">{SEED_LINE}</p>
                                                 <p className="para-note">
-                                                    Seed line from the demo setup (index.js). Not a debate turn.
+                                                    Opening line set in the demo. Not a debate turn.
                                                 </p>
                                             </>
                                         ) : (
@@ -177,13 +223,6 @@ export default function Home() {
                                     </div>
                                     <div className="meter">
                                         <Track values={first ? seed : undefined} />
-                                        {first && (
-                                            <p className="meter-note">
-                                                {seed
-                                                    ? `Opening stances on file: ${AGENTS.senatorbot.name} ${seed.senatorbot}, ${AGENTS.reformerbot.name} ${seed.reformerbot}.`
-                                                    : 'No opening stance is on file for this topic.'}
-                                            </p>
-                                        )}
                                         {i === 0 && <span className="sr-only">Stance meter, 0 to 1.</span>}
                                     </div>
                                 </li>
@@ -199,6 +238,7 @@ export default function Home() {
             </main>
 
             <footer className="home-foot">
+                <a href="/arena">Arena</a>
                 <a href="/about">About</a>
                 <a href="/contact">Contact</a>
                 <a href="/privacy-policy">Privacy policy</a>
