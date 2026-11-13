@@ -21,7 +21,7 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
       content: (
         <div className="text-center">
           <div className="mb-6">
-            <h3 className="font-display text-3xl font-black uppercase tracking-[0.04em] text-white mb-2">Enterprise AI Debate Platform</h3>
+            <h3 className="font-display text-3xl font-black uppercase tracking-[0.04em] text-white mb-2">Live AI Debate Platform</h3>
             <p className="text-gray-300 text-lg mb-5">
               Experience real-time AI agents powered by all 4 Redis modules working together
             </p>
@@ -30,13 +30,13 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
           <div className="grid grid-cols-2 gap-4 mt-6">
             <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
               <Icon name="database" className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <div className="text-sm font-bold text-green-300">66.7% Cache Hit Rate</div>
-              <div className="text-xs text-gray-400">Live semantic caching</div>
+              <div className="text-sm font-bold text-green-300">Semantic caching</div>
+              <div className="text-xs text-gray-400">Reuses answers to similar prompts</div>
             </div>
             <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
               <Icon name="activity" className="w-8 h-8 text-green-400 mx-auto mb-2" />
-              <div className="text-sm font-bold text-green-300">Sub-3s Response</div>
-              <div className="text-xs text-gray-400">Enterprise performance</div>
+              <div className="text-sm font-bold text-green-300">Live metrics</div>
+              <div className="text-xs text-gray-400">Updates as debates run</div>
             </div>
           </div>
         </div>
@@ -113,7 +113,7 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
             <div className="bg-orange-900/20 rounded-lg p-4 border border-orange-500/30">
               <Icon name="trending-up" className="w-6 h-6 text-orange-400 mb-2" />
               <div className="font-bold text-orange-300 mb-1">Platform</div>
-              <div className="text-xs text-gray-400">Executive showcase & business value</div>
+              <div className="text-xs text-gray-400">Platform-wide metrics and estimated savings</div>
             </div>
           </div>
         </div>
@@ -129,29 +129,29 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
           <div className="bg-green-900/20 rounded-lg p-6 border border-green-500/30 mb-6">
             <div className="text-center mb-4">
               <Icon name="target" className="w-12 h-12 text-green-400 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-green-300">70%+ Cache Hit Rate</div>
-              <div className="text-sm text-gray-400">Live semantic similarity matching</div>
+              <div className="text-2xl font-bold text-green-300">Semantic Cache</div>
+              <div className="text-sm text-gray-400">Live similarity matching, hit rate shown in Analytics</div>
             </div>
           </div>
           <p className="text-gray-300 mb-4">
-            Our breakthrough semantic caching system uses Redis Vector Search to:
+            The semantic cache uses Redis Vector Search to:
           </p>
           <ul className="space-y-2 text-gray-300">
             <li className="flex items-center gap-2">
               <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Cache AI responses with 85% similarity threshold</span>
+              <span>Cache AI responses and reuse them for similar prompts</span>
             </li>
             <li className="flex items-center gap-2">
               <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Reduce OpenAI API costs by 60%+</span>
+              <span>Cut repeat OpenAI API calls</span>
             </li>
             <li className="flex items-center gap-2">
               <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Deliver sub-second cached responses</span>
+              <span>Serve cached responses without a new model call</span>
             </li>
             <li className="flex items-center gap-2">
               <Icon name="check" className="w-4 h-4 text-green-400" />
-              <span>Scale to thousands of requests efficiently</span>
+              <span>Track hits, misses and estimated savings as you debate</span>
             </li>
           </ul>
         </div>
@@ -167,7 +167,7 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
           <Icon name="play" className="w-16 h-16 mx-auto text-green-400 mb-4" />
           <h3 className="text-xl font-bold text-white mb-4">You're Ready to Begin!</h3>
           <p className="text-gray-300 mb-6">
-            Start exploring StanceStream's capabilities. The platform is optimized and ready for demonstration.
+            Start exploring StanceStream's capabilities. Pick a topic and watch the agents debate.
           </p>
           <div className="bg-gray-800/50 rounded-lg p-4 border border-green-500/30">
             <h4 className="font-bold text-green-300 mb-2">Quick Start Tips:</h4>
