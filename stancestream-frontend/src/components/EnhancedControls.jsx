@@ -2,17 +2,10 @@
 import { useState } from 'react';
 import api from '../services/api';
 import Icon from './Icon';
+import { BASE_DEBATE_TOPICS } from '../data/debateTopics';
 
-const DEBATE_TOPICS = [
-    { id: 'climate', name: 'Climate Policy', description: 'Environmental regulations and green energy', icon: 'climate' },
-    { id: 'ai', name: 'AI Regulation', description: 'Artificial intelligence governance and ethics', icon: 'ai' },
-    { id: 'healthcare', name: 'Healthcare Reform', description: 'Universal healthcare and medical access', icon: 'healthcare' },
-    { id: 'immigration', name: 'Immigration Policy', description: 'Border security and refugee assistance', icon: 'immigration' },
-    { id: 'education', name: 'Education Reform', description: 'Public education and student debt', icon: 'education' },
-    { id: 'taxation', name: 'Tax Policy', description: 'Progressive taxation and wealth redistribution', icon: 'taxation' },
-    { id: 'privacy', name: 'Digital Privacy', description: 'Data protection and surveillance', icon: 'privacy' },
-    { id: 'space', name: 'Space Exploration', description: 'Space colonization and research funding', icon: 'space' }
-];
+// Copy: addCustomTopic below pushes custom topics onto this list.
+const DEBATE_TOPICS = [...BASE_DEBATE_TOPICS];
 
 export default function EnhancedControls({ 
     viewMode, 
