@@ -18,7 +18,11 @@ export default function EnhancedControls({
     onClearConversation,
     onDebateStarted 
 }) {
-    const [selectedTopics, setSelectedTopics] = useState(['climate']);
+    const [selectedTopics, setSelectedTopics] = useState(() => {
+        // The home page links here with ?topic=<id>.
+        const wanted = new URLSearchParams(window.location.search).get('topic');
+        return [DEBATE_TOPICS.some(t => t.id === wanted) ? wanted : 'climate'];
+    });
     const [customTopic, setCustomTopic] = useState('');
     const [isStarting, setIsStarting] = useState(false);
     const [isAddingTopic, setIsAddingTopic] = useState(false);
