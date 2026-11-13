@@ -1653,7 +1653,7 @@ app.get("/api/cache/metrics", async (req, res) => {
       const dashboardMetrics = getDashboardMetrics(cacheStats);
 
       console.log(
-        `📊 Cache metrics: ${cacheStats.cache_hits}/${cacheStats.total_requests} hits (${cacheStats.hit_ratio.toFixed(1)}%) - $${businessMetrics.current_usage.monthly_savings}/month saved`,
+        `📊 Cache metrics: ${cacheStats.cache_hits}/${cacheStats.total_requests} hits (${(cacheStats.hit_ratio * 100).toFixed(1)}%) - $${businessMetrics.current_usage.monthly_savings}/month saved`,
       );
 
       const response = {
