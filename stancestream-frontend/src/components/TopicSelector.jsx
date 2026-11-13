@@ -137,7 +137,7 @@ const TopicSelector = ({ onTopicChange, currentTopic, disabled }) => {
                                 <button
                                     onClick={handleCustomSubmit}
                                     disabled={!customTopic.trim()}
-                                    className="flex-1 bg-gradient-to-r from-green-500 to-green-400 hover:from-green-400 hover:to-green-400 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg shadow-green-500/30 font-mono"
+                                    className="flex-1 bg-arena-b hover:bg-arena-b-deep disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg shadow-green-500/30 font-mono"
                                 >
                                     <Icon name="play" size={16} className="mr-2" />
                                     Start custom debate

@@ -88,7 +88,7 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                 <div className="flex items-center gap-3 mb-4">
                     <Icon name="award" className="w-8 h-8 text-green-400" />
                     <h1 className="text-4xl font-bold text-green-400">
-                        Redis AI challenge showcase
+                        Platform showcase
                     </h1>
                 </div>
                 <p className="text-xl text-green-300">

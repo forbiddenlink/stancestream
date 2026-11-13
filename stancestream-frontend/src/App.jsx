@@ -664,7 +664,7 @@ export default function App() {
 
                     {/* Fact Checker - Matrix Style */}
                     <div className="flex-1 min-h-[300px] max-h-[350px] animate-slide-in-right stagger-3">
-                      <FactChecker factChecks={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId)} />
+                      <FactChecker connected={connectionStatus === 'Connected'} factChecks={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId)} />
                     </div>
                   </div>
                 </div>
@@ -700,7 +700,7 @@ export default function App() {
 
                   {/* Side Panel: Fact Checker - Matrix Container */}
                   <div className="w-full lg:w-[450px] lg:flex-[3] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-right">
-                    <FactChecker factChecks={factChecks} />
+                    <FactChecker connected={connectionStatus === 'Connected'} factChecks={factChecks} />
                   </div>
                 </div>
 

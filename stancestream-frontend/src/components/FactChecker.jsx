@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from './Icon';
 import { Card, CardHeader, CardContent, StatusBadge, Stack } from './ui';
 
-const FactChecker = ({ factChecks = [] }) => {
+const FactChecker = ({ factChecks = [], connected = false }) => {
     const getFactCheckConfig = (score) => {
         if (score >= 0.8) {
             return {
@@ -54,8 +54,9 @@ const FactChecker = ({ factChecks = [] }) => {
                             <Icon name="search" size={24} className="text-green-400" />
                         </div>
                         <h4 className="text-green-400 font-medium mb-2 font-mono">Ready for fact-checking</h4>
-                        <p className="text-gray-400 text-sm mb-1 font-mono">Monitoring agent statements</p>
-                        <p className="text-gray-500 text-xs font-mono">Vector-powered verification system active</p>
+                        <p className="text-gray-400 text-sm mb-1 font-mono">
+                            {connected ? 'Waiting for agent statements' : 'Not connected, so nothing is being checked'}
+                        </p>
                     </div>
                 ) : (
                     <div className="space-y-3 h-full overflow-y-auto">

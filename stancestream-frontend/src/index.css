@@ -36,15 +36,15 @@
     --color-stage-raised: #eef2ef;
     --color-stage-line: #8a9a90;   /* rule */
 
-    /* brand: rust (was vermilion) */
+    /* brand scale: ink. Rust is reserved for side B (arena-b) and the one primary action. */
     --color-green-50: #131a16;  --color-green-100: #17201b; --color-green-200: #243029;
-    --color-green-300: #17201b; --color-green-400: #a22d12; --color-green-500: #b32f12;
-    --color-green-600: #c9603f; --color-green-700: #dd9a82; --color-green-800: #ecc4b4;
-    --color-green-900: #f4ddd3; --color-green-950: #faeee8;
+    --color-green-300: #17201b; --color-green-400: #243029; --color-green-500: #17201b;
+    --color-green-600: #66776e; --color-green-700: #a9b6ae; --color-green-800: #c9d3cd;
+    --color-green-900: #dde4df; --color-green-950: #eef2ef;
     --color-emerald-50: #131a16;  --color-emerald-100: #17201b; --color-emerald-200: #243029;
-    --color-emerald-300: #17201b; --color-emerald-400: #a22d12; --color-emerald-500: #b32f12;
-    --color-emerald-600: #c9603f; --color-emerald-700: #dd9a82; --color-emerald-800: #ecc4b4;
-    --color-emerald-900: #f4ddd3; --color-emerald-950: #faeee8;
+    --color-emerald-300: #17201b; --color-emerald-400: #243029; --color-emerald-500: #17201b;
+    --color-emerald-600: #66776e; --color-emerald-700: #a9b6ae; --color-emerald-800: #c9d3cd;
+    --color-emerald-900: #dde4df; --color-emerald-950: #eef2ef;
 
     /* teal (was blush, cyan, sky) */
     --color-cyan-300: #17394a; --color-cyan-400: #1d4656; --color-cyan-500: #24505f; --color-cyan-600: #5d8190;
@@ -113,7 +113,7 @@ html,
 body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100%;
     overflow-x: hidden;
     /* Prevent horizontal scroll */
     background: #e3e9e5;
@@ -193,7 +193,7 @@ body {
     }
 
     .button-primary {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-green-500 hover:bg-green-400 text-slate-950 border border-green-500 font-bold;
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-arena-b hover:bg-arena-b-deep text-slate-950 border border-arena-b font-bold;
     }
 
     .button-secondary {

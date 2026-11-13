@@ -211,9 +211,6 @@ export default function EnhancedPerformanceDashboard() {
                     <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
                         <Icon name="database" size={18} className="mr-2 text-green-400" />
                         Redis multi-modal architecture
-                        <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full border border-green-500/30 font-mono">
-                            Contest showcase
-                        </span>
                         {metrics.benchmark?.multiModalScore && (
                             <>
                                 <span className={`text-xs px-2 py-1 rounded-full border font-mono ${metrics.benchmark.multiModalScore.score === 100
@@ -221,9 +218,6 @@ export default function EnhancedPerformanceDashboard() {
                                     : 'bg-green-400/20 text-green-300 border-green-400/30'
                                     }`}>
                                     {metrics.benchmark.multiModalScore.rating}
-                                </span>
-                                <span className="text-xs bg-blue-500/20 px-2 py-1 rounded-full text-blue-400 border border-blue-500/30 font-mono">
-                                    Redis challenge
                                 </span>
                             </>
                         )}
@@ -265,9 +259,6 @@ export default function EnhancedPerformanceDashboard() {
                         <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
                             <Icon name="zap" size={18} className="mr-2 text-green-400" />
                             Semantic cache performance
-                            <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                                Innovation showcase
-                            </span>
                             {hitPercent > 70 && (
                                 <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
                                     High efficiency
@@ -428,8 +419,7 @@ export default function EnhancedPerformanceDashboard() {
                 {/* Metric Update Info */}
                 <div className="text-xs text-blue-400 text-center mt-6 font-mono">
                     Last updated: {new Date(metrics.timestamp).toLocaleTimeString()} •
-                    [LIVE DATA] •
-                    Redis challenge analytics 🏆
+                    [LIVE DATA]
                 </div>
             </CardContent>
         </Card>

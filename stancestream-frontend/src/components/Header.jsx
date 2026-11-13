@@ -52,10 +52,7 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                             <p className="text-slate-300 text-[11px] sm:text-xs lg:text-sm font-semibold font-mono mt-1">
                                 Live AI debate intelligence platform
                             </p>
-                            <p className="hidden sm:block text-slate-400 text-[10px] sm:text-xs font-medium font-mono">
-                                By StanceStream Editorial Team • <time dateTime="2026-02-07">Updated February 7, 2026</time>
-                            </p>
-                        </div>
+</div>
                     </Flex>
 
                     {/* Matrix Status Indicators */}

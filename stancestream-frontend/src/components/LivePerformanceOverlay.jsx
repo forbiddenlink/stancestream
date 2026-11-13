@@ -42,7 +42,7 @@ const MetricDisplay = ({ label, value, unit, icon, color, trend, isLoading: metr
 );
 
 // Cache Hit Celebration Component
-const CacheHitCelebration = ({ showCelebration, celebrationRef, cacheHits, lastSimilarity }) => (
+const CacheHitCelebration = ({ showCelebration, celebrationRef, lastSimilarity }) => (
     showCelebration && (
         <div
             ref={celebrationRef}
@@ -53,68 +53,13 @@ const CacheHitCelebration = ({ showCelebration, celebrationRef, cacheHits, lastS
                 <div>
                     <div className="text-sm font-mono">Cache hit!</div>
                     <div className="text-xs opacity-90 font-mono">
-                        Saved ${cacheHits[cacheHits.length - 1]?.amount?.toFixed(3) || '0.002'} • {(lastSimilarity * 100).toFixed(1)}% match
+                        {lastSimilarity > 0 ? `${(lastSimilarity * 100).toFixed(1)}% match` : 'Served from cache'}
                     </div>
                 </div>
             </div>
         </div>
     )
 );
-
-// Business Value Comparison Chart
-const BusinessComparison = ({ runningTotal }) => {
-    const traditionalCost = runningTotal * 2.5; // Estimate using an assumed 60% cost reduction
-
-    return (
-        <div className="bg-black/80 border border-green-500/30 rounded-lg p-3 mt-2">
-            <div className="flex items-center gap-2 mb-2">
-                <Icon name="bar-chart-3" className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-green-300 font-medium font-mono">Estimated cost comparison</span>
-            </div>
-
-            <div className="space-y-2">
-                {/* Traditional AI Bar */}
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-200 font-mono">Traditional AI:</span>
-                    <div className="flex items-center gap-2 flex-1 mx-2">
-                        <div className="bg-green-500/20 border border-green-500/30 rounded-full h-2 flex-1 relative">
-                            <div className="bg-green-500 h-2 rounded-full w-full"></div>
-                        </div>
-                        <span className="text-xs text-green-300 font-mono">${traditionalCost.toFixed(2)}</span>
-                    </div>
-                </div>
-
-                {/* StanceStream AI Bar */}
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-400 font-mono">StanceStream:</span>
-                    <div className="flex items-center gap-2 flex-1 mx-2">
-                        <div className="bg-green-400/20 border border-green-400/30 rounded-full h-2 flex-1 relative">
-                            <div
-                                className="bg-green-400 h-2 rounded-full transition-all duration-1000"
-                                style={{ width: `${traditionalCost > 0 ? (runningTotal / traditionalCost) * 100 : 0}%` }}
-                            ></div>
-                        </div>
-                        <span className="text-xs text-green-400 font-mono">${runningTotal.toFixed(2)}</span>
-                    </div>
-                </div>
-            </div>
-
-            {/* Savings Display */}
-            <div className="mt-2 pt-2 border-t border-green-500/30">
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-300 font-medium font-mono">Estimated savings:</span>
-                    <span className="text-sm text-green-400 font-bold font-mono">
-                        ${(traditionalCost - runningTotal).toFixed(2)}
-                    </span>
-                </div>
-                <div className="text-xs text-gray-400 mt-1 font-mono">
-                    {(traditionalCost > 0 ? (1 - runningTotal / traditionalCost) * 100 : 0).toFixed(1)}% cost reduction
-                </div>
-            </div>
-        </div>
-    );
-};
-
 
 async function fetchMetricResponses() {
     // Fetch cache metrics with business value
@@ -148,23 +93,12 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
     });
 
     const [businessMetrics, setBusinessMetrics] = useState({
-        current_usage: {
-            monthly_savings: null,
-            daily_cost_saved: 0,
-            cache_efficiency: 'Unavailable',
-            daily_tokens_saved: 0
-        },
-        enterprise_projections: {
-            medium_enterprise: { annual_savings: 0 }
-        },
         performance_impact: {
-            api_calls_eliminated: null,
-            system_efficiency: 'Unavailable'
+            api_calls_eliminated: null
         }
     });
 
     const [cacheHits, setCacheHits] = useState([]);
-    const [runningTotal, setRunningTotal] = useState(0);
     const [lastSimilarity, setLastSimilarity] = useState(0);
     const [showCelebration, setShowCelebration] = useState(false);
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -186,7 +120,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
         };
         
         setCacheHits(prev => [...prev.slice(-4), newHit]); // Keep last 5 hits
-        setRunningTotal(prev => prev + amount);
         setLastSimilarity(similarity);
         setShowCelebration(true);
         
@@ -200,7 +133,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
             setMetrics(prev => ({
                 ...prev,
                 cacheHitRate: cacheData?.metrics?.hit_ratio ?? null,
-                costSavings: cacheData?.business_value?.current_usage?.monthly_savings ?? null,
                 activeDebates: platformData?.contestMetrics?.debateStatistics?.activeDebates ?? null,
                 totalMessages: platformData?.contestMetrics?.debateStatistics?.totalMessages ?? null,
                 ...normalizePerformanceMetrics(perfData?.performance)
@@ -209,10 +141,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
             // Update business metrics
             if (cacheData?.business_value) {
                 setBusinessMetrics(cacheData.business_value);
-                
-                // Update running total if we have new savings data
-                const newTotal = cacheData.business_value.current_usage.daily_cost_saved * 30; // Monthly equivalent
-                setRunningTotal(previous => newTotal > previous ? newTotal : previous);
             }
 
             setLastUpdate(new Date());
@@ -257,8 +185,8 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
             } else if (event.detail?.type === 'cache_hit') {
                 // Celebrate cache hits with business value!
                 console.log('Cache hit celebration triggered:', event.detail); // Debug logging
-                const { similarity, cost_saved } = event.detail;
-                triggerCelebration(cost_saved || 0.002, similarity || 0.85);
+                const { similarity, cost_saved } = event.detail; // only what the event reports
+                triggerCelebration(cost_saved ?? null, similarity ?? 0);
             }
         };
 
@@ -414,7 +342,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
     return (
         <div className={`${getContainerClasses()} relative overflow-visible`}>
             {/* Cache Hit Celebration Overlay */}
-            <CacheHitCelebration showCelebration={showCelebration} celebrationRef={celebrationRef} cacheHits={cacheHits} lastSimilarity={lastSimilarity} />
+            <CacheHitCelebration showCelebration={showCelebration} celebrationRef={celebrationRef} lastSimilarity={lastSimilarity} />
             
             {/* Matrix Mission Control Header */}
             <div className="bg-gradient-to-r from-black/95 to-gray-900/95 backdrop-blur-sm border border-green-500/30 rounded-t-lg p-3 shadow-lg shadow-green-500/10">
@@ -422,18 +350,12 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                         <h3 className="text-sm font-bold text-green-400 font-mono">Semantic cache engine</h3>
-                        <div className="px-2 py-0.5 bg-green-600/20 border border-green-500/30 rounded text-xs text-green-300 font-mono">
-                            ${runningTotal.toFixed(2)} saved
-                        </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-400 ml-4">
                         <Icon name="refresh-cw" className="w-3 h-3 animate-spin" />
                         <span className="font-mono">{lastUpdate.toLocaleTimeString()}</span>
                     </div>
                     </div>
-                <div className="text-xs text-green-300 mt-1 font-medium font-mono">
-                    Live business value • {businessMetrics.current_usage.cache_efficiency} hit rate • {businessMetrics.performance_impact.system_efficiency}
-                </div>
             </div>
 
             {/* Matrix Enhanced Metrics Grid - Responsive for embedded mode */}
@@ -451,16 +373,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                         celebration={showCelebration}
                     />
                     
-                    <MetricDisplay
-                        label="Cost savings"
-                        value={businessMetrics.current_usage.monthly_savings}
-                        unit="/mo"
-                        icon="dollar-sign"
-                        color="emerald"
-                        isLoading={isLoading}
-                        pulse={businessMetrics.current_usage.monthly_savings > 0}
-                    />
-                    
                     {position !== 'embedded' && (
                         <>
                             <MetricDisplay
@@ -475,7 +387,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                             
                             <MetricDisplay
                                 label="API calls saved"
-                                value={businessMetrics.performance_impact.api_calls_eliminated}
+                                value={businessMetrics.performance_impact?.api_calls_eliminated}
                                 unit="calls"
                                 icon="zap"
                                 color="green"
@@ -485,35 +397,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                         </>
                     )}
                 </div>
-
-                {/* Compact Business Value Comparison for embedded mode */}
-                {position === 'embedded' ? (
-                    <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
-                        <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-green-300 font-medium font-mono">Estimated cost comparison</span>
-                            <span className="text-xs text-green-400 font-bold font-mono">
-                                {(runningTotal > 0 ? (1 - runningTotal / (runningTotal * 2.5)) * 100 : 0).toFixed(0)}% saved
-                            </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="bg-green-500/20 border border-green-500/30 rounded-full h-1.5 flex-1 relative">
-                                <div className="bg-green-500 h-1.5 rounded-full w-full"></div>
-                            </div>
-                            <div className="bg-green-400/20 border border-green-400/30 rounded-full h-1.5 flex-1 relative">
-                                <div 
-                                    className="bg-green-400 h-1.5 rounded-full transition-all duration-1000" 
-                                    style={{ width: `${runningTotal > 0 ? (runningTotal / (runningTotal * 2.5)) * 100 : 0}%` }}
-                                ></div>
-                            </div>
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-400 mt-1 font-mono">
-                            <span>Traditional AI</span>
-                            <span>StanceStream</span>
-                        </div>
-                    </div>
-                ) : (
-                    <BusinessComparison runningTotal={runningTotal} />
-                )}
 
                 {/* Recent Cache Hits - Compact for embedded */}
                 {cacheHits.length > 0 && (
@@ -530,7 +413,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                                     </span>
                                     <div className="flex items-center gap-2">
                                         <span className="text-green-200 font-mono">{(hit.similarity * 100).toFixed(0)}%</span>
-                                        <span className="text-green-400 font-mono">${hit.amount.toFixed(3)}</span>
                                     </div>
                                 </div>
                             ))}
@@ -538,36 +420,6 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     </div>
                 )}
 
-                {/* Scale projection - Compact for embedded */}
-                {position !== 'embedded' && (
-                    <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
-                        <div className="flex items-center gap-2 mb-1">
-                            <Icon name="trending-up" className="w-3 h-3 text-green-400" />
-                            <span className="text-xs text-green-300 font-medium font-mono">Scale projection</span>
-                        </div>
-                        <div className="text-xs text-green-200 font-mono">
-                            Projected at scale: <span className="text-green-400 font-bold">
-                                ${businessMetrics.enterprise_projections.medium_enterprise.annual_savings.toLocaleString()}/YEAR SAVINGS
-                            </span>
-                        </div>
-                    </div>
-                )}
-
-                {/* Matrix System Status Indicators */}
-                <div className="flex items-center justify-between mt-3 pt-2 border-t border-green-500/30">
-                    <div className="flex items-center gap-2 text-xs">
-                        <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">Vector search</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                        <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">Cache active</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                        <div className="w-1.5 h-1.5 bg-green-300 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">Optimizing</span>
-                    </div>
-                </div>
             </div>
         </div>
     );

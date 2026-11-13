@@ -67,9 +67,6 @@ export default function StanceEvolutionChart({ stanceData = [] }) {
                             <Icon name="trending" className="w-5 h-5 text-black" />
                         </div>
                         <h3 className="text-xl font-bold text-green-400 font-mono">Stance evolution</h3>
-                        <span className="text-xs bg-green-500/20 border border-green-500/30 px-2 py-1 rounded-full text-green-400 font-mono">
-                            Election night style
-                        </span>
                     </div>
                 </div>
 

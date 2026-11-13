@@ -338,7 +338,7 @@ export default function EnhancedControls({
                                     className="sr-only"
                                 />
                                 <span className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 font-bold text-center min-w-0">
-                                    <Icon name={topic.icon} size={14} className="flex-shrink-0 sm:size-4 text-green-400" />
+                                    <Icon name={topic.icon} size={14} className={`flex-shrink-0 sm:size-4 ${selectedTopics.includes(topic.id) ? 'text-slate-950' : 'text-green-400'}`} />
                                     <span className="text-xs sm:text-sm leading-tight text-center tracking-tight">{topic.name}</span>
                                 </span>
                             </label>
@@ -376,7 +376,7 @@ export default function EnhancedControls({
                                 className={`
                     w-full px-3 py-2 rounded-xl font-bold transition-all duration-150 text-sm flex items-center justify-center font-mono
                     ${selectedTopics.length > 0 && !isStarting && !(viewMode === 'standard' && isDebating)
-                                        ? 'bg-green-500 border border-green-500 text-slate-950 hover:bg-green-400 hover:border-green-400'
+                                        ? 'bg-arena-b border border-arena-b text-slate-950 hover:bg-arena-b-deep hover:border-arena-b-deep'
                                         : 'bg-surface-card border border-green-500/10 text-neutral-500 cursor-not-allowed'
                                     }
                   `}
@@ -413,7 +413,7 @@ export default function EnhancedControls({
                         {/* Cache Hit Demo Button - Showcase Semantic Caching Business Value */}
                         <button
                             onClick={triggerCacheHitDemo}
-                            className="w-full px-3 py-2 rounded-xl font-bold transition-all duration-150 text-sm flex items-center justify-center bg-green-500 border border-green-500 text-slate-950 hover:bg-green-400 hover:border-green-400 font-mono"
+                            className="w-full px-3 py-2 rounded-xl font-bold transition-all duration-150 text-sm flex items-center justify-center bg-transparent border border-slate-100 text-slate-100 hover:bg-slate-100 hover:text-slate-950 font-mono"
                         >
                             <Icon name="zap" size={16} className="mr-2" />
                             Demo cache hit
