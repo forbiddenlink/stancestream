@@ -123,7 +123,7 @@ export default function EnhancedControls({
                                 debateId: `multi_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`
                             });
                         } catch (singleError) {
-                            console.error(`Failed to start debate for: ${topic}`, singleError);
+                            console.error('Failed to start debate for: %s', topic, singleError);
                         }
                     }
                 }
