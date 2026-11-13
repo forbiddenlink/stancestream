@@ -538,15 +538,15 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     </div>
                 )}
 
-                {/* Enterprise Projection - Compact for embedded */}
+                {/* Scale projection - Compact for embedded */}
                 {position !== 'embedded' && (
                     <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
                         <div className="flex items-center gap-2 mb-1">
                             <Icon name="trending-up" className="w-3 h-3 text-green-400" />
-                            <span className="text-xs text-green-300 font-medium font-mono">ENTERPRISE PROJECTION</span>
+                            <span className="text-xs text-green-300 font-medium font-mono">SCALE PROJECTION</span>
                         </div>
                         <div className="text-xs text-green-200 font-mono">
-                            MEDIUM ENTERPRISE: <span className="text-green-400 font-bold">
+                            PROJECTED AT SCALE: <span className="text-green-400 font-bold">
                                 ${businessMetrics.enterprise_projections.medium_enterprise.annual_savings.toLocaleString()}/YEAR SAVINGS
                             </span>
                         </div>

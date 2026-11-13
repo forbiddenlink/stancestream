@@ -189,14 +189,6 @@ export default function RedisMatrixModal({ isOpen, onClose }) {
                             </div>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-300">Monthly Savings:</span>
-                                    <span className="text-green-300 font-bold">$47.32</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-300">Enterprise/Year:</span>
-                                    <span className="text-green-300 font-bold">$12,500</span>
-                                </div>
-                                <div className="flex justify-between">
                                     <span className="text-gray-300">API Calls Saved:</span>
                                     <span className="text-green-300 font-bold">2,847</span>
                                 </div>
