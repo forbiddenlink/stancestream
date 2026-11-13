@@ -133,13 +133,13 @@ const Controls = () => {
                 summaryWindow.document.write(`
                     <html>
                         <head><title>Debate Summary</title></head>
-                        <body style="font-family: Arial, sans-serif; padding: 20px; background: #382321; color: white;">
+                        <body style="font-family: 'Hanken Grotesk', system-ui, sans-serif; padding: 20px; background: #e3e9e5; color: #17201b;">
                             <h1>📊 StanceStream Debate Summary</h1>
-                            <div style="background: #5b413c; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                            <div style="background: #eef2ef; border: 1px solid #8a9a90; padding: 20px; margin: 20px 0;">
                                 <h2>Key Points</h2>
-                                <pre style="white-space: pre-wrap; background: #927770; padding: 15px; border-radius: 5px;">${escapeHtml(result.summary ?? '')}</pre>
+                                <pre style="white-space: pre-wrap; background: #e3e9e5; padding: 15px;">${escapeHtml(result.summary ?? '')}</pre>
                             </div>
-                            <div style="background: #5b413c; padding: 20px; border-radius: 10px;">
+                            <div style="background: #eef2ef; border: 1px solid #8a9a90; padding: 20px;">
                                 <h2>Metadata</h2>
                                 <p><strong>Messages Analyzed:</strong> ${escapeHtml(result.metadata?.messageCount || 'N/A')}</p>
                                 <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>

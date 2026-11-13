@@ -87,12 +87,12 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
             <div className="mb-8">
                 <div className="flex items-center gap-3 mb-4">
                     <Icon name="award" className="w-8 h-8 text-green-400" />
-                    <h1 className="text-4xl font-bold text-green-400 tracking-wide">
-                        REDIS AI CHALLENGE SHOWCASE
+                    <h1 className="text-4xl font-bold text-green-400">
+                        Redis AI challenge showcase
                     </h1>
                 </div>
                 <p className="text-xl text-green-300">
-                    REAL-TIME DEMONSTRATION OF STANCESTREAM'S MULTI-MODAL REDIS ARCHITECTURE
+                    Real-time demonstration of StanceStream's multi-modal Redis architecture
                 </p>
             </div>
 
@@ -102,45 +102,45 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                     <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                         <div className="flex items-center gap-3 mb-2">
                             <Icon name="database" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">ACTIVE DEBATES</span>
+                            <span className="text-lg font-bold text-green-300">Active debates</span>
                         </div>
                         <div className="text-3xl font-bold text-green-200">
                             {platformMetrics.platformMetrics?.debateStatistics?.activeDebates || 0}
                         </div>
-                        <div className="text-sm text-green-400/80">REAL-TIME CONCURRENT PROCESSING</div>
+                        <div className="text-sm text-green-400">Real-time concurrent processing</div>
                     </div>
 
                     <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                         <div className="flex items-center gap-3 mb-2">
                             <Icon name="message-circle" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">TOTAL MESSAGES</span>
+                            <span className="text-lg font-bold text-green-300">Total messages</span>
                         </div>
                         <div className="text-3xl font-bold text-green-200">
                             {platformMetrics.platformMetrics?.debateStatistics?.totalMessages || 0}
                         </div>
-                        <div className="text-sm text-green-400/80">REDIS STREAMS THROUGHPUT</div>
+                        <div className="text-sm text-green-400">Redis streams throughput</div>
                     </div>
 
                     <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                         <div className="flex items-center gap-3 mb-2">
                             <Icon name="zap" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">CACHE HIT RATE</span>
+                            <span className="text-lg font-bold text-green-300">Cache hit rate</span>
                         </div>
                         <div className="text-3xl font-bold text-green-200">
                             {platformMetrics.platformMetrics?.semanticCache?.hit_ratio || 0}%
                         </div>
-                        <div className="text-sm text-green-400/80">SEMANTIC VECTOR CACHING</div>
+                        <div className="text-sm text-green-400">Semantic vector caching</div>
                     </div>
 
                     <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                         <div className="flex items-center gap-3 mb-2">
                             <Icon name="activity" className="w-6 h-6 text-green-400" />
-                            <span className="text-lg font-bold text-green-300">SYSTEM HEALTH</span>
+                            <span className="text-lg font-bold text-green-300">System health</span>
                         </div>
                         <div className="text-3xl font-bold text-green-200">
                             {Math.round((platformMetrics.platformMetrics?.systemHealth?.uptime || 0) / 60)}M
                         </div>
-                        <div className="text-sm text-green-400/80">UPTIME & STABILITY</div>
+                        <div className="text-sm text-green-400">Uptime & stability</div>
                     </div>
                 </div>
             )}
@@ -148,9 +148,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
             {/* Redis Multi-Modal Showcase */}
             {showcaseData && (
                 <div className="mb-8">
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400 tracking-wide">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
                         <Icon name="layers" className="w-6 h-6 text-green-400" />
-                        REDIS MULTI-MODAL ARCHITECTURE LIVE DEMO
+                        Redis multi-modal architecture live demo
                     </h2>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -158,20 +158,20 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">REDISJSON</h3>
+                                <h3 className="text-xl font-bold text-green-300">RedisJSON</h3>
                                 <Icon name="file-text" className="w-5 h-5 text-green-400" />
                             </div>
-                            <p className="text-sm text-green-400/80 mb-3">{showcaseData.showcase?.redisJSON?.example}</p>
+                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisJSON?.example}</p>
                             <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
                                 <code className="text-xs text-green-400">
-                                    KEYS: {showcaseData.summary?.activeKeys?.json || 0} |
-                                    PATTERN: {showcaseData.showcase?.redisJSON?.keyPattern}
+                                    Keys: {showcaseData.summary?.activeKeys?.json || 0} |
+                                    Pattern: {showcaseData.showcase?.redisJSON?.keyPattern}
                                 </code>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {showcaseData.showcase?.redisJSON?.operations?.map((op, i) => (
                                     <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op.toUpperCase()}
+                                        {op}
                                     </span>
                                 ))}
                             </div>
@@ -181,20 +181,20 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">REDIS STREAMS</h3>
+                                <h3 className="text-xl font-bold text-green-300">Redis streams</h3>
                                 <Icon name="git-branch" className="w-5 h-5 text-green-400" />
                             </div>
-                            <p className="text-sm text-green-400/80 mb-3">{showcaseData.showcase?.redisStreams?.example}</p>
+                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisStreams?.example}</p>
                             <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
                                 <code className="text-xs text-green-400">
-                                    KEYS: {showcaseData.summary?.activeKeys?.streams || 0} |
-                                    PATTERN: {showcaseData.showcase?.redisStreams?.keyPattern}
+                                    Keys: {showcaseData.summary?.activeKeys?.streams || 0} |
+                                    Pattern: {showcaseData.showcase?.redisStreams?.keyPattern}
                                 </code>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {showcaseData.showcase?.redisStreams?.operations?.map((op, i) => (
                                     <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op.toUpperCase()}
+                                        {op}
                                     </span>
                                 ))}
                             </div>
@@ -204,20 +204,20 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-3 h-3 bg-green-300 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">REDISTIMESERIES</h3>
+                                <h3 className="text-xl font-bold text-green-300">Redistimeseries</h3>
                                 <Icon name="trending-up" className="w-5 h-5 text-green-400" />
                             </div>
-                            <p className="text-sm text-green-400/80 mb-3">{showcaseData.showcase?.redisTimeSeries?.example}</p>
+                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisTimeSeries?.example}</p>
                             <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
                                 <code className="text-xs text-green-400">
-                                    KEYS: {showcaseData.summary?.activeKeys?.timeseries || 0} |
-                                    PATTERN: {showcaseData.showcase?.redisTimeSeries?.keyPattern}
+                                    Keys: {showcaseData.summary?.activeKeys?.timeseries || 0} |
+                                    Pattern: {showcaseData.showcase?.redisTimeSeries?.keyPattern}
                                 </code>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {showcaseData.showcase?.redisTimeSeries?.operations?.map((op, i) => (
                                     <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op.toUpperCase()}
+                                        {op}
                                     </span>
                                 ))}
                             </div>
@@ -227,20 +227,20 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                                <h3 className="text-xl font-bold text-green-300">REDIS VECTOR SEARCH</h3>
+                                <h3 className="text-xl font-bold text-green-300">Redis vector search</h3>
                                 <Icon name="search" className="w-5 h-5 text-green-400" />
                             </div>
-                            <p className="text-sm text-green-400/80 mb-3">{showcaseData.showcase?.redisVector?.example}</p>
+                            <p className="text-sm text-green-400 mb-3">{showcaseData.showcase?.redisVector?.example}</p>
                             <div className="bg-black/60 rounded-lg p-3 mb-3 border border-green-500/20">
                                 <code className="text-xs text-green-400">
-                                    KEYS: {showcaseData.summary?.activeKeys?.vector || 0} |
-                                    PATTERN: {showcaseData.showcase?.redisVector?.keyPattern}
+                                    Keys: {showcaseData.summary?.activeKeys?.vector || 0} |
+                                    Pattern: {showcaseData.showcase?.redisVector?.keyPattern}
                                 </code>
                             </div>
                             <div className="flex flex-wrap gap-2">
                                 {showcaseData.showcase?.redisVector?.operations?.map((op, i) => (
                                     <span key={i} className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded border border-green-500/30">
-                                        {op.toUpperCase()}
+                                        {op}
                                     </span>
                                 ))}
                             </div>
@@ -252,51 +252,51 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
             {/* Performance Optimization Dashboard */}
             {optimizationMetrics && (
                 <div className="mb-8">
-                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400 tracking-wide">
+                    <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
                         <Icon name="gauge" className="w-6 h-6 text-green-400" />
-                        REAL-TIME PERFORMANCE OPTIMIZATION
+                        Real-time performance optimization
                     </h2>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-3">
                                 <Icon name="cpu" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">OPTIMIZATION STATUS</span>
+                                <span className="font-bold text-green-300">Optimization status</span>
                             </div>
                             <div className="text-2xl font-bold text-green-200 mb-2">
-                                {(optimizationMetrics.optimization?.status || 'OFFLINE').toUpperCase()}
+                                {(optimizationMetrics.optimization?.status || 'Offline')}
                             </div>
-                            <div className="text-sm text-green-400/80">
-                                {optimizationMetrics.optimization?.total_optimizations || 0} TOTAL OPTIMIZATIONS
+                            <div className="text-sm text-green-400">
+                                {optimizationMetrics.optimization?.total_optimizations || 0} total optimizations
                             </div>
                         </div>
 
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-3">
                                 <Icon name="trending-up" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">AVG IMPROVEMENT</span>
+                                <span className="font-bold text-green-300">Avg improvement</span>
                             </div>
                             <div className="text-2xl font-bold text-green-200 mb-2">
                                 {(optimizationMetrics.optimization?.average_improvement || 0).toFixed(1)}%
                             </div>
-                            <div className="text-sm text-green-400/80">
-                                PERFORMANCE GAINS PER CYCLE
+                            <div className="text-sm text-green-400">
+                                Performance gains per cycle
                             </div>
                         </div>
 
                         <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
                             <div className="flex items-center gap-3 mb-3">
                                 <Icon name="clock" className="w-5 h-5 text-green-400" />
-                                <span className="font-bold text-green-300">LAST OPTIMIZATION</span>
+                                <span className="font-bold text-green-300">Last optimization</span>
                             </div>
                             <div className="text-lg font-bold text-green-200 mb-2">
                                 {optimizationMetrics.optimization?.last_optimization ?
                                     new Date(optimizationMetrics.optimization.last_optimization).toLocaleTimeString() :
-                                    'PENDING'
+                                    'Pending'
                                 }
                             </div>
-                            <div className="text-sm text-green-400/80">
-                                CONTINUOUS MONITORING ACTIVE
+                            <div className="text-sm text-green-400">
+                                Continuous monitoring active
                             </div>
                         </div>
                     </div>
@@ -305,38 +305,38 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
 
             {/* Interactive Demo Scenarios */}
             <div className="mb-8">
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400 tracking-wide">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
                     <Icon name="play-circle" className="w-6 h-6 text-green-400" />
-                    INTERACTIVE PLATFORM DEMONSTRATIONS
+                    Interactive platform demonstrations
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {[
                         {
                             id: 'multi-modal-showcase',
-                            title: 'MULTI-MODAL SHOWCASE',
-                            description: 'DEMONSTRATE ALL 4 REDIS MODULES IN SEQUENCE',
+                            title: 'Multi-modal showcase',
+                            description: 'Demonstrate all 4 Redis modules in sequence',
                             icon: 'layers',
                             color: 'green'
                         },
                         {
                             id: 'performance-stress-test',
-                            title: 'PERFORMANCE STRESS TEST',
-                            description: 'HIGH-THROUGHPUT OPERATIONS BENCHMARK',
+                            title: 'Performance stress test',
+                            description: 'High-throughput operations benchmark',
                             icon: 'zap',
                             color: 'green'
                         },
                         {
                             id: 'concurrent-debates',
-                            title: 'CONCURRENT DEBATES',
-                            description: 'MULTIPLE SIMULTANEOUS AI DEBATES',
+                            title: 'Concurrent debates',
+                            description: 'Multiple simultaneous AI debates',
                             icon: 'users',
                             color: 'green'
                         },
                         {
                             id: 'cache-efficiency',
-                            title: 'CACHE EFFICIENCY',
-                            description: 'SEMANTIC CACHE HIT RATE OPTIMIZATION',
+                            title: 'Cache efficiency',
+                            description: 'Semantic cache hit rate optimization',
                             icon: 'database',
                             color: 'green'
                         }
@@ -349,7 +349,7 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                                 />
                                 <span className="font-bold text-green-300">{demo.title}</span>
                             </div>
-                            <p className="text-sm text-green-400/80 mb-4">{demo.description}</p>
+                            <p className="text-sm text-green-400 mb-4">{demo.description}</p>
 
                             <button
                                 onClick={() => runDemo(demo.id)}
@@ -362,24 +362,24 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                                 {demoRunning && activeDemo === demo.id ? (
                                     <span className="flex items-center gap-2 justify-center">
                                         <Icon name="loader-2" className="w-4 h-4 animate-spin" />
-                                        RUNNING...
+                                        Running...
                                     </span>
                                 ) : (
-                                    'RUN DEMO'
+                                    'Run demo'
                                 )}
                             </button>
 
                             {/* Demo Results */}
                             {demoResults[demo.id] && (
                                 <div className="mt-4 p-3 bg-black/60 rounded-lg border border-green-500/20">
-                                    <div className="text-xs text-green-400/80 mb-2 font-mono">LATEST RESULT:</div>
+                                    <div className="text-xs text-green-400 mb-2 font-mono">Latest result:</div>
                                     {demoResults[demo.id].success ? (
                                         <div className="text-xs text-green-400 font-mono">
-                                            ✅ SUCCESS - {demoResults[demo.id].result?.metrics?.totalOperations || 0} OPERATIONS
+                                            ✅ success - {demoResults[demo.id].result?.metrics?.totalOperations || 0} operations
                                         </div>
                                     ) : (
                                         <div className="text-xs text-green-300 font-mono">
-                                            ❌ ERROR: {demoResults[demo.id].error}
+                                            ❌ error: {demoResults[demo.id].error}
                                         </div>
                                     )}
                                 </div>
@@ -391,9 +391,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
 
             {/* Real-time Activity Feed */}
             <div>
-                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400 tracking-wide">
+                <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-green-400">
                     <Icon name="activity" className="w-6 h-6 text-green-400" />
-                    LIVE SYSTEM ACTIVITY
+                    Live system activity
                 </h2>
 
                 <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-6 shadow-lg">
@@ -402,9 +402,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                             <div className="flex items-center gap-3 text-sm">
                                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                                 <span className="text-green-300 font-mono">
-                                    REDIS MODULES ACTIVE: {showcaseData.summary?.totalModules || 0}/4
+                                    Redis modules active: {showcaseData.summary?.totalModules || 0}/4
                                 </span>
-                                <span className="text-green-500/60 font-mono">
+                                <span className="text-slate-500 font-mono">
                                     {new Date().toLocaleTimeString()}
                                 </span>
                             </div>
@@ -414,9 +414,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                             <div className="flex items-center gap-3 text-sm">
                                 <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
                                 <span className="text-green-300 font-mono">
-                                    PROCESSING {platformMetrics.platformMetrics?.debateStatistics?.activeDebates || 0} CONCURRENT DEBATES
+                                    Processing {platformMetrics.platformMetrics?.debateStatistics?.activeDebates || 0} concurrent debates
                                 </span>
-                                <span className="text-green-500/60 font-mono">
+                                <span className="text-slate-500 font-mono">
                                     {new Date().toLocaleTimeString()}
                                 </span>
                             </div>
@@ -426,9 +426,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                             <div className="flex items-center gap-3 text-sm">
                                 <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
                                 <span className="text-green-300 font-mono">
-                                    PERFORMANCE OPTIMIZER RUNNING ({optimizationMetrics.optimization.total_optimizations} CYCLES COMPLETED)
+                                    Performance optimizer running ({optimizationMetrics.optimization.total_optimizations} cycles completed)
                                 </span>
-                                <span className="text-green-500/60 font-mono">
+                                <span className="text-slate-500 font-mono">
                                     {new Date().toLocaleTimeString()}
                                 </span>
                             </div>
@@ -437,9 +437,9 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
                         <div className="flex items-center gap-3 text-sm">
                             <div className="w-2 h-2 bg-green-600 rounded-full animate-pulse"></div>
                             <span className="text-green-300 font-mono">
-                                SEMANTIC CACHE HIT RATE: {platformMetrics?.platformMetrics?.semanticCache?.hit_ratio || 0}%
+                                Semantic cache hit rate: {platformMetrics?.platformMetrics?.semanticCache?.hit_ratio || 0}%
                             </span>
-                            <span className="text-green-500/60 font-mono">
+                            <span className="text-slate-500 font-mono">
                                 {new Date().toLocaleTimeString()}
                             </span>
                         </div>

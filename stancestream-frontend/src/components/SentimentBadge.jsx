@@ -31,7 +31,7 @@ const SentimentSparkline = ({ data, width = 60, height = 16 }) => {
 
   // Color based on trend
   const trend = values[values.length - 1] - values[0];
-  const strokeColor = trend > 0 ? '#ff7a55' : trend < 0 ? '#e9bb80' : '#6b7280';
+  const strokeColor = trend > 0 ? '#a22d12' : trend < 0 ? '#8a5b14' : '#4a5a51';
   
   console.log('🎨 Sparkline points:', points, 'color:', strokeColor);
 

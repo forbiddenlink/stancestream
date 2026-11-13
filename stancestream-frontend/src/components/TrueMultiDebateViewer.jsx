@@ -51,9 +51,9 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
             {/* Debate Header */}
             <div className="flex items-center justify-between mb-2 sm:mb-3 pb-2 border-b border-green-500/30 flex-shrink-0">
                 <div className="min-w-0 flex-1 pr-2">
-                    <h3 className="font-bold text-green-300 text-xs sm:text-sm truncate font-mono tracking-wide">{debate.topic.toUpperCase()}</h3>
-                    <div className="text-xs text-green-400/80 font-mono">
-                        {debateMessages.length} MESSAGES • {debate.status.toUpperCase()}
+                    <h3 className="font-bold text-green-300 text-xs sm:text-sm truncate font-mono">{debate.topic}</h3>
+                    <div className="text-xs text-green-400 font-mono">
+                        {debateMessages.length} messages • {debate.status}
                     </div>
                 </div>
                 <div className="flex gap-1 flex-shrink-0">
@@ -75,30 +75,31 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
             {/* Topic Change Interface */}
             {isChangingTopic && (
                 <div className="mb-2 p-2 bg-black/60 rounded border border-green-500/30 flex-shrink-0 shadow-lg">
-                    <div className="text-xs text-green-300 mb-2 font-mono tracking-wide">CHANGE TOPIC:</div>
+                    <div className="text-xs text-green-300 mb-2 font-mono">Change topic:</div>
                     <select
+                        aria-label="Debate topic"
                         value={selectedTopic}
                         onChange={(e) => setSelectedTopic(e.target.value)}
                         className="w-full px-2 py-1 bg-black/80 border border-green-500/30 rounded text-xs text-green-300 mb-2 font-mono focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
                         {DEBATE_TOPICS.map(topic => (
                             <option key={topic.id} value={topic.id}>
-                                {topic.name.toUpperCase()}
+                                {topic.name}
                             </option>
                         ))}
                     </select>
                     <div className="flex flex-col sm:flex-row gap-1">
                         <button
                             onClick={handleTopicChange}
-                            className="flex-1 px-2 py-1 bg-green-600 text-black text-xs rounded hover:bg-green-500 transition-colors font-mono font-bold tracking-wide"
+                            className="flex-1 px-2 py-1 bg-green-500 text-black text-xs rounded hover:bg-green-400 transition-colors font-mono font-bold"
                         >
-                            CHANGE
+                            Change
                         </button>
                         <button
                             onClick={() => setIsChangingTopic(false)}
-                            className="px-2 py-1 bg-black/80 border border-green-500/30 text-green-300 text-xs rounded hover:bg-green-900/20 transition-colors font-mono font-bold tracking-wide"
+                            className="px-2 py-1 bg-black/80 border border-green-500/30 text-green-300 text-xs rounded hover:bg-green-900/20 transition-colors font-mono font-bold"
                         >
-                            CANCEL
+                            Cancel
                         </button>
                     </div>
                 </div>
@@ -107,12 +108,12 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto space-y-1 sm:space-y-2 min-h-0">
                 {recentMessages.length === 0 ? (
-                    <div className="text-center text-green-400/60 py-4 sm:py-8">
+                    <div className="text-center text-green-400 py-4 sm:py-8">
                         <div className="w-8 h-8 sm:w-12 sm:h-12 bg-green-700/20 border border-green-500/30 rounded-full flex items-center justify-center mb-2 sm:mb-3 mx-auto">
                             <Icon name="message" size={16} className="sm:hidden text-green-500" />
                             <Icon name="message" size={24} className="hidden sm:block text-green-500" />
                         </div>
-                        <div className="text-xs font-mono tracking-wide">NO MESSAGES YET</div>
+                        <div className="text-xs font-mono">No messages yet</div>
                     </div>
                 ) : (
                     recentMessages.map((msg, msgIndex) => (
@@ -122,8 +123,8 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
                         >
                             {/* Message Header */}
                             <div className="flex items-center justify-between mb-1">
-                                <span className={`text-xs font-bold ${getAgentColor(msg.agentId)} truncate flex-1 pr-2 font-mono tracking-wide`}>
-                                    {msg.sender.toUpperCase()}
+                                <span className={`text-xs font-bold ${getAgentColor(msg.agentId)} truncate flex-1 pr-2 font-mono`}>
+                                    {msg.sender}
                                 </span>
                                 <div className="flex items-center gap-1 flex-shrink-0">
                                     {msg.factCheck && (
@@ -131,7 +132,7 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
                                             <Icon name="success" size={8} />
                                         </span>
                                     )}
-                                    <span className="text-xs text-green-400/60 hidden sm:inline font-mono">
+                                    <span className="text-xs text-green-400 hidden sm:inline font-mono">
                                         {msg.timestamp ? formatDistanceToNow(new Date(msg.timestamp), { addSuffix: true }) : 'NOW'}
                                     </span>
                                 </div>
@@ -145,7 +146,7 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
                             {/* Fact Check */}
                             {msg.factCheck && (
                                 <div className="mt-1 p-1 bg-green-900/20 border border-green-500/30 rounded text-xs shadow-lg">
-                                    <div className="text-green-400 font-bold text-xs font-mono tracking-wide">FACT:</div>
+                                    <div className="text-green-400 font-bold text-xs font-mono">Fact:</div>
                                     <div className="text-green-200 text-xs break-words font-mono">{msg.factCheck.fact}</div>
                                 </div>
                             )}
@@ -156,9 +157,9 @@ function DebateColumn({ debate, messages, onTopicChange, onStop, index }) {
 
             {/* Status Footer */}
             <div className="mt-2 pt-2 border-t border-green-500/30 text-center flex-shrink-0">
-                <div className="flex items-center justify-center gap-2 text-xs text-green-400 font-mono tracking-wide">
+                <div className="flex items-center justify-center gap-2 text-xs text-green-400 font-mono">
                     <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    LIVE • {debate.messageCount || 0} TOTAL
+                    Live • {debate.messageCount || 0} total
                 </div>
             </div>
         </div>
@@ -231,32 +232,33 @@ export default function TrueMultiDebateViewer({ messages, activeDebates, onMetri
         <div className="h-full flex flex-col max-w-full overflow-hidden bg-gradient-to-br from-black/90 to-gray-900/90 backdrop-blur-sm rounded-xl p-2 sm:p-4 border border-green-500/30 shadow-lg shadow-green-500/10">
             {/* Header */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 sm:mb-4 gap-2 sm:gap-0 flex-shrink-0">
-                <h2 className="text-lg sm:text-xl font-bold text-green-300 flex items-center gap-2 font-mono tracking-wide">
+                <h2 className="text-lg sm:text-xl font-bold text-green-300 flex items-center gap-2 font-mono">
                     <Icon name="multi-debate" size={20} className="mr-2 text-green-400" />
-                    <span className="hidden sm:inline">MULTI-DEBATE ARENA</span>
-                    <span className="sm:hidden">MULTI-DEBATE</span>
+                    <span className="hidden sm:inline">Multi-debate arena</span>
+                    <span className="sm:hidden">Multi-debate</span>
                     <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                        {activeDebatesArray.length} ACTIVE
+                        {activeDebatesArray.length} active
                     </span>
                 </h2>
                 <div className="flex items-center gap-2 w-full sm:w-auto">
                     <select
+                        aria-label="Number of debates"
                         value={maxDebates}
                         onChange={(e) => setMaxDebates(Number(e.target.value))}
                         className="px-2 py-1 bg-black/80 border border-green-500/30 rounded text-xs text-green-300 flex-1 sm:flex-none font-mono focus:outline-none focus:ring-2 focus:ring-green-500"
                     >
-                        <option value={2}>2 DEBATES</option>
-                        <option value={3}>3 DEBATES</option>
-                        <option value={4}>4 DEBATES</option>
-                        <option value={6}>6 DEBATES</option>
+                        <option value={2}>2 debates</option>
+                        <option value={3}>3 debates</option>
+                        <option value={4}>4 debates</option>
+                        <option value={6}>6 debates</option>
                     </select>
                     <button
                         onClick={startNewDebate}
-                        className="px-2 sm:px-3 py-1 bg-green-600/20 border border-green-500/30 rounded text-green-300 text-xs hover:bg-green-600/30 transition-colors flex items-center gap-1 flex-shrink-0 font-mono font-bold tracking-wide"
+                        className="px-2 sm:px-3 py-1 bg-green-600/20 border border-green-500/30 rounded text-green-300 text-xs hover:bg-green-600/30 transition-colors flex items-center gap-1 flex-shrink-0 font-mono font-bold"
                     >
                         <Icon name="add" size={14} />
-                        <span className="hidden sm:inline">NEW DEBATE</span>
-                        <span className="sm:hidden">NEW</span>
+                        <span className="hidden sm:inline">New debate</span>
+                        <span className="sm:hidden">New</span>
                     </button>
                 </div>
             </div>
@@ -269,14 +271,14 @@ export default function TrueMultiDebateViewer({ messages, activeDebates, onMetri
                             <div className="w-16 h-16 bg-green-500/20 border border-green-500/30 rounded-full flex items-center justify-center mb-4 mx-auto shadow-lg">
                                 <Icon name="multi-debate" size={32} className="text-green-400" />
                             </div>
-                            <div className="text-lg mb-2 font-mono font-bold tracking-wide">NO ACTIVE DEBATES</div>
-                            <div className="text-sm font-mono text-green-300/80">START MULTIPLE DEBATES TO SEE THEM HERE SIMULTANEOUSLY</div>
+                            <div className="text-lg mb-2 font-mono font-bold">No active debates</div>
+                            <div className="text-sm font-mono text-green-300">Start multiple debates to see them here simultaneously</div>
                             <button
                                 onClick={startNewDebate}
-                                className="mt-4 px-4 py-2 bg-green-600 text-black rounded hover:bg-green-500 transition-colors flex items-center gap-2 mx-auto font-mono font-bold tracking-wide shadow-lg shadow-green-500/30"
+                                className="mt-4 px-4 py-2 bg-green-500 text-black rounded hover:bg-green-400 transition-colors flex items-center gap-2 mx-auto font-mono font-bold shadow-lg shadow-green-500/30"
                             >
                                 <Icon name="play" size={16} />
-                                START FIRST DEBATE
+                                Start first debate
                             </button>
                         </div>
                     </div>
@@ -306,15 +308,15 @@ export default function TrueMultiDebateViewer({ messages, activeDebates, onMetri
             {activeDebatesArray.length > 0 && (
                 <div className="mt-4 p-3 bg-black/60 rounded-lg border border-green-500/30 shadow-lg">
                     <div className="flex justify-between items-center text-sm">
-                        <div className="text-green-300 font-mono tracking-wide">
-                            <span className="font-bold">{activeDebatesArray.length}</span> CONCURRENT DEBATES •{' '}
+                        <div className="text-green-300 font-mono">
+                            <span className="font-bold">{activeDebatesArray.length}</span> concurrent debates •{' '}
                             <span className="font-bold">
                                 {messages.length}
-                            </span> TOTAL MESSAGES
+                            </span> total messages
                         </div>
-                        <div className="flex items-center gap-2 text-xs text-green-400 font-mono tracking-wide">
+                        <div className="flex items-center gap-2 text-xs text-green-400 font-mono">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            REAL-TIME UPDATES
+                            Real-time updates
                         </div>
                     </div>
                 </div>

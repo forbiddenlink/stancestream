@@ -21,7 +21,7 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
       content: (
         <div className="text-center">
           <div className="mb-6">
-            <h3 className="font-display text-3xl font-black uppercase tracking-[0.04em] text-white mb-2">Live AI Debate Platform</h3>
+            <h3 className="font-display text-3xl font-bold text-white mb-2">Live AI Debate Platform</h3>
             <p className="text-gray-300 text-lg mb-5">
               Experience real-time AI agents powered by all 4 Redis modules working together
             </p>

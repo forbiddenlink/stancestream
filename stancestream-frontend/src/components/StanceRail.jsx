@@ -43,11 +43,11 @@ const Row = ({ topic }) => {
     return (
         <div className="stance-row">
             <div className="stance-row-head">
-                <span className="font-mono text-[11px] tracking-[0.14em] text-slate-300 uppercase">
+                <span className="font-mono text-[11px] text-slate-300">
                     {topic.key}
                 </span>
-                <span className="font-mono text-[11px] tracking-[0.14em] text-slate-400">
-                    {fmt(hi - lo)} APART
+                <span className="font-mono text-[11px] text-slate-400">
+                    {fmt(hi - lo)} apart
                 </span>
             </div>
             <div className="stance-track" aria-hidden="true">
@@ -101,7 +101,7 @@ const StanceRail = ({ compact = false, className = '' }) => {
             {!compact && (
                 <div className="stance-source">
                     <p className="stance-source-line">
-                        <span className="stance-source-cmd">TS.ADD</span>
+                        <span className="stance-source-cmd">Ts.add</span>
                         <span className="stance-source-key">{TS_KEY}</span>
                         <span className="stance-source-cmd">* 0.4</span>
                     </p>

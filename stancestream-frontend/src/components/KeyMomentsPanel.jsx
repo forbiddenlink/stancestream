@@ -109,11 +109,11 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
 
     const getMomentLabel = (type, significance) => {
         const labels = {
-            stance_flip: significance === 'major' ? 'MAJOR STANCE SHIFT' : 'STANCE CHANGE',
-            questionable_claim: significance === 'critical' ? 'CRITICAL FACT ISSUE' : 'QUESTIONABLE CLAIM',
-            memory_milestone: significance === 'major' ? 'MAJOR MILESTONE' : 'MEMORY MILESTONE'
+            stance_flip: significance === 'major' ? 'Major stance shift' : 'Stance change',
+            questionable_claim: significance === 'critical' ? 'Critical fact issue' : 'Questionable claim',
+            memory_milestone: significance === 'major' ? 'Major milestone' : 'Memory milestone'
         };
-        return labels[type] || 'KEY MOMENT';
+        return labels[type] || 'Key moment';
     };
 
     const getMomentColor = (type) => {
@@ -131,29 +131,29 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
         const diffMs = now - time;
         const diffMins = Math.floor(diffMs / 60000);
         
-        if (diffMins < 1) return 'JUST NOW';
-        if (diffMins < 60) return `${diffMins}M AGO`;
-        if (diffMins < 1440) return `${Math.floor(diffMins / 60)}H AGO`;
-        return `${Math.floor(diffMins / 1440)}D AGO`;
+        if (diffMins < 1) return 'Just now';
+        if (diffMins < 60) return `${diffMins}m ago`;
+        if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+        return `${Math.floor(diffMins / 1440)}d ago`;
     };
 
     const getTitle = () => {
         if (viewMode === 'standard') {
-            return debateId ? 'KEY MOMENTS' : 'KEY MOMENTS';
+            return debateId ? 'Key moments' : 'Key moments';
         } else if (viewMode === 'multi-debate') {
-            return 'KEY MOMENTS - ALL ACTIVE DEBATES';
+            return 'Key moments - all active debates';
         } else {
-            return 'KEY MOMENTS ANALYTICS - SYSTEM WIDE';
+            return 'Key moments analytics - system wide';
         }
     };
 
     const getSubtitle = () => {
         if (viewMode === 'standard') {
-            return debateId ? `CURRENT DEBATE: ${debateId}` : 'NO ACTIVE DEBATE';
+            return debateId ? `Current debate: ${debateId}` : 'No active debate';
         } else if (viewMode === 'multi-debate') {
-            return 'REAL-TIME MOMENTS ACROSS ALL CONCURRENT DEBATES';
+            return 'Real-time moments across all concurrent debates';
         } else {
-            return 'COMPREHENSIVE ANALYSIS OF ALL SIGNIFICANT DEBATE MOMENTS';
+            return 'Comprehensive analysis of all significant debate moments';
         }
     };
 
@@ -162,13 +162,13 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
             {/* Matrix Header */}
             <div className="flex flex-col gap-2 mb-4 flex-shrink-0">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-green-400 flex items-center font-mono tracking-wide">
+                    <h3 className="text-lg font-semibold text-green-400 flex items-center font-mono">
                         <Icon name="star" size={20} className="mr-2 text-green-400" />
                         {getTitle()}
                     </h3>
                     <div className="flex items-center gap-2">
                         <span className="text-xs bg-green-500/20 border border-green-500/30 px-2 py-1 rounded-full text-green-400 font-medium font-mono">
-                            {stats.total_moments} TOTAL
+                            {stats.total_moments} total
                         </span>
                         <button
                             onClick={fetchKeyMoments}
@@ -189,13 +189,13 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                 {/* Matrix Detection Criteria Info */}
                 <div className="flex flex-wrap gap-2 text-xs font-mono">
                     <span className="bg-green-500/10 text-green-400 px-2 py-1 rounded border border-green-500/20">
-                        STANCE FLIPS &gt;0.3
+                        Stance flips &gt;0.3
                     </span>
                     <span className="bg-green-400/10 text-green-300 px-2 py-1 rounded border border-green-400/20">
-                        FACT CONFIDENCE &lt;0.7
+                        Fact confidence &lt;0.7
                     </span>
                     <span className="bg-green-300/10 text-green-200 px-2 py-1 rounded border border-green-300/20">
-                        MEMORY MILESTONES
+                        Memory milestones
                     </span>
                 </div>
             </div>
@@ -207,16 +207,16 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                         <div className="w-10 h-10 bg-black/80 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Icon name="loader" size={20} className="text-green-400 animate-spin" />
                         </div>
-                        <p className="text-neutral-400 text-sm font-mono">LOADING KEY MOMENTS...</p>
+                        <p className="text-neutral-400 text-sm font-mono">Loading key moments...</p>
                     </div>
                 ) : keyMoments.length === 0 ? (
                     <div className="text-center py-6 flex-1 flex flex-col justify-center">
                         <div className="w-10 h-10 bg-black/80 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-3">
                             <Icon name="star" size={20} className="text-green-400" />
                         </div>
-                        <p className="text-neutral-400 text-sm font-mono">NO KEY MOMENTS YET</p>
+                        <p className="text-neutral-400 text-sm font-mono">No key moments yet</p>
                         <p className="text-neutral-500 text-xs mt-1 font-mono">
-                            MAJOR STANCE FLIPS (&gt;0.3) OR QUESTIONABLE CLAIMS (&lt;0.7) WILL APPEAR HERE
+                            Major stance flips (&gt;0.3) or questionable claims (&lt;0.7) will appear here
                         </p>
                     </div>
                 ) : (
@@ -257,7 +257,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                                         <div className="flex items-center gap-2">
                                             <Icon name="user" size={14} className="text-neutral-400 flex-shrink-0" />
                                             <span className="text-xs text-green-300 capitalize font-medium font-mono">
-                                                {moment.metadata.agentId.toUpperCase()}
+                                                {moment.metadata.agentId}
                                             </span>
                                             {viewMode !== 'standard' && moment.metadata?.debateId && (
                                                 <>
@@ -278,7 +278,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                                         <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-2 rounded">
                                             <Icon name="trending-up" size={14} className="text-green-400 flex-shrink-0" />
                                             <span className="text-xs text-green-300 font-medium font-mono">
-                                                {(moment.metadata.change * 100).toFixed(1)}% STANCE SHIFT
+                                                {(moment.metadata.change * 100).toFixed(1)}% stance shift
                                             </span>
                                         </div>
                                     )}
@@ -287,7 +287,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                                         <div className="flex items-center gap-2 bg-green-400/10 border border-green-400/20 px-3 py-2 rounded">
                                             <Icon name="shield" size={14} className="text-green-300 flex-shrink-0" />
                                             <span className="text-xs text-green-200 font-medium font-mono">
-                                                {(moment.metadata.factCheckScore * 100).toFixed(1)}% FACT CONFIDENCE
+                                                {(moment.metadata.factCheckScore * 100).toFixed(1)}% fact confidence
                                             </span>
                                         </div>
                                     )}
@@ -296,7 +296,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                                         <div className="flex items-center gap-2 bg-green-300/10 border border-green-300/20 px-3 py-2 rounded">
                                             <Icon name="message-circle" size={14} className="text-green-200 flex-shrink-0" />
                                             <span className="text-xs text-green-100 font-medium font-mono">
-                                                {moment.metadata.messageCount} MESSAGES REACHED
+                                                {moment.metadata.messageCount} messages reached
                                             </span>
                                         </div>
                                     )}
@@ -308,10 +308,10 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                                         <div className="flex items-center justify-between">
                                             <div className="flex items-center gap-2">
                                                 <Icon name="activity" size={12} className="text-green-400" />
-                                                <span className="text-xs text-green-400 font-medium font-mono">AI ANALYSIS</span>
+                                                <span className="text-xs text-green-400 font-medium font-mono">AI analysis</span>
                                             </div>
                                             <span className="text-xs text-neutral-500 font-mono">
-                                                GPT-4 GENERATED
+                                                GPT-4 generated
                                             </span>
                                         </div>
                                     </div>
@@ -327,7 +327,7 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
                 <div className="absolute bottom-4 left-4 right-4 pt-3 bg-gradient-to-t from-black/95 to-transparent border-t border-green-500/30">
                     <p className="text-xs text-neutral-500 flex items-center gap-1 bg-surface-card border border-green-500/20 px-2 py-1 rounded font-mono">
                         <Icon name="clock" size={10} />
-                        LAST UPDATED: {formatTimeAgo(lastUpdate)}
+                        Last updated: {formatTimeAgo(lastUpdate)}
                     </p>
                 </div>
             )}

@@ -30,10 +30,10 @@ async function loadEnhancedMetrics() {
 
 // Key counts come from the backend key patterns in advancedMetrics.js countKeysByType().
 const REDIS_MODULES = [
-    { key: 'json', label: 'REDISJSON', unit: 'KEYS', note: 'AGENT PROFILES + KEY MOMENTS', dot: 'bg-blue-500' },
-    { key: 'streams', label: 'STREAMS', unit: 'STREAMS', note: 'REAL-TIME DEBATE MESSAGING', dot: 'bg-blue-400' },
-    { key: 'timeseries', label: 'TIMESERIES', unit: 'SERIES', note: 'STANCE + SENTIMENT TRACKING', dot: 'bg-blue-300' },
-    { key: 'vector', label: 'VECTOR SEARCH', unit: 'VECTORS', note: 'FACTS + SEMANTIC CACHE', dot: 'bg-blue-600' }
+    { key: 'json', label: 'RedisJSON', unit: 'Keys', note: 'Agent profiles and key moments', dot: 'bg-blue-500' },
+    { key: 'streams', label: 'Streams', unit: 'Streams', note: 'Real-time debate messaging', dot: 'bg-blue-400' },
+    { key: 'timeseries', label: 'TimeSeries', unit: 'Series', note: 'Stance and sentiment tracking', dot: 'bg-blue-300' },
+    { key: 'vector', label: 'Vector search', unit: 'Vectors', note: 'Facts and semantic cache', dot: 'bg-blue-600' }
 ];
 
 export default function EnhancedPerformanceDashboard() {
@@ -124,15 +124,15 @@ export default function EnhancedPerformanceDashboard() {
                             <Icon name="activity" size={24} className="text-green-400" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-green-300 font-mono tracking-wide">SYSTEM ANALYTICS DASHBOARD</h2>
-                            <p className="text-green-400/80 text-sm font-mono">REAL-TIME REDIS MULTI-MODAL PERFORMANCE</p>
+                            <h2 className="text-xl font-bold text-green-300 font-mono">System analytics dashboard</h2>
+                            <p className="text-green-400 text-sm font-mono">Real-time Redis multi-modal performance</p>
                         </div>
-                        <StatusBadge status="success" label="LIVE" className="ml-auto" />
+                        <StatusBadge status="success" label="Live" className="ml-auto" />
                     </div>
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2 text-sm text-green-400 font-mono">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span>REAL-TIME MONITORING</span>
+                            <span>Real-time monitoring</span>
                         </div>
                         <label className="flex items-center space-x-2 text-sm text-green-400 font-mono">
                             <input
@@ -141,7 +141,7 @@ export default function EnhancedPerformanceDashboard() {
                                 onChange={(e) => setAutoRefresh(e.target.checked)}
                                 className="w-4 h-4 rounded border-green-600 text-green-500 focus:ring-green-500/20 bg-black/60"
                             />
-                            <span>AUTO-REFRESH</span>
+                            <span>Auto-refresh</span>
                         </label>
                         <button
                             onClick={fetchEnhancedMetrics}
@@ -199,7 +199,7 @@ export default function EnhancedPerformanceDashboard() {
 
                     <MetricCard
                         title="System Status"
-                        value={metrics.system?.status ? metrics.system.status.toUpperCase() : '-'}
+                        value={metrics.system?.status ? metrics.system.status : '-'}
                         subtitle="Stats API"
                         icon="check-circle"
                         color="violet"
@@ -208,11 +208,11 @@ export default function EnhancedPerformanceDashboard() {
 
                 {/* Redis Multi-Modal Usage - CONTEST SHOWCASE */}
                 <div className="mb-4">
-                    <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
+                    <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
                         <Icon name="database" size={18} className="mr-2 text-green-400" />
-                        REDIS MULTI-MODAL ARCHITECTURE
+                        Redis multi-modal architecture
                         <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full border border-green-500/30 font-mono">
-                            CONTEST SHOWCASE
+                            Contest showcase
                         </span>
                         {metrics.benchmark?.multiModalScore && (
                             <>
@@ -223,7 +223,7 @@ export default function EnhancedPerformanceDashboard() {
                                     {metrics.benchmark.multiModalScore.rating}
                                 </span>
                                 <span className="text-xs bg-blue-500/20 px-2 py-1 rounded-full text-blue-400 border border-blue-500/30 font-mono">
-                                    REDIS CHALLENGE
+                                    Redis challenge
                                 </span>
                             </>
                         )}
@@ -231,9 +231,9 @@ export default function EnhancedPerformanceDashboard() {
                     {/* Contest-Focused Real-Time Metrics */}
                     <div className="mb-4 p-3 bg-blue-600/10 border border-blue-500/30 rounded-lg shadow-lg">
                         <div className="text-center">
-                            <div className="text-xs text-blue-400 font-mono mb-1">MODULE USAGE</div>
+                            <div className="text-xs text-blue-400 font-mono mb-1">Module usage</div>
                             <div className="text-2xl font-bold text-blue-300 font-mono">
-                                {activeModules === null ? '-' : `${activeModules}/4`} <span className="text-xs">WITH DATA</span>
+                                {activeModules === null ? '-' : `${activeModules}/4`} <span className="text-xs">With data</span>
                             </div>
                         </div>
                     </div>
@@ -246,14 +246,14 @@ export default function EnhancedPerformanceDashboard() {
                                         <span className="text-sm font-bold text-blue-300 font-mono">{label}</span>
                                     </div>
                                     <span className="text-xs bg-blue-500/20 px-2 py-0.5 rounded text-blue-400 border border-blue-500/30 font-mono">
-                                        {metrics.keyCount?.[key] > 0 ? 'ACTIVE' : 'NO DATA'}
+                                        {metrics.keyCount?.[key] > 0 ? 'Active' : 'No data'}
                                     </span>
                                 </div>
                                 <div className="text-xl font-bold text-blue-200 font-mono flex items-end gap-2">
                                     {show(metrics.keyCount?.[key])}
-                                    <span className="text-xs text-blue-400/80">{unit}</span>
+                                    <span className="text-xs text-blue-400">{unit}</span>
                                 </div>
-                                <div className="text-xs text-blue-400/60 font-mono mt-2">{note}</div>
+                                <div className="text-xs text-blue-400 font-mono mt-2">{note}</div>
                             </div>
                         ))}
                     </div>
@@ -262,15 +262,15 @@ export default function EnhancedPerformanceDashboard() {
                 {/* Semantic Cache Performance - SHOWCASE FEATURE */}
                 {cache && (
                     <div className="mb-4">
-                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
+                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
                             <Icon name="zap" size={18} className="mr-2 text-green-400" />
-                            SEMANTIC CACHE PERFORMANCE
+                            Semantic cache performance
                             <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                                INNOVATION SHOWCASE
+                                Innovation showcase
                             </span>
                             {hitPercent > 70 && (
                                 <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                                    HIGH EFFICIENCY
+                                    High efficiency
                                 </span>
                             )}
                         </h3>
@@ -279,56 +279,56 @@ export default function EnhancedPerformanceDashboard() {
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Icon name="target" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">HIT RATE</span>
+                                    <span className="text-sm font-bold text-green-300 font-mono">Hit rate</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
                                     {show(hitPercent?.toFixed(1), '%')}
                                 </div>
-                                <div className="text-xs text-green-400/80 font-mono">
-                                    {show(cache.cache_hits)}/{show(cache.total_requests)} REQUESTS
+                                <div className="text-xs text-green-400 font-mono">
+                                    {show(cache.cache_hits)}/{show(cache.total_requests)} requests
                                 </div>
-                                <div className="text-xs text-green-400 font-mono">AI RESPONSE CACHING</div>
+                                <div className="text-xs text-green-400 font-mono">AI response caching</div>
                             </div>
 
                             {/* Cost Savings */}
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Icon name="dollar-sign" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">COST SAVED</span>
+                                    <span className="text-sm font-bold text-green-300 font-mono">Cost saved</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
                                     {typeof cache.estimated_cost_saved === 'number' ? `$${cache.estimated_cost_saved.toFixed(3)}` : '-'}
                                 </div>
-                                <div className="text-xs text-green-400/80 font-mono">
-                                    {show(cache.total_tokens_saved?.toLocaleString())} TOKENS SAVED
+                                <div className="text-xs text-green-400 font-mono">
+                                    {show(cache.total_tokens_saved?.toLocaleString())} tokens saved
                                 </div>
-                                <div className="text-xs text-green-400 font-mono">OPENAI API SAVINGS</div>
+                                <div className="text-xs text-green-400 font-mono">OpenAI API savings</div>
                             </div>
 
                             {/* Cache Efficiency */}
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Icon name="activity" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">SIMILARITY</span>
+                                    <span className="text-sm font-bold text-green-300 font-mono">Similarity</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
                                     {typeof cache.average_similarity === 'number' ? `${(cache.average_similarity * 100).toFixed(1)}%` : '-'}
                                 </div>
-                                <div className="text-xs text-green-400/80 font-mono">AVERAGE MATCH QUALITY</div>
-                                <div className="text-xs text-green-400 font-mono">VECTOR SIMILARITY</div>
+                                <div className="text-xs text-green-400 font-mono">Average match quality</div>
+                                <div className="text-xs text-green-400 font-mono">Vector similarity</div>
                             </div>
 
                             {/* Cache Entries */}
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Icon name="database" size={16} className="text-green-400" />
-                                    <span className="text-sm font-bold text-green-300 font-mono">CACHED</span>
+                                    <span className="text-sm font-bold text-green-300 font-mono">Cached</span>
                                 </div>
                                 <div className="text-2xl font-bold text-green-200 font-mono">
                                     {show(cache.total_cache_entries)}
                                 </div>
-                                <div className="text-xs text-green-400/80 font-mono">RESPONSES STORED</div>
-                                <div className="text-xs text-green-400 font-mono">SEMANTIC VECTORS</div>
+                                <div className="text-xs text-green-400 font-mono">Responses stored</div>
+                                <div className="text-xs text-green-400 font-mono">Semantic vectors</div>
                             </div>
                         </div>
 
@@ -338,13 +338,13 @@ export default function EnhancedPerformanceDashboard() {
                                 <div className="flex items-center gap-2">
                                     <Icon name="trending-up" size={16} className="text-green-400" />
                                     <span className="text-sm font-bold text-green-300 font-mono">
-                                        CACHE EFFICIENCY: {show(hitPercent?.toFixed(1), '%')}
+                                        Cache efficiency: {show(hitPercent?.toFixed(1), '%')}
                                     </span>
                                 </div>
                             </div>
                             <div className="mt-2 flex items-center justify-between text-xs">
-                                <span className="text-green-400/80 font-mono">
-                                    SEMANTIC CACHING REDUCING API DEPENDENCIES
+                                <span className="text-green-400 font-mono">
+                                    Semantic caching reducing API dependencies
                                 </span>
                                 {hitPercent !== null && (
                                     <span className={`px-2 py-1 rounded-full border font-mono ${hitPercent > 70
@@ -353,7 +353,7 @@ export default function EnhancedPerformanceDashboard() {
                                             ? 'bg-green-400/20 text-green-300 border-green-400/30'
                                             : 'bg-green-300/20 text-green-200 border-green-300/30'
                                         }`}>
-                                        {hitPercent > 70 ? 'EXCELLENT' : hitPercent > 50 ? 'GOOD' : 'BUILDING'}
+                                        {hitPercent > 70 ? 'Excellent' : hitPercent > 50 ? 'Good' : 'Building'}
                                     </span>
                                 )}
                             </div>
@@ -364,15 +364,15 @@ export default function EnhancedPerformanceDashboard() {
                 {/* Business Performance Indicators */}
                 {metrics.benchmark && (
                     <div className="border-t border-green-500/30 pt-4">
-                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
-                            💼 BUSINESS PERFORMANCE METRICS
+                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
+                            💼 Business performance metrics
                         </h3>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <div className="bg-green-600/10 border border-green-500/30 rounded-lg p-4 shadow-lg">
                                 <div className="text-lg font-bold text-green-300 font-mono">
                                     {show(metrics.benchmark.multiModalScore?.score, '%')}
                                 </div>
-                                <div className="text-sm text-green-200 font-mono">ARCHITECTURE EFFICIENCY</div>
+                                <div className="text-sm text-green-200 font-mono">Architecture efficiency</div>
                                 <div className="text-xs text-green-400 font-mono">
                                     {show(metrics.benchmark.multiModalScore?.activeModules)}/4 DATA MODELS ACTIVE
                                 </div>
@@ -381,8 +381,8 @@ export default function EnhancedPerformanceDashboard() {
                                 <div className="text-lg font-bold text-green-300 font-mono">
                                     {show(responseMs, 'MS')}
                                 </div>
-                                <div className="text-sm text-green-200 font-mono">RESPONSE TIME</div>
-                                <div className="text-xs text-green-400 font-mono">REDIS INFO QUERY</div>
+                                <div className="text-sm text-green-200 font-mono">Response time</div>
+                                <div className="text-xs text-green-400 font-mono">Redis info query</div>
                             </div>
                         </div>
                     </div>
@@ -391,11 +391,11 @@ export default function EnhancedPerformanceDashboard() {
                 {/* Active Sessions Monitor */}
                 {metrics.debate?.activeDebates && Object.keys(metrics.debate.activeDebates).length > 0 && (
                     <div className="border-t border-green-500/30 pt-4 mt-4">
-                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono tracking-wide">
+                        <h3 className="text-sm font-bold text-green-300 mb-3 flex items-center gap-2 font-mono">
                             <Icon name="activity" size={14} className="text-green-400" />
-                            ACTIVE SESSIONS MONITOR
+                            Active sessions monitor
                             <span className="text-xs bg-green-500/20 px-2 py-1 rounded-full text-green-400 border border-green-500/30 font-mono">
-                                {Object.keys(metrics.debate.activeDebates).length} SESSIONS
+                                {Object.keys(metrics.debate.activeDebates).length} sessions
                             </span>
                         </h3>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -407,16 +407,16 @@ export default function EnhancedPerformanceDashboard() {
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="text-sm font-bold text-green-300 flex items-center gap-2 font-mono">
                                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                            SESSION {id.substring(0, 8).toUpperCase()}...
+                                            Session {id.substring(0, 8)}...
                                         </div>
                                         <span className="text-xs bg-green-500/20 px-2 py-1 rounded text-green-400 border border-green-500/30 font-mono">
-                                            {info.status?.toUpperCase() || 'ACTIVE'}
+                                            {info.status || 'Active'}
                                         </span>
                                     </div>
-                                    <div className="text-xs text-green-400/80 space-y-1 font-mono">
-                                        <div>📋 TOPIC: {info.topic}</div>
+                                    <div className="text-xs text-green-400 space-y-1 font-mono">
+                                        <div>📋 topic: {info.topic}</div>
                                         <div className="flex items-center justify-between">
-                                            <span>💬 {info.messageCount || 0} MESSAGES</span>
+                                            <span>💬 {info.messageCount || 0} messages</span>
                                         </div>
                                     </div>
                                 </div>
@@ -426,10 +426,10 @@ export default function EnhancedPerformanceDashboard() {
                 )}
 
                 {/* Metric Update Info */}
-                <div className="text-xs text-blue-400/60 text-center mt-6 font-mono">
-                    LAST UPDATED: {new Date(metrics.timestamp).toLocaleTimeString()} •
+                <div className="text-xs text-blue-400 text-center mt-6 font-mono">
+                    Last updated: {new Date(metrics.timestamp).toLocaleTimeString()} •
                     [LIVE DATA] •
-                    REDIS CHALLENGE ANALYTICS 🏆
+                    Redis challenge analytics 🏆
                 </div>
             </CardContent>
         </Card>

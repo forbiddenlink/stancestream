@@ -26,7 +26,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
         streams: {
             icon: 'arrow-right',
             color: 'green', 
-            label: 'STREAMS',
+            label: 'Streams',
             description: 'Messages',
             examples: [
                 'debate:messages → new statement',
@@ -38,7 +38,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
         timeseries: {
             icon: 'trending-up',
             color: 'purple',
-            label: 'TIMESERIES',
+            label: 'TimeSeries',
             description: 'Stance Changes',
             examples: [
                 'stance:climate_policy → +0.3',
@@ -50,7 +50,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
         vector: {
             icon: 'target',
             color: 'green',
-            label: 'VECTOR',
+            label: 'Vector',
             description: 'Cache Hits',
             examples: [
                 'cache:prompt → 92.1% match',
@@ -183,7 +183,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
                 metadata = { change: detail.change, topic: detail.topic };
             } else if (detail?.type === 'cache_hit') {
                 redisType = 'vector';
-                customOperation = `cache:prompt → ${(detail.similarity * 100).toFixed(1)}% MATCH!`;
+                customOperation = `cache:prompt → ${(detail.similarity * 100).toFixed(1)}% match!`;
                 metadata = { similarity: detail.similarity, costSaved: detail.cost_saved };
             } else if (detail?.type === 'agent_update') {
                 redisType = 'json';
@@ -260,8 +260,8 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <h3 className="text-sm font-bold text-green-300 tracking-wider font-mono">
-                            REDIS OPERATIONS MATRIX
+                        <h3 className="text-sm font-bold text-green-300 font-mono">
+                            Redis operations matrix
                         </h3>
                     </div>
                     <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
                                     : 'bg-red-600/20 text-red-300 border border-red-500/30'
                             }`}
                         >
-                            {isActive ? 'LIVE' : 'PAUSED'}
+                            {isActive ? 'Live' : 'Paused'}
                         </button>
                     </div>
                 </div>
@@ -321,7 +321,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
                                         </span>
                                         {op.isReal && (
                                             <span className="px-1 py-0.5 bg-green-600/30 border border-green-500/50 rounded text-xs text-green-300 font-bold">
-                                                LIVE
+                                                Live
                                             </span>
                                         )}
                                     </div>
@@ -364,7 +364,7 @@ export default function RedisMatrixStream({ position = 'overlay', className = ''
                                     op.phase === 'processing' ? 'text-green-300' :
                                     'text-gray-400'
                                 }`}>
-                                    {op.phase.toUpperCase()}
+                                    {op.phase}
                                     {op.phase === 'success' && ' ✓'}
                                     {op.phase === 'processing' && ' ⟳'}
                                 </div>

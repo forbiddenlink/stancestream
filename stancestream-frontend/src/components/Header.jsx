@@ -37,20 +37,20 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                     <Flex align="center" gap="gap-2 sm:gap-3 lg:gap-4" className="min-w-0 flex-1 sm:flex-none">
                         <div className="relative flex-shrink-0" aria-hidden="true">
                             <svg viewBox="0 0 56 56" className="w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14" fill="none">
-                                <rect x="1" y="1" width="54" height="54" rx="10" fill="#1b0d0c" stroke="#3a1c1a" strokeWidth="2" />
-                                <path d="M10 20H46M10 36H46" stroke="#5b413c" strokeWidth="2" strokeLinecap="round" />
-                                <circle cx="22" cy="20" r="6" fill="#f4cfc6" />
-                                <circle cx="40" cy="20" r="6" fill="#ff6a45" />
-                                <circle cx="35" cy="36" r="6" fill="#f4cfc6" />
-                                <circle cx="17" cy="36" r="6" fill="#ff6a45" />
+                                <rect x="1" y="1" width="54" height="54" rx="10" fill="#eef2ef" stroke="#17201b" strokeWidth="2" />
+                                <path d="M10 20H46M10 36H46" stroke="#8a9a90" strokeWidth="2" strokeLinecap="round" />
+                                <circle cx="22" cy="20" r="6" fill="#24505f" />
+                                <circle cx="40" cy="20" r="6" fill="#b32f12" />
+                                <circle cx="35" cy="36" r="6" fill="#24505f" />
+                                <circle cx="17" cy="36" r="6" fill="#b32f12" />
                             </svg>
                         </div>
                         <div className="flex flex-col min-w-0">
-                            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-black text-slate-50 uppercase tracking-[0.06em] leading-none">
-                                STANCESTREAM
+                            <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-50 leading-none">
+                                StanceStream
                             </h1>
-                            <p className="text-slate-300 text-[11px] sm:text-xs lg:text-sm font-semibold font-mono tracking-[0.16em] mt-1">
-                                LIVE AI DEBATE INTELLIGENCE PLATFORM
+                            <p className="text-slate-300 text-[11px] sm:text-xs lg:text-sm font-semibold font-mono mt-1">
+                                Live AI debate intelligence platform
                             </p>
                             <p className="hidden sm:block text-slate-400 text-[10px] sm:text-xs font-medium font-mono">
                                 By StanceStream Editorial Team • <time dateTime="2026-02-07">Updated February 7, 2026</time>
@@ -69,7 +69,7 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                             >
                                 <Icon name="play-circle" size={14} className="sm:hidden" />
                                 <Icon name="play-circle" size={16} className="hidden sm:block" />
-                                <span className="hidden sm:inline">INTRO</span>
+                                <span className="hidden sm:inline">Intro</span>
                             </button>
                         )}
                         
@@ -79,12 +79,12 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                             <div className="flex items-center space-x-2 lg:space-x-3">
                                 <div className="text-right">
                                     <div className="flex items-center space-x-1 lg:space-x-2">
-                                        <span className="text-gray-400 text-xs lg:text-sm font-medium font-mono">WEBSOCKET</span>
+                                        <span className="text-gray-400 text-xs lg:text-sm font-medium font-mono">WebSocket</span>
                                         <div className={`status-indicator ${connectionStatus === 'Connected' ? 'online' : 'offline'}`}></div>
                                     </div>
                                 </div>
                                 <span className={`text-xs lg:text-sm font-semibold font-mono ${getStatusColor(connectionStatus)}`}>
-                                    {connectionStatus.toUpperCase()}
+                                    {connectionStatus}
                                 </span>
                             </div>
 
@@ -92,12 +92,12 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                             <div className="flex items-center space-x-2 lg:space-x-3">
                                 <div className="text-right">
                                     <div className="flex items-center space-x-1 lg:space-x-2">
-                                        <span className="text-gray-400 text-xs lg:text-sm font-medium font-mono">BACKEND</span>
+                                        <span className="text-gray-400 text-xs lg:text-sm font-medium font-mono">Backend</span>
                                         <div className={`status-indicator ${backendHealth === 'healthy' ? 'online' : 'offline'}`}></div>
                                     </div>
                                 </div>
                                 <span className={`text-xs lg:text-sm font-semibold font-mono ${getStatusColor(backendHealth)}`}>
-                                    {backendHealth === 'healthy' ? 'HEALTHY' : 'ERROR'}
+                                    {backendHealth === 'healthy' ? 'Healthy' : 'Error'}
                                 </span>
                             </div>
                         </div>
@@ -110,12 +110,12 @@ const Header = ({ connectionStatus = 'Disconnected', backendHealth = 'unknown', 
                                 }`}></div>
                             <div className="flex flex-col min-w-0">
                                 <span className="text-green-300 text-xs sm:text-sm font-semibold font-mono">
-                                    PLATFORM READY
+                                    Platform ready
                                 </span>
                                 <span className="text-gray-400 text-xs hidden sm:block font-mono">
                                     {connectionStatus === 'Connected' && backendHealth === 'healthy'
-                                        ? 'ALL SYSTEMS ONLINE'
-                                        : 'SYSTEM CHECK REQUIRED'
+                                        ? 'All systems online'
+                                        : 'System check required'
                                     }
                                 </span>
                             </div>

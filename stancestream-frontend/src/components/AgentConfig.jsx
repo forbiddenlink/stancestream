@@ -170,7 +170,7 @@ const AgentConfig = ({ isVisible, onClose, agentId = 'senatorbot' }) => {
                                         <div key={topic} className="bg-slate-700/50 rounded-xl p-4">
                                             <div className="flex justify-between items-center mb-3">
                                                 <label className="text-sm font-semibold text-slate-200">
-                                                    {topic.replace('_', ' ').toUpperCase()}
+                                                    {topic.replace('_', ' ')}
                                                 </label>
                                                 <span className="text-lg font-bold text-blue-400">
                                                     {(value * 100).toFixed(0)}%

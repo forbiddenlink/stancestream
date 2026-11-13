@@ -552,7 +552,7 @@ export default function App() {
                         : 'bg-red-400'
                         }`}></div>
                       <span className="text-xs text-green-300 whitespace-nowrap font-mono">
-                        {connectionStatus === 'Connected' && connectionHealth === 'healthy' ? 'ONLINE' : 'ERROR'}
+                        {connectionStatus === 'Connected' && connectionHealth === 'healthy' ? 'Online' : 'Error'}
                       </span>
                     </div>
                   </div>
@@ -564,47 +564,47 @@ export default function App() {
                     <button
                       onClick={() => setViewMode('standard')}
                       className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'standard'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          ? 'bg-slate-100 border-slate-100 text-slate-950'
                           : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
-                      STANDARD
+                      Standard
                     </button>
                     <button
                       onClick={() => setViewMode('multi-debate')}
                       className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'multi-debate'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          ? 'bg-slate-100 border-slate-100 text-slate-950'
                           : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
-                      MULTI-DEBATE
+                      Multi-debate
                     </button>
                     <button
                       onClick={() => setViewMode('analytics')}
                       className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'analytics'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          ? 'bg-slate-100 border-slate-100 text-slate-950'
                           : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
-                      ANALYTICS
+                      Analytics
                     </button>
                     <button
                       onClick={() => setViewMode('business')}
                       className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'business'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          ? 'bg-slate-100 border-slate-100 text-slate-950'
                           : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
-                      BUSINESS
+                      Business
                     </button>
                     <button
                       onClick={() => setViewMode('platform-showcase')}
                       className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'platform-showcase'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
+                          ? 'bg-slate-100 border-slate-100 text-slate-950'
                           : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
                         }`}
                     >
-                      PLATFORM
+                      Platform
                     </button>
                     <button
                       onClick={() => setShowMatrixModal(true)}
@@ -612,7 +612,7 @@ export default function App() {
                       title="Redis Operations Matrix - Live visualization of all 4 modules"
                     >
                       <Icon name="activity" className="w-4 h-4 inline mr-1" />
-                      MATRIX
+                      Matrix
                     </button>
                     <button
                       onClick={() => setShowIntro(true)}
@@ -620,7 +620,7 @@ export default function App() {
                       title="Platform Introduction & Feature Tour"
                     >
                       <Icon name="help-circle" className="w-4 h-4 inline mr-1" />
-                      INTRO
+                      Intro
                     </button>
                   </div>
                 </div>
@@ -738,7 +738,7 @@ export default function App() {
                   <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                     <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
                       <Icon name="analytics" size={20} className="text-green-400" />
-                      QUICK ACTIONS
+                      Quick actions
                     </h3>
                     <div className="flex flex-wrap items-center gap-2">
                       <button
@@ -746,21 +746,21 @@ export default function App() {
                         className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="multi-debate" size={16} className="mr-1" />
-                        MULTI-DEBATE
+                        Multi-debate
                       </button>
                       <button
                         onClick={() => setViewMode('standard')}
                         className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="target" size={16} className="mr-1" />
-                        STANDARD
+                        Standard
                       </button>
                       <button
                         onClick={handleMetricsUpdate}
                         className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
                       >
                         <Icon name="refresh" size={16} className="mr-1" />
-                        REFRESH
+                        Refresh
                       </button>
                     </div>
                   </div>
@@ -769,7 +769,7 @@ export default function App() {
                   <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
                     <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
                       <Icon name="bar-chart" size={20} className="text-green-400" />
-                      LIVE STATISTICS
+                      Live statistics
                     </h3>
                     <div className="grid grid-cols-3 gap-4">
                       <div className="text-center">

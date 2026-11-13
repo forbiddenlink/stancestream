@@ -42,7 +42,7 @@ const SIDES = {
 const sideKeyOf = (agentId) => (agentId === 'reformerbot' ? 'b' : 'a');
 
 const displayName = (msg, agentId) =>
-    (msg?.sender || agentId || 'agent').toString().toUpperCase();
+    (msg?.sender || agentId || 'agent').toString();
 
 const formatTimestamp = (timestamp) =>
     new Date(timestamp).toLocaleTimeString('en-US', {
@@ -122,9 +122,9 @@ const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => 
                     )}
                 </div>
                 <div className={align === 'right' ? 'items-end' : ''}>
-                    <div className={`font-display font-bold tracking-wide ${side.text}`}>{name}</div>
-                    <div className="font-mono text-[10px] tracking-[0.18em] text-slate-500">
-                        {isActive ? 'ON AIR' : 'STANDBY'} · {messages.length} ARG
+                    <div className={`font-display font-bold ${side.text}`}>{name}</div>
+                    <div className="font-mono text-[10px] text-slate-500">
+                        {isActive ? 'On air' : 'Standby'} · {messages.length} args
                     </div>
                 </div>
             </div>
@@ -133,8 +133,8 @@ const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => 
             <div className="flex-1 overflow-y-auto scrollbar-thin min-h-0 px-3 py-4 space-y-3">
                 {messages.length === 0 ? (
                     <div className="h-full min-h-[140px] flex items-center justify-center text-center px-4">
-                        <p className="font-mono text-[11px] tracking-widest text-slate-500">
-                            AWAITING OPENING STATEMENT
+                        <p className="font-mono text-[11px] text-slate-500">
+                            Awaiting opening statement
                         </p>
                     </div>
                 ) : (
@@ -170,7 +170,7 @@ const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => 
                                 <div className="mt-2.5 pt-2.5 border-t border-stage-line flex items-center gap-2">
                                     <Icon name="shield-check" size={13} className={side.text} />
                                     <span className={`font-mono text-[10px] font-medium ${side.text}`}>
-                                        FACT CHECK: {(msg.factCheck.score * 100).toFixed(0)}%
+                                        Fact check: {(msg.factCheck.score * 100).toFixed(0)}%
                                     </span>
                                 </div>
                             )}
@@ -193,7 +193,7 @@ const CenterSpine = ({ scoreA, scoreB, hasData }) => {
 
     return (
         <div className="hidden md:flex flex-col items-center justify-between py-2 px-1 select-none">
-            <div className="font-display font-black text-slate-500 text-sm tracking-widest">VS</div>
+            <div className="font-display font-bold text-slate-500 text-sm">VS</div>
 
             {hasData ? (
                 <div className="flex-1 flex flex-col items-center justify-center gap-2 w-14">
@@ -211,8 +211,8 @@ const CenterSpine = ({ scoreA, scoreB, hasData }) => {
                             />
                         </div>
                     </div>
-                    <div className="font-mono text-[9px] tracking-widest text-slate-500 text-center leading-tight">
-                        SENTIMENT
+                    <div className="font-mono text-[9px] text-slate-500 text-center leading-tight">
+                        Sentiment
                         <br />
                         Δ {delta}
                     </div>
@@ -236,8 +236,8 @@ const DebatePanel = ({ messages = [] }) => {
     const { colA, colB, nameA, nameB, scoreA, scoreB, hasSentiment } = useMemo(() => {
         const a = [];
         const b = [];
-        let nA = 'SENATORBOT';
-        let nB = 'REFORMERBOT';
+        let nA = 'SenatorBot';
+        let nB = 'ReformerBot';
         let sA = 0;
         let sB = 0;
         let sentimentSeen = false;
@@ -262,12 +262,12 @@ const DebatePanel = ({ messages = [] }) => {
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-1.5">
                         <span className="w-2.5 h-2.5 rounded-full bg-arena-b animate-pulse" aria-hidden="true" />
-                        <span className="font-mono text-[10px] font-bold tracking-[0.22em] text-arena-b">
-                            LIVE
+                        <span className="font-mono text-[10px] font-bold text-arena-b">
+                            Live
                         </span>
                     </div>
                     <div className="h-4 w-px bg-stage-line" aria-hidden="true" />
-                    <h2 className="font-display text-lg font-bold tracking-wide text-slate-100">
+                    <h2 className="font-display text-lg font-bold text-slate-100">
                         Debate Arena
                     </h2>
                 </div>
@@ -275,7 +275,7 @@ const DebatePanel = ({ messages = [] }) => {
                 {messages.length > 0 && (
                     <div className="flex items-center gap-4">
                         <span className="font-mono text-[11px] text-slate-400">
-                            {messages.length} EXCHANGES
+                            {messages.length} exchanges
                         </span>
                         <span className="font-mono text-[11px] text-slate-500">
                             {formatTimestamp(messages[messages.length - 1]?.timestamp)}
@@ -287,7 +287,7 @@ const DebatePanel = ({ messages = [] }) => {
             {/* Versus stage */}
             {messages.length === 0 ? (
                 <div className="flex-1 flex flex-col items-center justify-start text-center px-4 sm:px-6 pt-8 pb-8 gap-4">
-                    <h3 className="font-display text-3xl sm:text-5xl font-black uppercase tracking-[0.04em] text-slate-50 leading-none">
+                    <h3 className="font-display text-3xl sm:text-5xl font-bold text-slate-50 leading-none">
                         Ready for the Arena
                     </h3>
                     <p className="font-sans text-slate-300 max-w-md leading-relaxed">
@@ -295,7 +295,7 @@ const DebatePanel = ({ messages = [] }) => {
                         live fact-checking, memory, and stance evolution.
                     </p>
                     <StanceRail />
-                    <p className="font-mono text-[11px] tracking-wide text-slate-400 max-w-md">
+                    <p className="font-mono text-[11px] text-slate-400 max-w-md">
                         Opening stances as seeded in the repo. Start a debate to watch them move.
                     </p>
                 </div>

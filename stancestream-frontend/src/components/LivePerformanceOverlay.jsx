@@ -12,7 +12,7 @@ const MetricDisplay = ({ label, value, unit, icon, color, trend, isLoading: metr
         <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-2">
                 <Icon name={icon} className={`w-4 h-4 text-green-400 ${pulse ? 'animate-bounce' : ''}`} />
-                <span className="text-xs text-green-300 font-medium tracking-wide font-mono">{label}</span>
+                <span className="text-xs text-green-300 font-medium font-mono">{label}</span>
             </div>
         </div>
         {trend && (
@@ -46,14 +46,14 @@ const CacheHitCelebration = ({ showCelebration, celebrationRef, cacheHits, lastS
     showCelebration && (
         <div
             ref={celebrationRef}
-            className="fixed top-48 right-4 bg-green-600/90 backdrop-blur-sm border border-green-400 rounded-lg p-3 z-[9999] animate-bounce shadow-lg shadow-green-500/30"
+            className="fixed top-48 right-4 bg-green-500/95 backdrop-blur-sm border border-green-400 rounded-lg p-3 z-[9999] animate-bounce shadow-lg shadow-green-500/30"
         >
             <div className="flex items-center gap-2 text-black font-bold">
                 <span className="text-2xl">🎯</span>
                 <div>
-                    <div className="text-sm font-mono">CACHE HIT!</div>
+                    <div className="text-sm font-mono">Cache hit!</div>
                     <div className="text-xs opacity-90 font-mono">
-                        SAVED ${cacheHits[cacheHits.length - 1]?.amount?.toFixed(3) || '0.002'} • {(lastSimilarity * 100).toFixed(1)}% MATCH
+                        Saved ${cacheHits[cacheHits.length - 1]?.amount?.toFixed(3) || '0.002'} • {(lastSimilarity * 100).toFixed(1)}% match
                     </div>
                 </div>
             </div>
@@ -69,13 +69,13 @@ const BusinessComparison = ({ runningTotal }) => {
         <div className="bg-black/80 border border-green-500/30 rounded-lg p-3 mt-2">
             <div className="flex items-center gap-2 mb-2">
                 <Icon name="bar-chart-3" className="w-4 h-4 text-green-400" />
-                <span className="text-xs text-green-300 font-medium font-mono">ESTIMATED COST COMPARISON</span>
+                <span className="text-xs text-green-300 font-medium font-mono">Estimated cost comparison</span>
             </div>
 
             <div className="space-y-2">
                 {/* Traditional AI Bar */}
                 <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-200 font-mono">TRADITIONAL AI:</span>
+                    <span className="text-xs text-green-200 font-mono">Traditional AI:</span>
                     <div className="flex items-center gap-2 flex-1 mx-2">
                         <div className="bg-green-500/20 border border-green-500/30 rounded-full h-2 flex-1 relative">
                             <div className="bg-green-500 h-2 rounded-full w-full"></div>
@@ -86,7 +86,7 @@ const BusinessComparison = ({ runningTotal }) => {
 
                 {/* StanceStream AI Bar */}
                 <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-400 font-mono">STANCESTREAM:</span>
+                    <span className="text-xs text-green-400 font-mono">StanceStream:</span>
                     <div className="flex items-center gap-2 flex-1 mx-2">
                         <div className="bg-green-400/20 border border-green-400/30 rounded-full h-2 flex-1 relative">
                             <div
@@ -102,13 +102,13 @@ const BusinessComparison = ({ runningTotal }) => {
             {/* Savings Display */}
             <div className="mt-2 pt-2 border-t border-green-500/30">
                 <div className="flex items-center justify-between">
-                    <span className="text-xs text-green-300 font-medium font-mono">ESTIMATED SAVINGS:</span>
+                    <span className="text-xs text-green-300 font-medium font-mono">Estimated savings:</span>
                     <span className="text-sm text-green-400 font-bold font-mono">
                         ${(traditionalCost - runningTotal).toFixed(2)}
                     </span>
                 </div>
                 <div className="text-xs text-gray-400 mt-1 font-mono">
-                    {(traditionalCost > 0 ? (1 - runningTotal / traditionalCost) * 100 : 0).toFixed(1)}% COST REDUCTION
+                    {(traditionalCost > 0 ? (1 - runningTotal / traditionalCost) * 100 : 0).toFixed(1)}% cost reduction
                 </div>
             </div>
         </div>
@@ -421,9 +421,9 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <h3 className="text-sm font-bold text-green-400 tracking-wide font-mono">SEMANTIC CACHE ENGINE</h3>
+                        <h3 className="text-sm font-bold text-green-400 font-mono">Semantic cache engine</h3>
                         <div className="px-2 py-0.5 bg-green-600/20 border border-green-500/30 rounded text-xs text-green-300 font-mono">
-                            ${runningTotal.toFixed(2)} SAVED
+                            ${runningTotal.toFixed(2)} saved
                         </div>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-gray-400 ml-4">
@@ -432,7 +432,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     </div>
                     </div>
                 <div className="text-xs text-green-300 mt-1 font-medium font-mono">
-                    LIVE BUSINESS VALUE • {businessMetrics.current_usage.cache_efficiency} HIT RATE • {businessMetrics.performance_impact.system_efficiency}
+                    Live business value • {businessMetrics.current_usage.cache_efficiency} hit rate • {businessMetrics.performance_impact.system_efficiency}
                 </div>
             </div>
 
@@ -441,7 +441,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                 {/* Primary Business Metrics - Responsive grid */}
                 <div className={`grid gap-2 ${position === 'embedded' ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-2'}`}>
                     <MetricDisplay
-                        label="CACHE HIT RATE"
+                        label="Cache hit rate"
                         value={metrics.cacheHitRate}
                         unit="%"
                         icon="target"
@@ -452,7 +452,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     />
                     
                     <MetricDisplay
-                        label="COST SAVINGS"
+                        label="Cost savings"
                         value={businessMetrics.current_usage.monthly_savings}
                         unit="/mo"
                         icon="dollar-sign"
@@ -464,7 +464,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     {position !== 'embedded' && (
                         <>
                             <MetricDisplay
-                                label="SIMILARITY SCORE"
+                                label="Similarity score"
                                 value={lastSimilarity * 100}
                                 unit="%"
                                 icon="search"
@@ -474,7 +474,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                             />
                             
                             <MetricDisplay
-                                label="API CALLS SAVED"
+                                label="API calls saved"
                                 value={businessMetrics.performance_impact.api_calls_eliminated}
                                 unit="calls"
                                 icon="zap"
@@ -490,9 +490,9 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                 {position === 'embedded' ? (
                     <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
                         <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs text-green-300 font-medium font-mono">ESTIMATED COST COMPARISON</span>
+                            <span className="text-xs text-green-300 font-medium font-mono">Estimated cost comparison</span>
                             <span className="text-xs text-green-400 font-bold font-mono">
-                                {(runningTotal > 0 ? (1 - runningTotal / (runningTotal * 2.5)) * 100 : 0).toFixed(0)}% SAVED
+                                {(runningTotal > 0 ? (1 - runningTotal / (runningTotal * 2.5)) * 100 : 0).toFixed(0)}% saved
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -507,8 +507,8 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                             </div>
                         </div>
                         <div className="flex justify-between text-xs text-gray-400 mt-1 font-mono">
-                            <span>TRADITIONAL AI</span>
-                            <span>STANCESTREAM</span>
+                            <span>Traditional AI</span>
+                            <span>StanceStream</span>
                         </div>
                     </div>
                 ) : (
@@ -520,7 +520,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
                         <div className="flex items-center gap-2 mb-2">
                             <Icon name="activity" className="w-3 h-3 text-green-400" />
-                            <span className="text-xs text-green-300 font-medium font-mono">RECENT HITS</span>
+                            <span className="text-xs text-green-300 font-medium font-mono">Recent hits</span>
                         </div>
                         <div className="space-y-1 max-h-12 overflow-y-auto">
                             {cacheHits.slice(-2).map((hit) => (
@@ -543,10 +543,10 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                     <div className="bg-black/80 border border-green-500/30 rounded-lg p-2 mt-2">
                         <div className="flex items-center gap-2 mb-1">
                             <Icon name="trending-up" className="w-3 h-3 text-green-400" />
-                            <span className="text-xs text-green-300 font-medium font-mono">SCALE PROJECTION</span>
+                            <span className="text-xs text-green-300 font-medium font-mono">Scale projection</span>
                         </div>
                         <div className="text-xs text-green-200 font-mono">
-                            PROJECTED AT SCALE: <span className="text-green-400 font-bold">
+                            Projected at scale: <span className="text-green-400 font-bold">
                                 ${businessMetrics.enterprise_projections.medium_enterprise.annual_savings.toLocaleString()}/YEAR SAVINGS
                             </span>
                         </div>
@@ -557,15 +557,15 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
                 <div className="flex items-center justify-between mt-3 pt-2 border-t border-green-500/30">
                     <div className="flex items-center gap-2 text-xs">
                         <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">VECTOR SEARCH</span>
+                        <span className="text-green-300 font-medium font-mono">Vector search</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                         <div className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">CACHE ACTIVE</span>
+                        <span className="text-green-300 font-medium font-mono">Cache active</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                         <div className="w-1.5 h-1.5 bg-green-300 rounded-full animate-pulse"></div>
-                        <span className="text-green-300 font-medium font-mono">OPTIMIZING</span>
+                        <span className="text-green-300 font-medium font-mono">Optimizing</span>
                     </div>
                 </div>
             </div>

@@ -7,21 +7,21 @@ const FactChecker = ({ factChecks = [] }) => {
         if (score >= 0.8) {
             return {
                 variant: 'success',
-                label: 'HIGH CONFIDENCE',
+                label: 'High confidence',
                 icon: 'check-circle',
                 cardClass: 'border-green-500/30 bg-green-900/20'
             };
         } else if (score >= 0.6) {
             return {
                 variant: 'warning',
-                label: 'MODERATE CONFIDENCE',
+                label: 'Moderate confidence',
                 icon: 'alert-triangle',
                 cardClass: 'border-green-400/30 bg-green-800/20'
             };
         } else {
             return {
                 variant: 'error',
-                label: 'LOW CONFIDENCE',
+                label: 'Low confidence',
                 icon: 'x-circle',
                 cardClass: 'border-green-300/30 bg-green-700/20'
             };
@@ -36,12 +36,12 @@ const FactChecker = ({ factChecks = [] }) => {
                         <Icon name="shield-check" size={20} className="text-green-400" />
                     </div>
                     <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-green-400 font-mono tracking-wide">FACT CHECKER</h3>
-                        <p className="text-gray-400 text-sm font-mono">REAL-TIME VERIFICATION</p>
+                        <h3 className="text-lg font-semibold text-green-400 font-mono">Fact checker</h3>
+                        <p className="text-gray-400 text-sm font-mono">Real-time verification</p>
                     </div>
                     <div className="bg-surface-card border border-green-500/20 px-2 py-1 rounded-xl">
                         <span className="text-green-400 text-sm font-mono">
-                            {factChecks.length} CHECKS
+                            {factChecks.length} checks
                         </span>
                     </div>
                 </div>
@@ -53,9 +53,9 @@ const FactChecker = ({ factChecks = [] }) => {
                         <div className="w-16 h-16 rounded-xl bg-surface-card border border-green-500/20 flex items-center justify-center mb-4 shadow-glow">
                             <Icon name="search" size={24} className="text-green-400" />
                         </div>
-                        <h4 className="text-green-400 font-medium mb-2 font-mono">READY FOR FACT-CHECKING</h4>
-                        <p className="text-gray-400 text-sm mb-1 font-mono">MONITORING AGENT STATEMENTS</p>
-                        <p className="text-gray-500 text-xs font-mono">VECTOR-POWERED VERIFICATION SYSTEM ACTIVE</p>
+                        <h4 className="text-green-400 font-medium mb-2 font-mono">Ready for fact-checking</h4>
+                        <p className="text-gray-400 text-sm mb-1 font-mono">Monitoring agent statements</p>
+                        <p className="text-gray-500 text-xs font-mono">Vector-powered verification system active</p>
                     </div>
                 ) : (
                     <div className="space-y-3 h-full overflow-y-auto">
@@ -86,7 +86,7 @@ const FactChecker = ({ factChecks = [] }) => {
                                             {check.source && (
                                                 <div className="flex items-center space-x-2 text-xs text-gray-400 font-mono">
                                                     <Icon name="external-link" size={12} />
-                                                    <span>SOURCE VERIFIED</span>
+                                                    <span>Source verified</span>
                                                 </div>
                                             )}
                                         </div>

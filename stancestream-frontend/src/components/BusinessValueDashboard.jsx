@@ -53,7 +53,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
             <div className="bg-black/95 border border-green-500/30 rounded-xl shadow-2xl shadow-green-500/10 p-8">
                 <div className="flex items-center justify-center">
                     <Icon name="loader-2" className="w-8 h-8 animate-spin text-green-400" />
-                    <span className="ml-3 text-green-300 font-mono">LOADING BUSINESS ANALYTICS...</span>
+                    <span className="ml-3 text-green-300 font-mono">Loading business analytics...</span>
                 </div>
             </div>
         );
@@ -86,8 +86,8 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                             <Icon name="trending-up" className="w-6 h-6 text-green-400" />
                         </div>
                         <div className="flex-1">
-                            <h2 className="text-xl font-bold text-green-400 mb-2 font-mono tracking-wide">
-                                BUSINESS IMPACT SUMMARY
+                            <h2 className="text-xl font-bold text-green-400 mb-2 font-mono">
+                                Business impact summary
                             </h2>
                             <p className="text-lg text-green-300 font-medium mb-3 font-mono">
                                 {executiveSummary.headline}
@@ -111,7 +111,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                     <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-500">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="dollar-sign" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-neutral-400 font-mono">MONTHLY SAVINGS</span>
+                            <span className="text-sm text-neutral-400 font-mono">Monthly savings</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             ${currentUsage.monthly_savings}
@@ -124,39 +124,39 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                     <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-400">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="zap" className="w-6 h-6 text-green-400" />
-                            <span className="text-sm text-neutral-400 font-mono">CACHE EFFICIENCY</span>
+                            <span className="text-sm text-neutral-400 font-mono">Cache efficiency</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             {currentUsage.cache_efficiency}
                         </div>
                         <div className="text-sm text-green-400 mt-1 font-mono">
-                            API COST REDUCTION
+                            API cost reduction
                         </div>
                     </div>
 
                     <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-300">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="cpu" className="w-6 h-6 text-green-300" />
-                            <span className="text-sm text-neutral-400 font-mono">TOKENS SAVED</span>
+                            <span className="text-sm text-neutral-400 font-mono">Tokens saved</span>
                         </div>
                         <div className="text-2xl font-bold text-green-300 font-mono">
                             {currentUsage.daily_tokens_saved?.toLocaleString() || '0'}
                         </div>
                         <div className="text-sm text-green-400 mt-1 font-mono">
-                            DAILY PROCESSING SAVED
+                            Daily processing saved
                         </div>
                     </div>
 
                     <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg p-6 border-l-4 border-l-green-200">
                         <div className="flex items-center justify-between mb-2">
                             <Icon name="activity" className="w-6 h-6 text-green-200" />
-                            <span className="text-sm text-neutral-400 font-mono">SYSTEM STATUS</span>
+                            <span className="text-sm text-neutral-400 font-mono">System status</span>
                         </div>
                         <div className="text-lg font-bold text-green-300 font-mono">
                             {performance?.system_efficiency || 'Optimizing'}
                         </div>
                         <div className="text-sm text-green-400 mt-1 font-mono">
-                            {performance?.production_readiness || 'SCALING'}
+                            {performance?.production_readiness || 'Scaling'}
                         </div>
                     </div>
                 </div>
@@ -167,14 +167,14 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                 <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
                     <div className="flex items-center gap-3 mb-6">
                         <Icon name="building" className="w-6 h-6 text-green-400" />
-                        <h3 className="text-xl font-bold text-green-300 font-mono tracking-wide">SCALING PROJECTIONS</h3>
+                        <h3 className="text-xl font-bold text-green-300 font-mono">Scaling projections</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {Object.entries(enterpriseProjections).map(([scale, data]) => (
                             <div key={scale} className="bg-surface-elevated/50 border border-green-500/20 rounded-xl p-4">
                                 <div className="text-lg font-bold text-green-300 mb-1 font-mono">
-                                    {data.requests_per_day} REQUESTS/DAY
+                                    {data.requests_per_day} requests/DAY
                                 </div>
                                 <div className="text-green-400 font-semibold font-mono">
                                     ${data.annual_savings?.toLocaleString()}/YEAR SAVINGS
@@ -191,11 +191,11 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                             <Icon name="monitor" className="w-6 h-6 text-green-400" />
-                            <h3 className="text-xl font-bold text-green-300 font-mono tracking-wide">REAL-TIME OPERATIONS</h3>
+                            <h3 className="text-xl font-bold text-green-300 font-mono">Real-time operations</h3>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm text-green-300 font-mono">LIVE</span>
+                            <span className="text-sm text-green-300 font-mono">Live</span>
                         </div>
                     </div>
 
@@ -203,7 +203,7 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                         {Object.entries(cacheMetrics.dashboard.primary_kpis).map(([key, value]) => (
                             <div key={key} className="text-center bg-surface-elevated/50 border border-green-500/20 rounded-xl p-3">
                                 <div className="text-lg font-bold text-green-300 font-mono">{value}</div>
-                                <div className="text-sm text-green-400 font-mono">{key.toUpperCase()}</div>
+                                <div className="text-sm text-green-400 font-mono">{key.replace(/_/g, ' ')}</div>
                             </div>
                         ))}
                     </div>
@@ -218,28 +218,28 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                             <Icon name="briefcase" className="w-6 h-6 text-green-400" />
                         </div>
                         <div className="flex-1">
-                            <h3 className="text-lg font-bold text-green-300 mb-3 font-mono tracking-wide">BUSINESS CASE</h3>
+                            <h3 className="text-lg font-bold text-green-300 mb-3 font-mono">Business case</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">IMMEDIATE VALUE</h4>
+                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Immediate value</h4>
                                     <p className="text-green-200 text-sm font-mono">
                                         {executiveSummary.business_case.immediate_value}
                                     </p>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">SCALABILITY</h4>
+                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Scalability</h4>
                                     <p className="text-green-200 text-sm font-mono">
                                         {executiveSummary.business_case.scalability}
                                     </p>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">COMPETITIVE ADVANTAGE</h4>
+                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Competitive advantage</h4>
                                     <p className="text-green-200 text-sm font-mono">
                                         {executiveSummary.business_case.competitive_advantage}
                                     </p>
                                 </div>
                                 <div>
-                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">TECHNICAL MOAT</h4>
+                                    <h4 className="font-semibold text-green-400 mb-2 font-mono">Technical moat</h4>
                                     <p className="text-green-200 text-sm font-mono">
                                         {executiveSummary.business_case.technical_moat}
                                     </p>
@@ -252,13 +252,13 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
 
             {/* Last Updated - Matrix Style */}
             <div className="text-center text-sm text-neutral-400 bg-surface-card border border-green-500/20 rounded-xl p-3">
-                <span className="font-mono">LAST UPDATED: {new Date().toLocaleTimeString()}</span>
+                <span className="font-mono">Last updated: {new Date().toLocaleTimeString()}</span>
                 <span className="mx-2 text-green-500">•</span>
                 <button
                     onClick={fetchBusinessMetrics}
                     className="text-green-400 hover:text-green-300 transition-colors duration-150 font-mono"
                 >
-                    REFRESH
+                    Refresh
                 </button>
             </div>
         </div>
