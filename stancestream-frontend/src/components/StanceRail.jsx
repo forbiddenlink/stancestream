@@ -43,10 +43,10 @@ const Row = ({ topic }) => {
     return (
         <div className="stance-row">
             <div className="stance-row-head">
-                <span className="font-mono text-[11px] text-slate-300">
+                <span className="font-mono text-[13px] text-slate-300">
                     {topic.key}
                 </span>
-                <span className="font-mono text-[11px] text-slate-400">
+                <span className="font-mono text-[13px] text-slate-400">
                     {fmt(hi - lo)} apart
                 </span>
             </div>
