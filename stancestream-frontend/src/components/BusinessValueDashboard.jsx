@@ -162,20 +162,17 @@ const BusinessValueDashboard = memo(function BusinessValueDashboard() {
                 </div>
             )}
 
-            {/* Enterprise Scaling Projections - Matrix Style */}
+            {/* Scaling projections, extrapolated from measured savings - Matrix Style */}
             {enterpriseProjections && (
                 <div className="bg-surface-card border border-green-500/20 rounded-xl shadow-lg shadow-green-500/10 p-6">
                     <div className="flex items-center gap-3 mb-6">
                         <Icon name="building" className="w-6 h-6 text-green-400" />
-                        <h3 className="text-xl font-bold text-green-300 font-mono tracking-wide">ENTERPRISE SCALING PROJECTIONS</h3>
+                        <h3 className="text-xl font-bold text-green-300 font-mono tracking-wide">SCALING PROJECTIONS</h3>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {Object.entries(enterpriseProjections).map(([scale, data]) => (
                             <div key={scale} className="bg-surface-elevated/50 border border-green-500/20 rounded-xl p-4">
-                                <div className="text-sm font-medium text-green-300 mb-2 font-mono">
-                                    {data.description}
-                                </div>
                                 <div className="text-lg font-bold text-green-300 mb-1 font-mono">
                                     {data.requests_per_day} REQUESTS/DAY
                                 </div>

@@ -103,7 +103,7 @@ export default function RedisMatrixModal({ isOpen, onClose }) {
                                     <div className="text-xs text-green-400 font-mono">SIMILARITY</div>
                                 </div>
                                 <ul className="text-xs text-gray-300 space-y-1">
-                                    <li>• Semantic caching (94.7%)</li>
+                                    <li>• Semantic caching</li>
                                     <li>• Fact-checking & verification</li>
                                     <li>• COSINE similarity matching</li>
                                     <li>• Cost optimization</li>
@@ -138,72 +138,7 @@ export default function RedisMatrixModal({ isOpen, onClose }) {
                 </div>
 
                 {/* Main Matrix Display */}
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                    {/* Matrix Stream - Takes up 2/3 on large screens */}
-                    <div className="xl:col-span-2">
-                        <RedisMatrixStream position="embedded" />
-                    </div>
-                    
-                    {/* Stats & Business Value - Takes up 1/3 on large screens */}
-                    <div className="space-y-4">
-                        {/* Live Performance Stats */}
-                        <div className="bg-gray-900/90 border border-green-500/30 rounded-lg p-4">
-                            <h3 className="text-lg font-bold text-green-300 mb-4 font-mono text-center">
-                                📊 LIVE PERFORMANCE
-                            </h3>
-                            <div className="space-y-3 text-sm">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-300">JSON Operations:</span>
-                                    <span className="text-green-300 font-mono font-bold">1,247/min</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-300">Stream Messages:</span>
-                                    <span className="text-green-300 font-mono font-bold">892/min</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-300">TS Data Points:</span>
-                                    <span className="text-purple-300 font-mono font-bold">534/min</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <span className="text-gray-300">Vector Searches:</span>
-                                    <span className="text-green-300 font-mono font-bold">156/min</span>
-                                </div>
-                                <div className="border-t border-gray-600/30 pt-2 flex justify-between items-center">
-                                    <span className="text-gray-300 font-bold">Total Redis Ops:</span>
-                                    <span className="text-green-300 font-mono font-bold text-lg">2,829/min</span>
-                                </div>
-                                <div className="border-t border-gray-600/30 pt-2 flex justify-between items-center">
-                                    <span className="text-gray-300 font-bold">Cache Hit Rate:</span>
-                                    <span className="text-green-300 font-mono font-bold text-lg">94.7%</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Business Value */}
-                        <div className="bg-gradient-to-br from-green-900/40 to-blue-900/40 border border-green-500/30 rounded-lg p-4">
-                            <div className="text-center mb-3">
-                                <Icon name="dollar-sign" className="w-6 h-6 text-green-400 mx-auto mb-2" />
-                                <h3 className="text-lg font-bold text-green-300 font-mono">
-                                    💰 BUSINESS IMPACT
-                                </h3>
-                            </div>
-                            <div className="space-y-2 text-sm">
-                                <div className="flex justify-between">
-                                    <span className="text-gray-300">Monthly Savings:</span>
-                                    <span className="text-green-300 font-bold">$47.32</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-300">Enterprise/Year:</span>
-                                    <span className="text-green-300 font-bold">$12,500</span>
-                                </div>
-                                <div className="flex justify-between">
-                                    <span className="text-gray-300">API Calls Saved:</span>
-                                    <span className="text-green-300 font-bold">2,847</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <RedisMatrixStream position="embedded" />
             </div>
         </div>
     );
