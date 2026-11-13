@@ -59,6 +59,7 @@ import {
   debugRoutesGate,
   validateBody,
   createSpendGuard,
+  createConcurrencyGuard,
 } from "./src/middleware/spendGuard.js";
 import enhancedEndpoints from "./src/routes/enhanced-endpoints.js";
 
@@ -99,6 +100,15 @@ const multiDebateStartGuard = createSpendGuard({
   getClient: getSpendClient,
   scope: "debate",
   ...spendConfig.debate,
+  cost: (req) => req.validated.topics.length,
+});
+const debateConcurrencyGuard = createConcurrencyGuard({
+  getActiveCount: () => activeDebates.size,
+  max: spendConfig.maxConcurrentDebates,
+});
+const multiDebateConcurrencyGuard = createConcurrencyGuard({
+  getActiveCount: () => activeDebates.size,
+  max: spendConfig.maxConcurrentDebates,
   cost: (req) => req.validated.topics.length,
 });
 const aiCallGuard = createSpendGuard({
@@ -685,6 +695,7 @@ function sanitizeInput(input) {
 app.post(
   "/api/debate/start",
   validateBody(validateDebateStartBody, spendConfig),
+  debateConcurrencyGuard,
   debateStartGuard,
   async (req, res) => {
   try {
@@ -1138,6 +1149,7 @@ app.get("/api/agents", async (req, res) => {
 app.post(
   "/api/debates/start-multiple",
   validateBody(validateMultiStartBody, spendConfig),
+  multiDebateConcurrencyGuard,
   multiDebateStartGuard,
   async (req, res) => {
   try {
@@ -1222,6 +1234,7 @@ app.post(
 app.post(
   "/api/debate/langgraph/start",
   validateBody(validateDebateStartBody, spendConfig),
+  debateConcurrencyGuard,
   debateStartGuard,
   async (req, res) => {
   try {

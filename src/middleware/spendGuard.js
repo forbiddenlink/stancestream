@@ -32,6 +32,7 @@ export function readSpendConfig(env = process.env) {
       perIpWindowSec: positiveInt(env.AI_CALL_PER_IP_WINDOW_SEC, 3600),
       globalDailyLimit: positiveInt(env.AI_CALL_GLOBAL_DAILY_LIMIT, 500),
     },
+    maxConcurrentDebates: positiveInt(env.MAX_CONCURRENT_DEBATES, 3),
     maxRounds: positiveInt(env.DEBATE_MAX_ROUNDS, 5),
     maxMessageLength: positiveInt(env.DEBATE_MAX_MESSAGE_LENGTH, 1000),
     maxTopicLength: positiveInt(env.DEBATE_MAX_TOPIC_LENGTH, 200),
@@ -194,8 +195,8 @@ export function createSpendGuard({
 }) {
   return async function spendGuard(req, res, next) {
     const units = cost(req);
-    const ipKey = `spend:${scope}:ip:${safeKeyPart(req.ip)}`;
-    const globalKey = `spend:${scope}:global:${utcDay(now())}`;
+    const ipKey = `stancestream:spend:${scope}:ip:${safeKeyPart(req.ip)}`;
+    const globalKey = `stancestream:spend:${scope}:global:${utcDay(now())}`;
 
     let ipCount;
     let globalCount;
@@ -229,6 +230,31 @@ export function createSpendGuard({
         error: "Daily capacity reached",
         code: "daily_cap",
         message: "The demo has reached its daily usage cap. Try again tomorrow.",
+      });
+    }
+    return next();
+  };
+}
+
+/**
+ * Cap how many background debate loops run at once, across all callers.
+ * Each loop makes many model calls, so per-IP and daily counters alone still
+ * allow a burst of simultaneous loops. Reject with 429 before any counter is
+ * consumed so a refused request does not burn quota.
+ *
+ * @param {object} opts
+ * @param {() => number} opts.getActiveCount  current running debates
+ * @param {number} opts.max
+ * @param {(req) => number} [opts.cost]  loops this request would start
+ */
+export function createConcurrencyGuard({ getActiveCount, max, cost = () => 1 }) {
+  return function concurrencyGuard(req, res, next) {
+    if (getActiveCount() + cost(req) > max) {
+      res.set("Retry-After", "60");
+      return res.status(429).json({
+        error: "Too many debates running",
+        code: "concurrency_cap",
+        message: `At most ${max} debates can run at once. Try again shortly.`,
       });
     }
     return next();
