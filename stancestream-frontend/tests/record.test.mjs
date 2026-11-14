@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildRows, toUnit, toSigned, readStance, SHIFT_THRESHOLD, messageFromEvent, connectionSentence } from '../src/utils/record.js';
+import { buildRows, toUnit, toSigned, readStance, SHIFT_THRESHOLD, messageFromEvent, connectionSentence, debateErrorSentence } from '../src/utils/record.js';
 
 const msg = (id, agentId, value, extra = {}) => ({
     id, agentId, sender: agentId === 'senatorbot' ? 'SenatorBot' : 'ReformerBot',
@@ -97,4 +97,11 @@ test('connection sentence says what is true', () => {
     assert.match(connectionSentence('Error', 'error'), /failed/);
     assert.equal(connectionSentence('Connected', 'healthy'), 'Connected to the debate server.');
     assert.match(connectionSentence('Connected', 'checking'), /health check has not passed/);
+});
+
+test('debate_error sentence uses the server reason and never goes blank', () => {
+    assert.equal(debateErrorSentence({ reason: 'The AI model failed to respond. Check server logs.' }), 'The AI model failed to respond. Check server logs.');
+    assert.match(debateErrorSentence({}), /AI model failed to respond/);
+    assert.match(debateErrorSentence({ reason: '   ' }), /AI model failed to respond/);
+    assert.match(debateErrorSentence(undefined), /Check server logs/);
 });

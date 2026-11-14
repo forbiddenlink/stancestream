@@ -66,6 +66,8 @@ export async function generateEnhancedMessage(agentId, debateId, topic = 'genera
             maxTokens: 150
         });
 
+        if (result.error) return result;
+
         // Return consistent object format
         return {
             message: result.message,
@@ -136,6 +138,8 @@ export async function generateEnhancedMessageOnly(agentId, debateId, topic = 'ge
             temperature: adjustedTemperature,
             maxTokens: 200
         });
+
+        if (result.error) return result;
 
         // Integrate fact-checking and sentiment analysis
         const [factCheck, sentiment] = await Promise.all([
