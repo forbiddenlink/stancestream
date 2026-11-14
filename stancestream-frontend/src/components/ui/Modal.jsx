@@ -88,6 +88,7 @@ export const ModalHeader = ({
             {onClose && (
                 <button
                     onClick={onClose}
+                    aria-label="Close"
                     className="w-10 h-10 rounded-xl bg-neutral-800/50 hover:bg-neutral-700/50 flex items-center justify-center transition-colors duration-150 group"
                 >
                     <Icon name="x" size={20} className="text-neutral-400 group-hover:text-white" />

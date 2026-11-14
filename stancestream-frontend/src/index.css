@@ -1,5 +1,5 @@
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 /* Import advanced animations - must be before Tailwind */
 @import './styles/animations.css';
@@ -7,81 +7,91 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
-/* ===== Stance tape theme: warm reds over oxblood-black =====
-   Reserved hue family: vermilion / oxblood / blush, warm neutrals only.
-   The old green, cyan, blue and purple Tailwind scales are remapped here so
-   every existing utility class cascades into the new palette. Side A is the
-   pale blush "cool" end, side B is vermilion. Status always carries a text
+/* ===== Parliamentary record theme (matches the home page) =====
+   Pale grey-green paper, near-black green ink, hairline rules. Side A is the
+   deep teal, side B is the rust red; those two hues carry the debate.
+   The Tailwind colour scales below are remapped so every existing utility
+   class cascades into this palette. The scales run ink (50) to paper (950),
+   the reverse of the old dark theme, so `text-slate-100` is now ink and
+   `bg-slate-900` is now a raised paper surface. Status always carries a text
    label, never colour alone. */
 @theme {
     --font-sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-    --font-display: 'Big Shoulders Display', 'Hanken Grotesk', system-ui, sans-serif;
-    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-serif: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+    --font-display: 'Source Serif 4', 'Iowan Old Style', Georgia, serif;
+    --font-mono: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
-    --color-arena-a: #f4cfc6;      /* pale blush */
-    --color-arena-a-deep: #c98f86;
-    --color-arena-b: #ff6a45;      /* vermilion */
-    --color-arena-b-deep: #cf3a16;
-    --color-stage: #120707;        /* oxblood-black ground */
-    --color-stage-raised: #1b0d0c;
-    --color-stage-line: #3a1c1a;
+    /* square corners, like the record's rules and the home page buttons */
+    --radius-xs: 0px; --radius-sm: 0px; --radius-md: 2px; --radius-lg: 2px;
+    --radius-xl: 2px; --radius-2xl: 2px; --radius-3xl: 2px;
 
-    /* brand: vermilion (was green / emerald) */
-    --color-green-50: #fff3ee;  --color-green-100: #ffe2d6; --color-green-200: #ffc5ae;
-    --color-green-300: #ffa586; --color-green-400: #ff7a55; --color-green-500: #f2502a;
-    --color-green-600: #cf3a16; --color-green-700: #a22d12; --color-green-800: #75220f;
-    --color-green-900: #4a160c; --color-green-950: #2a0c08;
-    --color-emerald-50: #fff3ee;  --color-emerald-100: #ffe2d6; --color-emerald-200: #ffc5ae;
-    --color-emerald-300: #ffa586; --color-emerald-400: #ff7a55; --color-emerald-500: #f2502a;
-    --color-emerald-600: #cf3a16; --color-emerald-700: #a22d12; --color-emerald-800: #75220f;
-    --color-emerald-900: #4a160c; --color-emerald-950: #2a0c08;
+    --color-white: #17201b;       /* "white" text is now ink */
+    --color-black: #f4f7f5;       /* "black" scrims are now paper */
 
-    /* blush / bone (was cyan, sky, teal) */
-    --color-cyan-300: #f8d6cb; --color-cyan-400: #f2c0b0; --color-cyan-500: #dca391; --color-cyan-600: #b98270;
-    --color-sky-300: #f8d6cb;  --color-sky-400: #f2c0b0;  --color-sky-500: #dca391;  --color-sky-600: #b98270;
-    --color-teal-300: #f8d6cb; --color-teal-400: #f2c0b0; --color-teal-500: #dca391; --color-teal-600: #b98270;
+    --color-arena-a: #24505f;      /* teal: side A */
+    --color-arena-a-deep: #17394a;
+    --color-arena-b: #b32f12;      /* rust: side B */
+    --color-arena-b-deep: #8f2410;
+    --color-stage: #e3e9e5;        /* paper ground */
+    --color-stage-raised: #eef2ef;
+    --color-stage-line: #8a9a90;   /* rule */
+
+    /* brand scale: ink. Rust is reserved for side B (arena-b) and the one primary action. */
+    --color-green-50: #131a16;  --color-green-100: #17201b; --color-green-200: #243029;
+    --color-green-300: #17201b; --color-green-400: #243029; --color-green-500: #17201b;
+    --color-green-600: #66776e; --color-green-700: #a9b6ae; --color-green-800: #c9d3cd;
+    --color-green-900: #dde4df; --color-green-950: #eef2ef;
+    --color-emerald-50: #131a16;  --color-emerald-100: #17201b; --color-emerald-200: #243029;
+    --color-emerald-300: #17201b; --color-emerald-400: #243029; --color-emerald-500: #17201b;
+    --color-emerald-600: #66776e; --color-emerald-700: #a9b6ae; --color-emerald-800: #c9d3cd;
+    --color-emerald-900: #dde4df; --color-emerald-950: #eef2ef;
+
+    /* teal (was blush, cyan, sky) */
+    --color-cyan-300: #17394a; --color-cyan-400: #1d4656; --color-cyan-500: #24505f; --color-cyan-600: #5d8190;
+    --color-sky-300: #17394a;  --color-sky-400: #1d4656;  --color-sky-500: #24505f;  --color-sky-600: #5d8190;
+    --color-teal-300: #17394a; --color-teal-400: #1d4656; --color-teal-500: #24505f; --color-teal-600: #5d8190;
 
     /* rose (was blue) */
-    --color-blue-50: #fff1f3;  --color-blue-100: #ffe0e5; --color-blue-200: #ffc2cc;
-    --color-blue-300: #fba5b3; --color-blue-400: #f27d90; --color-blue-500: #dc566c;
-    --color-blue-600: #b83a50; --color-blue-700: #8f2b3f; --color-blue-800: #66202e;
-    --color-blue-900: #451520; --color-blue-950: #2b0c14;
-    --color-indigo-300: #fba5b3; --color-indigo-400: #f27d90; --color-indigo-500: #dc566c; --color-indigo-600: #b83a50;
+    --color-blue-50: #2b0c14;  --color-blue-100: #451520; --color-blue-200: #66202e;
+    --color-blue-300: #7a2535; --color-blue-400: #8f2b3f; --color-blue-500: #a8344a;
+    --color-blue-600: #c7788a; --color-blue-700: #dba5b1; --color-blue-800: #ecd0d6;
+    --color-blue-900: #f4e2e6; --color-blue-950: #faf0f2;
+    --color-indigo-300: #7a2535; --color-indigo-400: #8f2b3f; --color-indigo-500: #a8344a; --color-indigo-600: #c7788a;
 
     /* wine (was purple, violet, fuchsia, pink) */
-    --color-purple-50: #fdf2f6;  --color-purple-100: #fbe0ea; --color-purple-200: #f6bfd2;
-    --color-purple-300: #ef9dba; --color-purple-400: #e27799; --color-purple-500: #c75079;
-    --color-purple-600: #a23a60; --color-purple-700: #7c2c4a; --color-purple-800: #5a2036;
-    --color-purple-900: #3d1624; --color-purple-950: #260d16;
-    --color-violet-300: #ef9dba; --color-violet-400: #e27799; --color-violet-500: #c75079; --color-violet-600: #a23a60;
-    --color-fuchsia-300: #ef9dba; --color-fuchsia-400: #e27799; --color-fuchsia-500: #c75079;
-    --color-pink-300: #f6b3c2; --color-pink-400: #ee8ca1; --color-pink-500: #d9607d; --color-pink-600: #b64462;
+    --color-purple-50: #260d16;  --color-purple-100: #3d1624; --color-purple-200: #5a2036;
+    --color-purple-300: #6c2742; --color-purple-400: #7c2c4a; --color-purple-500: #8f3558;
+    --color-purple-600: #b8809a; --color-purple-700: #d3b0c1; --color-purple-800: #e6d0da;
+    --color-purple-900: #f1e3e9; --color-purple-950: #f8f0f4;
+    --color-violet-300: #6c2742; --color-violet-400: #7c2c4a; --color-violet-500: #8f3558; --color-violet-600: #b8809a;
+    --color-fuchsia-300: #6c2742; --color-fuchsia-400: #7c2c4a; --color-fuchsia-500: #8f3558;
+    --color-pink-300: #6c2742; --color-pink-400: #7c2c4a; --color-pink-500: #8f3558; --color-pink-600: #b8809a;
 
-    /* clay (was yellow, amber, orange) */
-    --color-yellow-300: #f3d3a6; --color-yellow-400: #e9bb80; --color-yellow-500: #d19c5a; --color-yellow-600: #a97a3e;
-    --color-amber-300: #f3d3a6;  --color-amber-400: #e9bb80;  --color-amber-500: #d19c5a;  --color-amber-600: #a97a3e;
-    --color-orange-300: #ffbf9f; --color-orange-400: #f7a07a; --color-orange-500: #e87f50; --color-orange-600: #c46137;
+    /* ochre (was yellow, amber, orange) */
+    --color-yellow-300: #5e3d0c; --color-yellow-400: #6e4810; --color-yellow-500: #8a5b14; --color-yellow-600: #b58a47;
+    --color-amber-300: #5e3d0c;  --color-amber-400: #6e4810;  --color-amber-500: #8a5b14;  --color-amber-600: #b58a47;
+    --color-orange-300: #6e2f0c; --color-orange-400: #85390f; --color-orange-500: #9c4412; --color-orange-600: #c07a50;
 
-    /* crimson (was red: errors stay readable next to vermilion) */
-    --color-red-300: #ff9fa8; --color-red-400: #ff7384; --color-red-500: #ea4560;
-    --color-red-600: #c62f49; --color-red-700: #9d2339; --color-red-800: #741a2b; --color-red-900: #4d121d;
-    --color-rose-300: #ff9fa8; --color-rose-400: #ff7384; --color-rose-500: #ea4560;
+    /* crimson (errors stay readable next to rust) */
+    --color-red-300: #4d121d; --color-red-400: #741a2b; --color-red-500: #8f1f33;
+    --color-red-600: #c76a79; --color-red-700: #dca2ac; --color-red-800: #eccbd0; --color-red-900: #f5e2e5;
+    --color-rose-300: #741a2b; --color-rose-400: #8f1f33; --color-rose-500: #a8283d;
 
-    /* warm neutrals (was slate / gray / zinc / neutral) */
-    --color-slate-50: #fbf3ef;  --color-slate-100: #f3e6e0; --color-slate-200: #e6d2ca;
-    --color-slate-300: #d3b9af; --color-slate-400: #bba096; --color-slate-500: #a58a80;
-    --color-slate-600: #927770; --color-slate-700: #5b413c; --color-slate-800: #382321;
-    --color-slate-900: #230f0e; --color-slate-950: #150808;
-    --color-gray-50: #fbf3ef;  --color-gray-100: #f3e6e0; --color-gray-200: #e6d2ca;
-    --color-gray-300: #d3b9af; --color-gray-400: #bba096; --color-gray-500: #a58a80;
-    --color-gray-600: #927770; --color-gray-700: #5b413c; --color-gray-800: #382321;
-    --color-gray-900: #230f0e; --color-gray-950: #150808;
-    --color-zinc-400: #bba096; --color-zinc-500: #a58a80; --color-zinc-600: #927770; --color-zinc-800: #382321;
+    /* grey-green neutrals, ink (50) to paper (950) */
+    --color-slate-50: #131a16;  --color-slate-100: #17201b; --color-slate-200: #243029;
+    --color-slate-300: #33423a; --color-slate-400: #3f4f46; --color-slate-500: #4a5a51;
+    --color-slate-600: #66776e; --color-slate-700: #a9b6ae; --color-slate-800: #c9d3cd;
+    --color-slate-900: #eef2ef; --color-slate-950: #f4f7f5;
+    --color-gray-50: #131a16;  --color-gray-100: #17201b; --color-gray-200: #243029;
+    --color-gray-300: #33423a; --color-gray-400: #3f4f46; --color-gray-500: #4a5a51;
+    --color-gray-600: #66776e; --color-gray-700: #a9b6ae; --color-gray-800: #c9d3cd;
+    --color-gray-900: #eef2ef; --color-gray-950: #f4f7f5;
+    --color-zinc-400: #3f4f46; --color-zinc-500: #4a5a51; --color-zinc-600: #66776e; --color-zinc-800: #c9d3cd;
 }
 
 :root {
-    --arena-a-rgb: 244, 207, 198;
-    --arena-b-rgb: 255, 106, 69;
+    --arena-a-rgb: 36, 80, 95;
+    --arena-b-rgb: 179, 47, 18;
 }
 
 /* Matrix Terminal Glitch Effect */
@@ -103,37 +113,23 @@ html,
 body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    min-height: 100%;
     overflow-x: hidden;
     /* Prevent horizontal scroll */
-    background: #120707;
+    background: #e3e9e5;
     font-family: 'Hanken Grotesk', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
-    color: #f3e6e0;
+    color: #17201b;
 }
 
 #root {
     min-height: 100vh;
-    background: #120707;
+    background: #e3e9e5;
     background-attachment: fixed;
     position: relative;
-}
-
-/* Chart-paper ruling: a faint ledger grid, like a seismograph tape */
-#root::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-        linear-gradient(to right, rgba(255, 106, 69, 0.045) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 106, 69, 0.045) 1px, transparent 1px),
-        radial-gradient(ellipse at 50% 0%, rgba(255, 106, 69, 0.08) 0%, transparent 55%);
-    background-size: 48px 48px, 48px 48px, 100% 100%;
-    pointer-events: none;
-    z-index: -1;
 }
 
 /* Matrix Style Scrollbar */
@@ -143,28 +139,28 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-    background: rgba(18, 7, 7, 0.9);
+    background: #e3e9e5;
     border-radius: 4px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #ff7a55 0%, #cf3a16 100%);
+    background: #8a9a90;
     border-radius: 4px;
-    border: 1px solid rgba(255, 106, 69, 0.3);
+    border: 1px solid #e3e9e5;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #cf3a16 0%, #ff7a55 100%);
+    background: #4a5a51;
 }
 
 .scrollbar-thin::-webkit-scrollbar-corner {
-    background: rgba(18, 7, 7, 0.9);
+    background: #e3e9e5;
 }
 
 /* Enhanced scrollbar for Firefox */
 .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: #ff7a55 rgba(18, 7, 7, 0.9);
+    scrollbar-color: #8a9a90 #e3e9e5;
 }
 
 /* Matrix component styles - Unified Design System */
@@ -197,24 +193,24 @@ body {
     }
 
     .button-primary {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-green-600/20 hover:bg-green-600/30 text-green-300 border border-green-500/30 hover:border-green-500/50 shadow-card hover:shadow-card-hover hover:scale-[1.01] active:scale-[0.98];
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-arena-b hover:bg-arena-b-deep text-slate-950 border border-arena-b font-bold;
     }
 
     .button-secondary {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-surface-elevated hover:bg-surface-overlay text-green-300 border border-green-500/20 hover:border-green-500/40 hover:scale-[1.01] active:scale-[0.98];
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-surface-elevated hover:bg-surface-overlay text-slate-100 border border-slate-100 hover:border-green-500;
     }
 
     .button-ghost {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500/10 text-green-300 hover:scale-[1.01] active:scale-[0.98];
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-500/10 text-slate-100 underline underline-offset-4;
     }
 
     .button-danger {
-        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/30 hover:border-red-500/50 hover:scale-[1.01] active:scale-[0.98];
+        @apply inline-flex items-center justify-center font-medium font-mono transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:ring-offset-2 focus:ring-offset-stage disabled:opacity-50 disabled:cursor-not-allowed bg-red-600/20 hover:bg-red-600/30 text-red-300 border border-red-500/40 hover:border-red-500/60;
     }
 
     /* Input system */
     .input-professional {
-        @apply w-full px-4 py-3 bg-surface-card border border-green-500/20 rounded-xl text-green-300 placeholder-green-500/40 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500/50 transition-all duration-150 hover:border-green-500/40 font-mono;
+        @apply w-full px-4 py-3 bg-surface-card border border-slate-600 rounded-xl text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 focus:border-green-500 transition-all duration-150 hover:border-slate-500 font-sans;
     }
 
     /* Card variants */
@@ -269,7 +265,7 @@ body {
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 106, 69, 0.1), transparent);
+        background: linear-gradient(90deg, transparent, rgba(179, 47, 18, 0.08), transparent);
         animation: shimmer 2s infinite;
     }
 }
@@ -318,7 +314,7 @@ body {
 
 /* Matrix surface system */
 .dark-optimized {
-    @apply bg-surface-base text-green-300;
+    @apply bg-surface-base text-slate-100;
 }
 
 .dark-surface {
@@ -335,19 +331,19 @@ body {
 
 /* Typography scale - Matrix Style */
 .heading-hero {
-    @apply text-4xl md:text-5xl lg:text-6xl font-bold leading-tight font-mono text-green-300;
+    @apply text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight font-serif text-slate-100;
 }
 
 .heading-section {
-    @apply text-2xl md:text-3xl font-semibold leading-tight font-mono text-green-300;
+    @apply text-2xl md:text-3xl font-semibold leading-tight font-serif text-slate-100;
 }
 
 .heading-card {
-    @apply text-lg md:text-xl font-medium leading-tight font-mono text-green-300;
+    @apply text-lg md:text-xl font-semibold leading-tight font-serif text-slate-100;
 }
 
 .text-body {
-    @apply text-base leading-relaxed font-mono text-green-300;
+    @apply text-base leading-relaxed font-sans text-slate-100;
 }
 
 .text-caption {
@@ -394,9 +390,10 @@ body {
     max-width: 40rem;
     margin: 0;
     text-align: left;
-    background: linear-gradient(180deg, rgba(35, 17, 16, 0.9), rgba(27, 13, 12, 0.9));
+    background: var(--color-stage-raised);
     border: 1px solid var(--color-stage-line);
-    border-radius: 14px;
+    border-radius: 0;
+    border-top: 2px solid var(--color-slate-100);
     padding: 1.25rem 1.5rem 1.25rem;
 }
 
@@ -417,20 +414,17 @@ body {
 .stance-legend-name {
     display: block;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.15rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: #fbf3ef;
+    color: var(--color-slate-100);
     line-height: 1.05;
 }
 
 .stance-legend-role {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    letter-spacing: 0.04em;
-    color: var(--color-slate-300);
+    font-size: 0.8125rem;
+    color: var(--color-slate-400);
 }
 
 .stance-legend-dot {
@@ -479,12 +473,7 @@ body {
     position: absolute;
     top: calc(50% - 3px);
     height: 6px;
-    border-radius: 3px;
-    background: repeating-linear-gradient(
-        90deg,
-        rgba(255, 106, 69, 0.55) 0 6px,
-        rgba(255, 106, 69, 0.15) 6px 10px
-    );
+    background: var(--color-slate-100);
     transform-origin: center;
     animation: stanceDraw 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.15s both;
 }
@@ -525,10 +514,9 @@ body {
     transform: translateX(-50%);
     top: -1.9rem;
     font-family: var(--font-display);
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.35rem;
     line-height: 1;
-    letter-spacing: 0.02em;
 }
 
 .stance-marker-a .stance-marker-value { color: var(--color-arena-a); }
@@ -539,7 +527,7 @@ body {
     height: 1rem;
     margin: 0 0.75rem;
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.8125rem;
     color: var(--color-slate-400);
 }
 
@@ -553,7 +541,7 @@ body {
     padding-top: 0.9rem;
     border-top: 1px dashed var(--color-stage-line);
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: 0.8125rem;
     line-height: 1.6;
     color: var(--color-slate-200);
 }
