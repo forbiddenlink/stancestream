@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.3](https://github.com/forbiddenlink/stancestream/compare/v1.2.2...v1.2.3) (2026-11-14)
+
+
+### Bug Fixes
+
+* **cache:** require 0.85 similarity for a semantic cache hit ([#171](https://github.com/forbiddenlink/stancestream/issues/171)) ([fec6157](https://github.com/forbiddenlink/stancestream/commit/fec615799e51459cc5aff340d97853c03fc70099))
+* **deps:** raise @hono/node-server, hono override floors to patched versions ([#174](https://github.com/forbiddenlink/stancestream/issues/174)) ([0b1f086](https://github.com/forbiddenlink/stancestream/commit/0b1f0861f764c9d11f9330a307fc327d28c6b25b))
+* **deps:** raise basic-ftp override floor to 6.2.4 ([#175](https://github.com/forbiddenlink/stancestream/issues/175)) ([ce0c328](https://github.com/forbiddenlink/stancestream/commit/ce0c32883e059030b0f45de45620fb63c2c54867))
+* **deps:** raise fast-xml-parser and node-forge override floors ([#168](https://github.com/forbiddenlink/stancestream/issues/168)) ([1ceaf4e](https://github.com/forbiddenlink/stancestream/commit/1ceaf4e2c619d0a039e54cbb9d4679f5fd9f0089))
+* **home:** remove hardcoded marketing numbers ([#170](https://github.com/forbiddenlink/stancestream/issues/170)) ([6da4d93](https://github.com/forbiddenlink/stancestream/commit/6da4d939e5c535c8026645aacf5ef17adbf4308a))
+* key moments load, cache hit rate percent, platform API host ([#179](https://github.com/forbiddenlink/stancestream/issues/179)) ([cbf7c47](https://github.com/forbiddenlink/stancestream/commit/cbf7c47464e7570cab4339324180b9cd55c06a29))
+* **spend:** cap concurrent debate loops and namespace spend counter keys ([#178](https://github.com/forbiddenlink/stancestream/issues/178)) ([c6be4f6](https://github.com/forbiddenlink/stancestream/commit/c6be4f6d4725196105f672ec8bd18531d23031f1))
+
 ## [1.2.2](https://github.com/forbiddenlink/stancestream/compare/v1.2.1...v1.2.2) (2026-11-11)
 
 
