@@ -11,6 +11,7 @@ import { WebSocketServer } from "ws";
 import redisManager from "./redisManager.js";
 import { isFeatureDisabled } from "./src/utils/unsupportedFeatures.js";
 import { addStancePoint, readStanceHistory } from "./src/utils/stanceHistory.js";
+import { stanceTurnInfo } from "./src/utils/stanceTurn.js";
 import { generateMessage, generateMessageOnly } from "./generateMessage.js";
 import { findClosestFact } from "./factChecker.js";
 import {
@@ -2587,9 +2588,10 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
 
         // Calculate turn number (round * agents.length + current agent index)
         // Calculate current round for broadcast compatibility
-        const currentRound = Math.floor(turn / agents.length) + 1;
-        const agentIndex = turn % agents.length;
-        const currentTurn = turn + 1;
+        const { currentRound, agentIndex, currentTurn } = stanceTurnInfo(
+          actualTurn,
+          agents.length,
+        );
 
         // Broadcast stance update with election-night excitement
         broadcast({
