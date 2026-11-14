@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
+import { readKeyMoments } from '../utils/keyMoments';
 
 const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
     const [keyMoments, setKeyMoments] = useState([]);
@@ -16,15 +17,15 @@ const KeyMomentsPanel = ({ debateId, viewMode = 'standard' }) => {
             if (viewMode === 'standard' && debateId) {
                 // Single debate mode - get moments for specific debate
                 response = await api.get(`/debate/${debateId}/key-moments?limit=10`);
-                console.log('📊 Key moments API response:', response.data);
-                setKeyMoments(response.data?.moments || []);
-                setStats(response.data?.stats || { total_moments: 0 });
+                const { moments, stats } = readKeyMoments(response, 'single');
+                setKeyMoments(moments);
+                setStats(stats);
             } else if (viewMode === 'multi-debate' || viewMode === 'analytics') {
                 // Multi-debate or analytics mode - get all moments
                 response = await api.get('/key-moments/all?limit=15');
-                console.log('📊 All key moments API response:', response.data);
-                setKeyMoments(response.data?.moments || []);
-                setStats({ total_moments: response.data?.total || 0 });
+                const { moments, stats } = readKeyMoments(response, 'all');
+                setKeyMoments(moments);
+                setStats(stats);
             } else {
                 // No specific debate, clear moments
                 setKeyMoments([]);

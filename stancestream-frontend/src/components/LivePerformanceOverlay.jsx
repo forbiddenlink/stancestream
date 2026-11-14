@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { buildApiUrl } from '../utils/url';
 import { normalizePerformanceMetrics } from '../utils/performanceMetrics';
+import { toPercent } from '../utils/dashboardMetrics';
 
 // One measurement as a labelled term and value.
 const MetricDisplay = ({ label, value, unit, isLoading: metricLoading }) => (
@@ -102,7 +103,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
             // Update metrics with real data
             setMetrics(prev => ({
                 ...prev,
-                cacheHitRate: cacheData?.metrics?.hit_ratio ?? null,
+                cacheHitRate: toPercent(cacheData?.metrics?.hit_ratio),
                 activeDebates: platformData?.contestMetrics?.debateStatistics?.activeDebates ?? null,
                 totalMessages: platformData?.contestMetrics?.debateStatistics?.totalMessages ?? null,
                 ...normalizePerformanceMetrics(perfData?.performance)

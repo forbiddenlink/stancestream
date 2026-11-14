@@ -1,5 +1,6 @@
 // Platform view: a plain reference of the four Redis data models, plus the server's own readings.
 import { useState, useEffect, memo, useCallback } from 'react';
+import { buildApiUrl } from '../utils/url';
 
 const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
     const [showcaseData, setShowcaseData] = useState(null);
@@ -14,21 +15,21 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
     const fetchShowcaseData = useCallback(async () => {
         try {
             // Get Redis modules showcase
-            const showcaseResponse = await fetch('/api/showcase/redis-modules');
+            const showcaseResponse = await fetch(buildApiUrl('/showcase/redis-modules'));
             if (showcaseResponse.ok) {
                 const data = await showcaseResponse.json();
                 setShowcaseData(data);
             }
 
             // Get platform metrics
-            const metricsResponse = await fetch('/api/analytics/platform-metrics');
+            const metricsResponse = await fetch(buildApiUrl('/analytics/platform-metrics'));
             if (metricsResponse.ok) {
                 const metrics = await metricsResponse.json();
                 setPlatformMetrics(metrics);
             }
 
             // Get optimization metrics
-            const optimizationResponse = await fetch('/api/optimization/metrics');
+            const optimizationResponse = await fetch(buildApiUrl('/optimization/metrics'));
             if (optimizationResponse.ok) {
                 const optimization = await optimizationResponse.json();
                 setOptimizationMetrics(optimization);
@@ -55,7 +56,7 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
         setActiveDemo(scenario);
 
         try {
-            const response = await fetch(`/api/platform/demo/${scenario}`, {
+            const response = await fetch(buildApiUrl(`/platform/demo/${scenario}`), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ duration: 15, agents: ['senatorbot', 'reformerbot'] })
