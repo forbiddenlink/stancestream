@@ -2,7 +2,7 @@
 
 import 'dotenv/config';
 import redisManager from './redisManager.js';
-import { disableIfUnsupported, isFeatureDisabled } from './src/utils/unsupportedFeatures.js';
+import { addStancePoint } from './src/utils/stanceHistory.js';
 import { generateMessageCore, determineEmotionalState, findPotentialAllies, topicToStanceKey } from './messageGenerationCore.js';
 import { debateStanceShifts } from './metrics.js';
 
@@ -17,10 +17,10 @@ async function findClosestFact(messageText) {
     }
 }
 
-async function analyzeSentiment(messageText) {
+async function analyzeSentiment(messageText, debateId, agentId) {
     try {
-        const { analyzeSentiment } = await import('./sentimentAnalysis.js');
-        return await analyzeSentiment(messageText);
+        const { default: sentimentAnalyzer } = await import('./sentimentAnalysis.js');
+        return await sentimentAnalyzer.analyzeSentiment(messageText, debateId, agentId);
     } catch (error) {
         console.warn('⚠️ Sentiment analyzer not available:', error.message);
         return { sentiment: 'neutral', confidence: 0.5, model: 'fallback' };
@@ -147,7 +147,7 @@ export async function generateEnhancedMessageOnly(agentId, debateId, topic = 'ge
                 console.warn('⚠️ Fact check failed:', err.message);
                 return { content: null, score: 1.0 };
             }),
-            analyzeSentiment(result.message).catch(err => {
+            analyzeSentiment(result.message, debateId, agentId).catch(err => {
                 console.warn('⚠️ Sentiment analysis failed:', err.message);
                 return { sentiment: 'neutral', confidence: 0.5, model: 'fallback' };
             })
@@ -239,15 +239,11 @@ export async function updateStanceBasedOnDebate(agentId, debateId, topic) {
         // Store in TimeSeries for tracking
         const tsKey = `debate:${debateId}:agent:${agentId}:stance:${stanceKey}`;
         try {
-            if (!isFeatureDisabled('RedisTimeSeries (TS.*)')) {
-                await redisManager.execute(async (client) => {
-                    await client.ts.add(tsKey, '*', parseFloat(newStance).toString());
-                });
-            }
+            await redisManager.execute(async (client) => {
+                await addStancePoint(client, tsKey, newStance);
+            });
         } catch (tsError) {
-            if (!disableIfUnsupported('RedisTimeSeries (TS.*)', tsError)) {
-                console.log(`⚠️ TimeSeries add failed: ${tsError.message}`);
-            }
+            console.log(`⚠️ Stance history write failed: ${tsError.message}`);
         }
 
         // Track stance shift metrics (only count meaningful shifts > 0.05)

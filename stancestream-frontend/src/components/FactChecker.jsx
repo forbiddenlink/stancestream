@@ -1,6 +1,9 @@
 // Fact checks, one line each. Each message is checked against stored facts
 // (findClosestFact in server.js); the score is the match score the server sent.
-const FactChecker = ({ factChecks = [], connected = false }) => {
+const FactChecker = ({ factChecks = [], connected = false, enabled = true }) => {
+    if (!enabled) {
+        return <p className="section-note">Fact checks are off on this server.</p>;
+    }
     if (factChecks.length === 0) {
         return (
             <p className="section-note">

@@ -9,10 +9,8 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import { WebSocketServer } from "ws";
 import redisManager from "./redisManager.js";
-import {
-  disableIfUnsupported,
-  isFeatureDisabled,
-} from "./src/utils/unsupportedFeatures.js";
+import { isFeatureDisabled } from "./src/utils/unsupportedFeatures.js";
+import { addStancePoint, readStanceHistory } from "./src/utils/stanceHistory.js";
 import { generateMessage, generateMessageOnly } from "./generateMessage.js";
 import { findClosestFact } from "./factChecker.js";
 import {
@@ -975,12 +973,7 @@ app.get("/api/agent/:id/stance/:debateId/:topic", async (req, res) => {
     const { id, debateId, topic } = req.params;
     const stanceKey = `debate:${debateId}:agent:${id}:stance:${topic}`;
 
-    const stanceData = await client.ts.range(stanceKey, "-", "+");
-
-    const formattedData = stanceData.map(([timestamp, value]) => ({
-      timestamp: new Date(timestamp).toISOString(),
-      value: parseFloat(value),
-    }));
+    const formattedData = await readStanceHistory(client, stanceKey);
 
     res.json(formattedData);
   } catch (error) {
@@ -1005,6 +998,12 @@ app.get("/api/health", async (req, res) => {
       redis: "unknown",
       websocket: "unknown",
       openai: "unknown",
+    },
+    // A feature reads as off once the Redis server has rejected its commands.
+    features: {
+      factCheck: !isFeatureDisabled("RediSearch (FT.*)"),
+      semanticCache: !isFeatureDisabled("RediSearch (FT.*)"),
+      stanceHistory: true, // falls back to a sorted set when TimeSeries is missing
     },
     metrics: {
       uptime: Math.floor(process.uptime()),
@@ -2422,17 +2421,9 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
         // Store stance in TimeSeries with correct topic
         const timesSeriesKey = `debate:${debateId}:agent:${agentId}:stance:${stanceKey}`;
         try {
-          if (!isFeatureDisabled("RedisTimeSeries (TS.*)")) {
-            await client.ts.add(
-              timesSeriesKey,
-              "*",
-              parseFloat(stanceData.newStance).toString(),
-            );
-          }
+          await addStancePoint(client, timesSeriesKey, stanceData.newStance);
         } catch (tsError) {
-          if (!disableIfUnsupported("RedisTimeSeries (TS.*)", tsError)) {
-            console.log(`⚠️ TimeSeries not available for ${timesSeriesKey}`);
-          }
+          console.log(`⚠️ Stance history write failed for ${timesSeriesKey}: ${tsError.message}`);
         }
       }
 
