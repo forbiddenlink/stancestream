@@ -17,10 +17,10 @@ async function findClosestFact(messageText) {
     }
 }
 
-async function analyzeSentiment(messageText) {
+async function analyzeSentiment(messageText, debateId, agentId) {
     try {
-        const { analyzeSentiment } = await import('./sentimentAnalysis.js');
-        return await analyzeSentiment(messageText);
+        const { default: sentimentAnalyzer } = await import('./sentimentAnalysis.js');
+        return await sentimentAnalyzer.analyzeSentiment(messageText, debateId, agentId);
     } catch (error) {
         console.warn('⚠️ Sentiment analyzer not available:', error.message);
         return { sentiment: 'neutral', confidence: 0.5, model: 'fallback' };
@@ -147,7 +147,7 @@ export async function generateEnhancedMessageOnly(agentId, debateId, topic = 'ge
                 console.warn('⚠️ Fact check failed:', err.message);
                 return { content: null, score: 1.0 };
             }),
-            analyzeSentiment(result.message).catch(err => {
+            analyzeSentiment(result.message, debateId, agentId).catch(err => {
                 console.warn('⚠️ Sentiment analysis failed:', err.message);
                 return { sentiment: 'neutral', confidence: 0.5, model: 'fallback' };
             })
