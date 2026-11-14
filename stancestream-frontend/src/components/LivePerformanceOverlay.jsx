@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Icon from './Icon';
 import { buildApiUrl } from '../utils/url';
 import { normalizePerformanceMetrics } from '../utils/performanceMetrics';
+import { toPercent } from '../utils/dashboardMetrics';
 
 // Mission control metric component with enhanced styling
 // eslint-disable-next-line no-unused-vars
@@ -132,7 +133,7 @@ export default function LivePerformanceOverlay({ position = 'top-right', size = 
             // Update metrics with real data
             setMetrics(prev => ({
                 ...prev,
-                cacheHitRate: cacheData?.metrics?.hit_ratio ?? null,
+                cacheHitRate: toPercent(cacheData?.metrics?.hit_ratio),
                 activeDebates: platformData?.contestMetrics?.debateStatistics?.activeDebates ?? null,
                 totalMessages: platformData?.contestMetrics?.debateStatistics?.totalMessages ?? null,
                 ...normalizePerformanceMetrics(perfData?.performance)
