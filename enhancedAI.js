@@ -2,6 +2,7 @@
 
 import 'dotenv/config';
 import redisManager from './redisManager.js';
+import { disableIfUnsupported, isFeatureDisabled } from './src/utils/unsupportedFeatures.js';
 import { generateMessageCore, determineEmotionalState, findPotentialAllies, topicToStanceKey } from './messageGenerationCore.js';
 import { debateStanceShifts } from './metrics.js';
 
@@ -234,11 +235,15 @@ export async function updateStanceBasedOnDebate(agentId, debateId, topic) {
         // Store in TimeSeries for tracking
         const tsKey = `debate:${debateId}:agent:${agentId}:stance:${stanceKey}`;
         try {
-            await redisManager.execute(async (client) => {
-                await client.ts.add(tsKey, '*', parseFloat(newStance).toString());
-            });
+            if (!isFeatureDisabled('RedisTimeSeries (TS.*)')) {
+                await redisManager.execute(async (client) => {
+                    await client.ts.add(tsKey, '*', parseFloat(newStance).toString());
+                });
+            }
         } catch (tsError) {
-            console.log(`⚠️ TimeSeries add failed: ${tsError.message}`);
+            if (!disableIfUnsupported('RedisTimeSeries (TS.*)', tsError)) {
+                console.log(`⚠️ TimeSeries add failed: ${tsError.message}`);
+            }
         }
 
         // Track stance shift metrics (only count meaningful shifts > 0.05)

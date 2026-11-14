@@ -2,6 +2,7 @@
 import 'dotenv/config';
 import { createClient } from 'redis';
 import healthMonitor from './src/services/healthMonitor.js';
+import { isUnsupportedCommandError } from './src/utils/unsupportedFeatures.js';
 
 /**
  * Singleton Redis Connection Manager
@@ -228,7 +229,11 @@ class RedisConnectionManager {
             const client = await this.getClient();
             return await operation(client);
         } catch (error) {
-            console.error('❌ Redis operation failed:', error.message);
+            // Unsupported-command errors (FT.*, TS.* on Upstash) are handled once by
+            // the caller via disableIfUnsupported; don't spam the log every call.
+            if (!isUnsupportedCommandError(error)) {
+                console.error('❌ Redis operation failed:', error.message);
+            }
             
             if (fallback !== null) {
                 console.warn('⚠️ Using fallback value for Redis operation');

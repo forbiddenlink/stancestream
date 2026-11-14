@@ -9,6 +9,10 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import { WebSocketServer } from "ws";
 import redisManager from "./redisManager.js";
+import {
+  disableIfUnsupported,
+  isFeatureDisabled,
+} from "./src/utils/unsupportedFeatures.js";
 import { generateMessage, generateMessageOnly } from "./generateMessage.js";
 import { findClosestFact } from "./factChecker.js";
 import {
@@ -2389,13 +2393,17 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
         // Store stance in TimeSeries with correct topic
         const timesSeriesKey = `debate:${debateId}:agent:${agentId}:stance:${stanceKey}`;
         try {
-          await client.ts.add(
-            timesSeriesKey,
-            "*",
-            parseFloat(stanceData.newStance).toString(),
-          );
+          if (!isFeatureDisabled("RedisTimeSeries (TS.*)")) {
+            await client.ts.add(
+              timesSeriesKey,
+              "*",
+              parseFloat(stanceData.newStance).toString(),
+            );
+          }
         } catch (tsError) {
-          console.log(`⚠️ TimeSeries not available for ${timesSeriesKey}`);
+          if (!disableIfUnsupported("RedisTimeSeries (TS.*)", tsError)) {
+            console.log(`⚠️ TimeSeries not available for ${timesSeriesKey}`);
+          }
         }
       }
 
