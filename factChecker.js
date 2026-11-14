@@ -1,24 +1,32 @@
 import 'dotenv/config';
-import { createClient } from 'redis';
 import { OpenAIEmbeddings } from '@langchain/openai';
+import redisManager from './redisManager.js';
+import { disableIfUnsupported, isFeatureDisabled } from './src/utils/unsupportedFeatures.js';
 
-const client = createClient({ url: process.env.REDIS_URL });
-client.on('error', (err) => console.error('🔴 Redis client error:', err.message));
 const embeddings = new OpenAIEmbeddings();
+const NO_MATCH = { content: null, score: 1.0 };
 
 async function findClosestFact(messageText) { // ✅ Renamed for clarity
-    await client.connect();
+    if (isFeatureDisabled('RediSearch (FT.*)')) return NO_MATCH;
 
     const embedding = await embeddings.embedQuery(messageText);
     const vector = Buffer.from(Float32Array.from(embedding).buffer);
 
-    const result = await client.ft.search('facts-index', '*=>[KNN 1 @embedding $vector AS score]', {
-        PARAMS: { vector },
-        RETURN: ['content', 'score'],
-        DIALECT: 2,
-    });
-
-    await client.quit();
+    // Use the shared, already-connected client. Calling connect()/quit() on a
+    // module-level client per call threw "Socket already opened" when two bots
+    // fact-checked concurrently.
+    let result;
+    try {
+        const client = await redisManager.getClient();
+        result = await client.ft.search('facts-index', '*=>[KNN 1 @embedding $vector AS score]', {
+            PARAMS: { vector },
+            RETURN: ['content', 'score'],
+            DIALECT: 2,
+        });
+    } catch (error) {
+        if (disableIfUnsupported('RediSearch (FT.*)', error)) return NO_MATCH;
+        throw error;
+    }
 
     if (result.total === 0) {
         return { content: null, score: 1.0 };
