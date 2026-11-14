@@ -124,7 +124,7 @@ const EmptySlots = () => (
     </ol>
 );
 
-const DebatePanel = ({ messages = [], topicText, roundMeta, factCheckCount = 0 }) => {
+const DebatePanel = ({ messages = [], topicText, roundMeta, factCheckCount = 0, factCheckOn = true }) => {
     const rows = useMemo(() => buildRows(messages), [messages]);
     const newestId = messages[messages.length - 1]?.id;
     const endRef = useRef(null);
@@ -170,8 +170,7 @@ const DebatePanel = ({ messages = [], topicText, roundMeta, factCheckCount = 0 }
                 <h2 id="record-title">{title}</h2>
                 <p>
                     {topic ? `${topic.description}. ` : ''}
-                    {rows.length} {rows.length === 1 ? 'turn' : 'turns'} recorded, {factCheckCount}{' '}
-                    {factCheckCount === 1 ? 'fact check' : 'fact checks'}.
+                    {rows.length} {rows.length === 1 ? 'turn' : 'turns'} recorded{factCheckOn ? `, ${factCheckCount} ${factCheckCount === 1 ? 'fact check' : 'fact checks'}` : ''}.
                     {roundMeta?.round ? ` Round ${roundMeta.round}${roundMeta.totalRounds ? ` of ${roundMeta.totalRounds}` : ''}.` : ''}
                 </p>
                 <p className="key">

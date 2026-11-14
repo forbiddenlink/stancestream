@@ -29,6 +29,7 @@ export default function App() {
   const [_agents, setAgents] = useState({});
   const [factChecks, setFactChecks] = useState([]);
   const [connectionHealth, setConnectionHealth] = useState('checking');
+  const [factCheckOn, setFactCheckOn] = useState(true);
   const [viewMode, setViewMode] = useState('standard'); // 'standard', 'multi-debate', 'analytics', 'business', or 'showcase'
   const [metricsUpdateTrigger, setMetricsUpdateTrigger] = useState(0);
   const [activeDebates, setActiveDebates] = useState(new Map()); // Track multiple debates
@@ -386,7 +387,8 @@ export default function App() {
   useEffect(() => {
     const checkHealth = async () => {
       try {
-        await api.getHealth();
+        const health = await api.getHealth();
+        setFactCheckOn(health?.features?.factCheck !== false);
         setConnectionHealth('healthy');
       } catch (error) {
         // Only set error if WebSocket isn't already connected (avoid race condition)
@@ -529,6 +531,7 @@ export default function App() {
                   messages={getFilteredMessages()}
                   topicText={activeDebates.get(currentDebateId)?.topic}
                   roundMeta={roundMeta}
+                  factCheckOn={factCheckOn}
                   factCheckCount={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId).length}
                 />
 
@@ -543,6 +546,7 @@ export default function App() {
                     <h2 id="fc-title">Fact checks</h2>
                     <FactChecker
                       connected={connectionStatus === 'Connected'}
+                      enabled={factCheckOn}
                       factChecks={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId)}
                     />
                   </section>
@@ -577,7 +581,7 @@ export default function App() {
                   </section>
                   <section className="arena-section" aria-labelledby="fc-title">
                     <h2 id="fc-title">Fact checks</h2>
-                    <FactChecker connected={connectionStatus === 'Connected'} factChecks={factChecks} />
+                    <FactChecker connected={connectionStatus === 'Connected'} enabled={factCheckOn} factChecks={factChecks} />
                   </section>
                   <section className="arena-section" aria-labelledby="st-title">
                     <h2 id="st-title">Stance over time</h2>
@@ -656,6 +660,7 @@ export default function App() {
           <Suspense fallback={<ModalLoader />}>
             <IntroModule
               showIntro={showIntro}
+              factCheckOn={factCheckOn}
               onComplete={() => {
                 setShowIntro(false);
                 try {

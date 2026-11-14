@@ -9,6 +9,7 @@ import rateLimit from "express-rate-limit";
 import morgan from "morgan";
 import { WebSocketServer } from "ws";
 import redisManager from "./redisManager.js";
+import { isFeatureDisabled } from "./src/utils/unsupportedFeatures.js";
 import { addStancePoint, readStanceHistory } from "./src/utils/stanceHistory.js";
 import { generateMessage, generateMessageOnly } from "./generateMessage.js";
 import { findClosestFact } from "./factChecker.js";
@@ -997,6 +998,12 @@ app.get("/api/health", async (req, res) => {
       redis: "unknown",
       websocket: "unknown",
       openai: "unknown",
+    },
+    // A feature reads as off once the Redis server has rejected its commands.
+    features: {
+      factCheck: !isFeatureDisabled("RediSearch (FT.*)"),
+      semanticCache: !isFeatureDisabled("RediSearch (FT.*)"),
+      stanceHistory: true, // falls back to a sorted set when TimeSeries is missing
     },
     metrics: {
       uptime: Math.floor(process.uptime()),

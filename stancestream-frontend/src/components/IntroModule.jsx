@@ -8,7 +8,7 @@ const STEPS = [
   ['Look under the record.', 'Analytics shows what the stats service measured. Platform lists the four Redis data models. Tools has the operations list.'],
 ];
 
-const IntroModule = ({ onComplete, showIntro = false }) => {
+const IntroModule = ({ onComplete, showIntro = false, factCheckOn = true }) => {
   const [isVisible, setIsVisible] = useState(showIntro);
   const closeRef = useRef(null);
 
@@ -43,7 +43,7 @@ const IntroModule = ({ onComplete, showIntro = false }) => {
       <div className="arena-modal-body">
         <h2 id="intro-title" className="pane-title">How StanceStream works</h2>
         <ol className="how-list">
-          {STEPS.map(([head, body]) => (
+          {STEPS.filter(([head]) => factCheckOn || head !== 'Check the facts.').map(([head, body]) => (
             <li key={head}>
               <p className="how-head">{head}</p>
               <p className="how-body">{body}</p>
