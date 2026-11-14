@@ -8,6 +8,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 import redisManager from './redisManager.js';
+import { OPENAI_MODEL } from './openaiModel.js';
 
 class KeyMomentsDetector {
     constructor() {
@@ -161,7 +162,7 @@ class KeyMomentsDetector {
             }
             
             const response = await openai.chat.completions.create({
-                model: 'gpt-4',
+                model: OPENAI_MODEL,
                 messages: [
                     {
                         role: 'system',
@@ -259,7 +260,7 @@ class KeyMomentsDetector {
             }
             
             // Store in RedisJSON
-            await client.json.set(keyMomentKey, '.', existingMoments);
+            await client.json.set(keyMomentKey, '$', existingMoments);
             
             console.log(`💾 Key moment stored: ${momentData.type} for debate ${debateId}`);
             

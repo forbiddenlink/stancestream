@@ -6,6 +6,8 @@ import { createClient } from "redis";
 import OpenAI from "openai";
 import { getCachedResponse, cacheNewResponse } from "./semanticCache.js";
 import { trackOpenAICall } from "./metrics.js";
+import { OPENAI_MODEL } from './openaiModel.js';
+import { disableIfUnsupported, isFeatureDisabled } from "./src/utils/unsupportedFeatures.js";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -78,9 +80,9 @@ class IntelligentAgentSystem {
 
       if (!response) {
         // Generate new response with GPT-4
-        const completion = await trackOpenAICall("gpt-4o-mini", async () => {
+        const completion = await trackOpenAICall(OPENAI_MODEL, async () => {
           return await openai.chat.completions.create({
-            model: "gpt-4o-mini",
+            model: OPENAI_MODEL,
             messages: [{ role: "user", content: enhancedPrompt }],
             max_tokens: 300,
             temperature: 0.7 + emotionalState.intensity * 0.3, // Emotional variation
@@ -172,9 +174,13 @@ class IntelligentAgentSystem {
 
       // Store current emotional state
       const timestamp = Date.now();
-      await this.client.ts.add(emotionalKey, timestamp, intensity).catch(() => {
-        console.log("📊 TimeSeries not available, using JSON fallback");
-      });
+      if (!isFeatureDisabled("RedisTimeSeries (TS.*)")) {
+        await this.client.ts.add(emotionalKey, timestamp, intensity).catch((tsError) => {
+          if (!disableIfUnsupported("RedisTimeSeries (TS.*)", tsError)) {
+            console.log("📊 TimeSeries not available, using JSON fallback");
+          }
+        });
+      }
 
       return { state, intensity, trend, timestamp };
     } catch (error) {

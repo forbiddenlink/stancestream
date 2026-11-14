@@ -15,6 +15,7 @@ import {
 } from "@langchain/core/messages";
 import redisManager from "../../redisManager.js";
 import { getLangfuse, flushLangfuse } from "../utils/langfuse.js";
+import { OPENAI_MODEL } from '../../openaiModel.js';
 
 // Lazy imports to avoid circular dependencies
 let findClosestFact;
@@ -117,7 +118,7 @@ async function loadAgentProfile(agentId) {
  */
 function createLLM(temperature = 0.7) {
   return new ChatOpenAI({
-    modelName: "gpt-4",
+    modelName: OPENAI_MODEL,
     temperature,
     maxTokens: 200,
   });
@@ -200,7 +201,7 @@ INSTRUCTIONS:
     });
 
     const generation = trace?.generation({
-      model: "gpt-4",
+      model: OPENAI_MODEL,
       modelParameters: {
         temperature: emotionalState === "passionate" ? 0.9 : 0.7,
         maxTokens: 200,
