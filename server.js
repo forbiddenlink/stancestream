@@ -2157,6 +2157,7 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
       let cacheHit = false;
       let similarity = 0;
       let costSaved = 0;
+      let aiFailure = null; // Set when the model call failed (never store as a turn)
 
       try {
         // Check cancellation before expensive AI call
@@ -2172,7 +2173,9 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
         );
 
         // Handle enhanced result format with all metadata
-        if (typeof result === "object" && result.message) {
+        if (result?.error) {
+          aiFailure = result;
+        } else if (typeof result === "object" && result.message) {
           message = result.message;
           cacheHit = result.cacheHit || false;
           similarity = result.similarity || 0;
@@ -2201,7 +2204,9 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
           var enhancedMetadata = {};
         }
 
-        console.log(`✨ Enhanced AI message generated for ${agentId}`);
+        if (!aiFailure) {
+          console.log(`✨ Enhanced AI message generated for ${agentId}`);
+        }
       } catch (enhancedError) {
         console.log(
           `⚠️ Enhanced AI failed, falling back to standard: ${enhancedError.message}`,
@@ -2218,7 +2223,9 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
         const result = await generateMessageOnly(agentId, debateId, topic);
 
         // Handle fallback result format
-        if (typeof result === "object" && result.message) {
+        if (result?.error) {
+          aiFailure = result;
+        } else if (typeof result === "object" && result.message) {
           message = result.message;
           cacheHit = result.cacheHit || false;
           similarity = result.similarity || 0;
@@ -2242,6 +2249,28 @@ async function runDebateRounds(debateId, agents, topic, requestedRounds = 5) {
           };
           var enhancedMetadata = {};
         }
+      }
+
+      // Model failure: surface it, do not store a fake turn, and stop cleanly
+      if (aiFailure) {
+        broadcast({
+          type: "debate_error",
+          debateId,
+          agentId,
+          reason: aiFailure.message,
+          detail: aiFailure.reason,
+          timestamp: new Date().toISOString(),
+        });
+        activeDebates.delete(debateId);
+        activeDebatesGauge.set(activeDebates.size);
+        broadcast({
+          type: "debate_ended",
+          debateId,
+          topic,
+          error: true,
+          timestamp: new Date().toISOString(),
+        });
+        return;
       }
 
       // 💾 Store message in Redis streams (centralized storage)

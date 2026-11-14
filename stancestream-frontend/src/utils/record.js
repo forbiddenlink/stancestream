@@ -78,6 +78,15 @@ export function connectionSentence(status, health) {
 }
 
 /**
+ * `debate_error` WebSocket event -> the sentence shown in the arena when the AI model failed.
+ * Falls back to a fixed sentence so the arena never shows an empty or silent failure.
+ */
+export function debateErrorSentence(event) {
+    const reason = event && typeof event.reason === 'string' ? event.reason.trim() : '';
+    return reason || 'The AI model failed to respond. Check server logs.';
+}
+
+/**
  * `new_message` WebSocket event -> the message object the record renders.
  * `stance` is kept exactly as sent (0..1); nothing is filled in when absent.
  */

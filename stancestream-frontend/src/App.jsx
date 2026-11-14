@@ -21,7 +21,7 @@ import { ToastProvider } from './components/ui';
 import wsManager from './services/websocketManager';
 import api from './services/api';
 import { getWebSocketUrl } from './utils/url';
-import { connectionSentence, messageFromEvent } from './utils/record';
+import { connectionSentence, messageFromEvent, debateErrorSentence } from './utils/record';
 import './pages/arena.css';
 
 export default function App() {
@@ -44,6 +44,7 @@ export default function App() {
     }
   }); // Intro module state
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+  const [debateError, setDebateError] = useState(null);
   const [roundMeta, setRoundMeta] = useState(null); // { round, totalRounds } from debate:stance_update metadata
   const messageSeq = useRef(0);
   const webSocketMessageHandlerRef = useRef(() => {});
@@ -174,6 +175,11 @@ export default function App() {
             setCurrentStances({ senatorbot: 0, reformerbot: 0 }); // Reset current stances
           }
         }
+        break;
+
+      case 'debate_error':
+        // The model failed: the server stored no turn and ended the debate. Say so in the arena.
+        setDebateError(debateErrorSentence(messageData));
         break;
 
       case 'debate_stopped':
@@ -498,6 +504,7 @@ export default function App() {
                 if (viewMode === 'standard') {
                   // Clear previous messages when starting a new debate
                   setDebateMessages([]);
+                  setDebateError(null);
                   setCurrentDebateId(debateId);
                 }
               }}
@@ -506,6 +513,11 @@ export default function App() {
             <p className="conn-line" role="status">
               {connectionSentence(connectionStatus, connectionHealth)}
             </p>
+            {debateError && (
+              <p className="conn-line" role="alert">
+                {debateError}
+              </p>
+            )}
           </section>
         </div>
 

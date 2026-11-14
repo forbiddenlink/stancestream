@@ -8,6 +8,7 @@ import {
     debateMessagesTotal
 } from './metrics.js';
 import { OPENAI_MODEL } from './openaiModel.js';
+import { buildAiFailure } from './aiFailure.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -128,14 +129,7 @@ Avoid repeating previous arguments. Express your distinctive viewpoint as a ${pr
         };
 
     } catch (error) {
-        console.error('❌ Error in generateMessage:', error);
-        // Fallback response
-        return {
-            message: `I apologize, but I'm having trouble formulating a response right now. Let me gather my thoughts on ${topic}.`,
-            cacheHit: false,
-            similarity: 0,
-            costSaved: 0
-        };
+        return buildAiFailure('generateMessage', error);
     }
 }
 
@@ -254,13 +248,7 @@ Seed: ${randomSeed}
         };
 
     } catch (error) {
-        console.error('❌ Error in generateMessageOnly:', error);
-        return {
-            message: `I apologize, but I'm having trouble formulating a response right now. Let me gather my thoughts on ${topic}.`,
-            cacheHit: false,
-            similarity: 0,
-            costSaved: 0
-        };
+        return buildAiFailure('generateMessageOnly', error);
     }
 }
 
@@ -340,9 +328,7 @@ Respond as ${profile.name} with your unique perspective on this topic. Stay true
         return response;
 
     } catch (error) {
-        console.error('❌ Error in generateEnhancedMessage:', error);
-        // Fallback response
-        return `I apologize, but I'm having trouble formulating a response right now. Let me gather my thoughts on ${topic}.`;
+        return buildAiFailure('generateEnhancedMessage', error);
     }
 }
 
