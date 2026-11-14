@@ -179,6 +179,7 @@ html.home-route #root::before { display: none; }
     border: 2px solid #e3e9e5;
 }
 .dot-a { background: var(--a); } .dot-b { background: var(--b); }
+.track-val-below { top: auto; bottom: -17px; }
 .track-val { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font-family: var(--sans); font-size: 12px; font-weight: 700; color: var(--ink); }
 
 .record-foot { font-family: var(--sans); font-size: 15px; color: var(--muted); margin: 24px 0 0 calc(var(--margin-w) + var(--gap)); }

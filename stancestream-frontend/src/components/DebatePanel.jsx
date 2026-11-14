@@ -1,72 +1,32 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import Icon from './Icon';
 import SentimentBadge from './SentimentBadge';
-import TranscriptTicker from './TranscriptTicker';
 import StanceRail from './StanceRail';
+import Track from './Track';
+import { AGENTS, AGENT_ORDER, SHIFT_THRESHOLD, buildRows } from '../utils/record';
+import { BASE_DEBATE_TOPICS } from '../data/debateTopics';
+import '../pages/arena.css';
 
 /**
- * DebatePanel — Broadcast Versus-Arena
- *
- * Split-column "versus stage": each agent is pinned to the top of its own
- * column (cool "A" on the left, hot "B" on the right) over a shared near-black
- * stage, with a center spine carrying the VS badge and a live sentiment-lean
- * readout. The active speaker's column glows/pulses; new arguments reveal
- * word-by-word; a broadcast chyron scrolls the transcript along the bottom.
+ * DebatePanel: the debate record.
+ * One row per turn, oldest first, numbered, speaker in the margin, and a stance
+ * track on every row on a single 0 to 1 scale (the per-message stance.value).
+ * A diamond sits in the margin only when that bot's own stance moved by more
+ * than SHIFT_THRESHOLD since its previous turn (the rule in keyMoments.js).
  */
 
-// --- Agent / side configuration -------------------------------------------
-
-const SIDES = {
-    a: {
-        key: 'a',
-        icon: 'user',
-        text: 'text-arena-a',
-        border: 'border-arena-a/30',
-        chip: 'bg-arena-a/10 border-arena-a/25',
-        dot: 'bg-arena-a',
-        avatar: 'from-arena-a to-arena-a-deep',
-        column: 'arena-column-a',
-    },
-    b: {
-        key: 'b',
-        icon: 'zap',
-        text: 'text-arena-b',
-        border: 'border-arena-b/30',
-        chip: 'bg-arena-b/10 border-arena-b/25',
-        dot: 'bg-arena-b',
-        avatar: 'from-arena-b to-arena-b-deep',
-        column: 'arena-column-b',
-    },
+const formatTimestamp = (timestamp) => {
+    const d = new Date(timestamp);
+    if (Number.isNaN(d.getTime())) return '';
+    return d.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
 };
 
-const sideKeyOf = (agentId) => (agentId === 'reformerbot' ? 'b' : 'a');
-
-const displayName = (msg, agentId) =>
-    (msg?.sender || agentId || 'agent').toString();
-
-const formatTimestamp = (timestamp) =>
-    new Date(timestamp).toLocaleTimeString('en-US', {
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-    });
-
-const sentimentScore = (sentiment) => {
-    if (!sentiment) return 0;
-    const label = (sentiment.sentiment || sentiment || '').toString().toLowerCase();
-    const conf = typeof sentiment.confidence === 'number' ? sentiment.confidence : 0.5;
-    if (label.includes('pos')) return conf;
-    if (label.includes('neg')) return -conf;
-    return 0;
-};
-
-// --- Kinetic streaming-text reveal ----------------------------------------
+const reducedMotion = () =>
+    typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
 const StreamingText = ({ text = '', animate = false }) => {
-    if (!animate) return text;
-    const tokens = text.split(/(\s+)/);
+    if (!animate || reducedMotion()) return text;
     let wordIndex = 0;
-    return tokens.map((token, i) => {
+    return text.split(/(\s+)/).map((token, i) => {
         if (token.trim() === '') return <React.Fragment key={i}>{token}</React.Fragment>;
         const delay = Math.min(wordIndex * 26, 1400);
         wordIndex += 1;
@@ -78,252 +38,170 @@ const StreamingText = ({ text = '', animate = false }) => {
     });
 };
 
-// --- Single agent column ---------------------------------------------------
+const fmt = (v) => (v === undefined ? 'not yet on record' : v.toFixed(2));
 
-const AgentColumn = ({ sideKey, name, messages, isActive, newestId, align }) => {
-    const side = SIDES[sideKey];
+const Turn = ({ row, newest }) => {
+    const agent = AGENTS[row.agentId] || { role: '', side: row.agentId === 'reformerbot' ? 'b' : 'a' };
+    const first = row.n % AGENT_ORDER.length === 1;
+    return (
+        <li className="turn" data-testid="turn" data-n={row.n} data-agent={row.agentId}>
+            {first && (
+                <p className="round" role="presentation">
+                    Round {row.round}
+                </p>
+            )}
+            <div className="who">
+                <span className={`who-name side-${agent.side}`} data-testid="speaker">{row.speaker}</span>
+                {agent.role && <span className="who-role">{agent.role}</span>}
+            </div>
+            <div className="mark">
+                {row.moved && (
+                    <>
+                        <span className="shift-mark" data-testid="shift-mark" aria-hidden="true" />
+                        <span className="sr-only">
+                            Stance moved by {row.change.toFixed(2)}, more than {SHIFT_THRESHOLD}.
+                        </span>
+                    </>
+                )}
+            </div>
+            <div className="para">
+                <span className="para-n" data-testid="turn-n">{row.n}.</span>
+                <p className="para-text" data-testid="turn-text">
+                    <StreamingText text={row.text} animate={newest} />
+                </p>
+                <p className="para-meta">
+                    {formatTimestamp(row.timestamp) && <span>{formatTimestamp(row.timestamp)}</span>}
+                    {row.factCheck && typeof row.factCheck.score === 'number' && (
+                        <span>Fact check {(row.factCheck.score * 100).toFixed(0)}%</span>
+                    )}
+                    {row.sentiment && (
+                        <SentimentBadge
+                            sentiment={row.sentiment.sentiment || row.sentiment}
+                            confidence={row.sentiment.confidence || 0}
+                            debateId={row.debateId}
+                            agentId={row.agentId}
+                            timestamp={row.timestamp}
+                        />
+                    )}
+                </p>
+                <p className="sr-only">
+                    {row.stance === null
+                        ? 'This turn carries no stance value.'
+                        : `Stance after this turn on a scale of 0 to 1: SenatorBot ${fmt(row.values.senatorbot)}, ReformerBot ${fmt(row.values.reformerbot)}.`}
+                </p>
+            </div>
+            <div className="meter" data-testid="meter" data-stance={row.stance ?? ''}>
+                <Track values={row.stance === null ? undefined : row.values} />
+                {row.stance === null && <span className="meter-none">No stance value on this turn.</span>}
+            </div>
+        </li>
+    );
+};
+
+const EmptySlots = () => (
+    <ol className="turns" aria-label="Empty record">
+        {Array.from({ length: 4 }, (_, i) => {
+            const agent = AGENTS[AGENT_ORDER[i % AGENT_ORDER.length]];
+            const n = i + 1;
+            return (
+                <li key={n} className="turn">
+                    {n % 2 === 1 && <p className="round" role="presentation">Round {Math.ceil(n / 2)}</p>}
+                    <div className="who">
+                        <span className={`who-name side-${agent.side}`}>{agent.name}</span>
+                        <span className="who-role">{agent.role}</span>
+                    </div>
+                    <div className="mark"><span className="shift-slot" aria-hidden="true" /></div>
+                    <div className="para">
+                        <span className="para-n">{n}.</span>
+                        <p className="para-text is-empty">
+                            Empty slot. {agent.name}&rsquo;s turn {n} is recorded here when a debate runs.
+                        </p>
+                    </div>
+                    <div className="meter"><Track values={undefined} /></div>
+                </li>
+            );
+        })}
+    </ol>
+);
+
+const DebatePanel = ({ messages = [], topicText, roundMeta, factCheckCount = 0 }) => {
+    const rows = useMemo(() => buildRows(messages), [messages]);
+    const newestId = messages[messages.length - 1]?.id;
     const endRef = useRef(null);
     const countRef = useRef(0);
 
     useEffect(() => {
-        if (messages.length > countRef.current) {
-            const t = setTimeout(() => {
-                endRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 80);
-            countRef.current = messages.length;
-            return () => clearTimeout(t);
+        if (rows.length > countRef.current && countRef.current > 0) {
+            endRef.current?.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'nearest' });
         }
-        countRef.current = messages.length;
-    }, [messages.length]);
+        countRef.current = rows.length;
+    }, [rows.length]);
 
-    return (
-        <div
-            className={`arena-column ${side.column} ${isActive ? 'is-speaking' : ''} flex flex-col min-h-0 bg-stage-raised/60 rounded-xl border ${
-                isActive ? side.border : 'border-stage-line'
-            }`}
-        >
-            {/* Pinned agent header */}
-            <div
-                className={`flex-shrink-0 flex items-center gap-3 px-4 py-3 border-b border-stage-line rounded-t-xl bg-stage/70 ${
-                    align === 'right' ? 'flex-row-reverse text-right' : ''
-                }`}
-            >
-                <div className="relative flex-shrink-0">
-                    <div
-                        className={`w-11 h-11 rounded-xl bg-gradient-to-br ${side.avatar} flex items-center justify-center shadow-lg`}
-                    >
-                        <Icon name={side.icon} size={20} className="text-stage" />
-                    </div>
-                    {isActive && (
-                        <span
-                            className={`absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full ${side.dot} border-2 border-stage animate-pulse`}
-                            aria-hidden="true"
-                        />
-                    )}
-                </div>
-                <div className={align === 'right' ? 'items-end' : ''}>
-                    <div className={`font-display font-bold ${side.text}`}>{name}</div>
-                    <div className="font-mono text-[10px] text-slate-500">
-                        {isActive ? 'On air' : 'Standby'} · {messages.length} args
-                    </div>
-                </div>
-            </div>
+    const topic = BASE_DEBATE_TOPICS.find((t) => t.description === topicText);
+    const title = topic?.name || topicText || 'Debate record';
 
-            {/* Column message stream */}
-            <div className="flex-1 overflow-y-auto scrollbar-thin min-h-0 px-3 py-4 space-y-3">
-                {messages.length === 0 ? (
-                    <div className="h-full min-h-[140px] flex items-center justify-center text-center px-4">
-                        <p className="font-mono text-[11px] text-slate-500">
-                            Awaiting opening statement
-                        </p>
-                    </div>
-                ) : (
-                    messages.map((msg) => (
-                        <div
-                            key={msg.id}
-                            className={`animate-slide-up rounded-xl border ${side.chip} p-3.5`}
-                        >
-                            <div
-                                className={`flex items-center gap-2 mb-1.5 ${
-                                    align === 'right' ? 'flex-row-reverse' : ''
-                                }`}
-                            >
-                                <span className="font-mono text-[10px] text-slate-500">
-                                    {formatTimestamp(msg.timestamp)}
-                                </span>
-                                {msg.sentiment && (
-                                    <SentimentBadge
-                                        sentiment={msg.sentiment.sentiment || msg.sentiment}
-                                        confidence={msg.sentiment.confidence || 0}
-                                        debateId={msg.debateId}
-                                        agentId={msg.agentId}
-                                        timestamp={msg.timestamp}
-                                    />
-                                )}
-                            </div>
-
-                            <p className="font-sans text-[15px] leading-relaxed text-slate-100">
-                                <StreamingText text={msg.text} animate={msg.id === newestId} />
-                            </p>
-
-                            {msg.factCheck && (
-                                <div className="mt-2.5 pt-2.5 border-t border-stage-line flex items-center gap-2">
-                                    <Icon name="shield-check" size={13} className={side.text} />
-                                    <span className={`font-mono text-[10px] font-medium ${side.text}`}>
-                                        Fact check: {(msg.factCheck.score * 100).toFixed(0)}%
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    ))
-                )}
-                <div ref={endRef} />
-            </div>
-        </div>
-    );
-};
-
-// --- Center spine: VS badge + live sentiment lean -------------------------
-
-const CenterSpine = ({ scoreA, scoreB, hasData }) => {
-    // Map -1..1 signed sentiment to a 0..100 bar height per side.
-    const heightA = Math.round(((scoreA + 1) / 2) * 100);
-    const heightB = Math.round(((scoreB + 1) / 2) * 100);
-    const delta = (scoreA - scoreB).toFixed(2);
-
-    return (
-        <div className="hidden md:flex flex-col items-center justify-between py-2 px-1 select-none">
-            <div className="font-display font-bold text-slate-500 text-sm">VS</div>
-
-            {hasData ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-2 w-14">
-                    <div className="flex items-end gap-1.5 h-24">
-                        <div className="w-2.5 h-full bg-stage-line/60 rounded-full flex flex-col justify-end overflow-hidden">
-                            <div
-                                className="w-full bg-arena-a rounded-full transition-all duration-500"
-                                style={{ height: `${heightA}%` }}
-                            />
-                        </div>
-                        <div className="w-2.5 h-full bg-stage-line/60 rounded-full flex flex-col justify-end overflow-hidden">
-                            <div
-                                className="w-full bg-arena-b rounded-full transition-all duration-500"
-                                style={{ height: `${heightB}%` }}
-                            />
-                        </div>
-                    </div>
-                    <div className="font-mono text-[9px] text-slate-500 text-center leading-tight">
-                        Sentiment
-                        <br />
-                        Δ {delta}
-                    </div>
-                </div>
-            ) : (
-                <div className="flex-1" />
-            )}
-
-            <div className="w-px flex-shrink-0 bg-stage-line" style={{ height: 0 }} />
-        </div>
-    );
-};
-
-// --- Panel -----------------------------------------------------------------
-
-const DebatePanel = ({ messages = [] }) => {
-    const activeAgentId = messages[messages.length - 1]?.agentId;
-    const activeSide = messages.length ? sideKeyOf(activeAgentId) : null;
-    const newestId = messages[messages.length - 1]?.id;
-
-    const { colA, colB, nameA, nameB, scoreA, scoreB, hasSentiment } = useMemo(() => {
-        const a = [];
-        const b = [];
-        let nA = 'SenatorBot';
-        let nB = 'ReformerBot';
-        let sA = 0;
-        let sB = 0;
-        let sentimentSeen = false;
-        for (const msg of messages) {
-            if (sideKeyOf(msg.agentId) === 'b') {
-                b.push(msg);
-                nB = displayName(msg, msg.agentId);
-                if (msg.sentiment) { sB = sentimentScore(msg.sentiment); sentimentSeen = true; }
-            } else {
-                a.push(msg);
-                nA = displayName(msg, msg.agentId);
-                if (msg.sentiment) { sA = sentimentScore(msg.sentiment); sentimentSeen = true; }
-            }
-        }
-        return { colA: a, colB: b, nameA: nA, nameB: nB, scoreA: sA, scoreB: sB, hasSentiment: sentimentSeen };
-    }, [messages]);
-
-    return (
-        <div className="h-full flex flex-col bg-stage border border-stage-line rounded-xl shadow-elevated overflow-hidden animate-fade-in">
-            {/* Broadcast header */}
-            <div className="flex-shrink-0 flex items-center justify-between px-5 py-3 bg-stage-raised border-b border-stage-line">
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-1.5">
-                        <span className="w-2.5 h-2.5 rounded-full bg-arena-b animate-pulse" aria-hidden="true" />
-                        <span className="font-mono text-[10px] font-bold text-arena-b">
-                            Live
-                        </span>
-                    </div>
-                    <div className="h-4 w-px bg-stage-line" aria-hidden="true" />
-                    <h2 className="font-display text-lg font-bold text-slate-100">
-                        Debate Arena
-                    </h2>
-                </div>
-
-                {messages.length > 0 && (
-                    <div className="flex items-center gap-4">
-                        <span className="font-mono text-[11px] text-slate-400">
-                            {messages.length} exchanges
-                        </span>
-                        <span className="font-mono text-[11px] text-slate-500">
-                            {formatTimestamp(messages[messages.length - 1]?.timestamp)}
-                        </span>
-                    </div>
-                )}
-            </div>
-
-            {/* Versus stage */}
-            {messages.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center justify-start text-center px-4 sm:px-6 pt-8 pb-8 gap-4">
-                    <h3 className="font-display text-3xl sm:text-5xl font-bold text-slate-50 leading-none">
-                        Ready for the Arena
-                    </h3>
-                    <p className="font-sans text-slate-300 max-w-md leading-relaxed">
-                        Select a topic and start a debate. Two AI agents take opposite corners with
-                        live fact-checking, memory, and stance evolution.
+    if (rows.length === 0) {
+        return (
+            <section className="record arena-record" aria-labelledby="record-title">
+                <div className="record-head">
+                    <h2 id="record-title">The record is empty</h2>
+                    <p>
+                        Select a topic and start a debate. Two AI bots argue it in turns; each turn and
+                        each stance is recorded here.
                     </p>
-                    <StanceRail />
-                    <p className="font-mono text-[11px] text-slate-400 max-w-md">
-                        Opening stances as seeded in the repo. Start a debate to watch them move.
+                    <p className="key">
+                        <span className="shift-mark" aria-hidden="true" />
+                        <span>
+                            A mark in the margin means a bot&rsquo;s stance moved by more than {SHIFT_THRESHOLD}{' '}
+                            between its turns. Stance runs from 0 to 1.
+                        </span>
                     </p>
                 </div>
-            ) : (
-                <div className="flex-1 min-h-0 grid grid-cols-2 md:grid-cols-[1fr_auto_1fr] gap-2 p-2">
-                    <AgentColumn
-                        sideKey="a"
-                        name={nameA}
-                        messages={colA}
-                        isActive={activeSide === 'a'}
-                        newestId={newestId}
-                        align="left"
-                    />
-                    <CenterSpine scoreA={scoreA} scoreB={scoreB} hasData={hasSentiment} />
-                    <AgentColumn
-                        sideKey="b"
-                        name={nameB}
-                        messages={colB}
-                        isActive={activeSide === 'b'}
-                        newestId={newestId}
-                        align="right"
-                    />
-                </div>
-            )}
+                <div className="arena-rail"><StanceRail /></div>
+                <EmptySlots />
+                <p className="record-foot">A debate runs 5 rounds by default, one turn per bot in each round.</p>
+            </section>
+        );
+    }
 
-            {/* Broadcast chyron */}
-            <TranscriptTicker messages={messages} />
-        </div>
+    return (
+        <section className="record arena-record" aria-labelledby="record-title">
+            <div className="record-head">
+                <h2 id="record-title">{title}</h2>
+                <p>
+                    {topic ? `${topic.description}. ` : ''}
+                    {rows.length} {rows.length === 1 ? 'turn' : 'turns'} recorded, {factCheckCount}{' '}
+                    {factCheckCount === 1 ? 'fact check' : 'fact checks'}.
+                    {roundMeta?.round ? ` Round ${roundMeta.round}${roundMeta.totalRounds ? ` of ${roundMeta.totalRounds}` : ''}.` : ''}
+                </p>
+                <p className="key">
+                    <span className="shift-mark" aria-hidden="true" />
+                    <span>
+                        A mark in the margin means a bot&rsquo;s stance moved by more than {SHIFT_THRESHOLD}{' '}
+                        between its turns. Stance runs from 0 to 1.
+                    </span>
+                </p>
+            </div>
+
+            <div className="meter-head" aria-hidden="true">
+                <div className="meter-legend">
+                    <span className="lg lg-a">{AGENTS.senatorbot.name}</span>
+                    <span className="lg lg-b">{AGENTS.reformerbot.name}</span>
+                </div>
+                <div className="meter-scale">
+                    <span style={{ left: '0%' }}>0</span>
+                    <span style={{ left: '50%' }}>0.5</span>
+                    <span style={{ left: '100%' }}>1</span>
+                </div>
+            </div>
+
+            <ol className="turns" data-testid="turns">
+                {rows.map((row) => (
+                    <Turn key={row.id} row={row} newest={row.id === newestId} />
+                ))}
+            </ol>
+            <div ref={endRef} />
+        </section>
     );
 };
 

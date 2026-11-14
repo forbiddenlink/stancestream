@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { BASE_DEBATE_TOPICS } from '../data/debateTopics';
+import Track from '../components/Track';
 import './home.css';
 
 // Facts below come from the repo, not from a live debate:
@@ -27,34 +28,6 @@ const turns = Array.from({ length: ROUNDS * ORDER.length }, (_, i) => ({
     round: Math.floor(i / ORDER.length) + 1,
     agent: ORDER[i % ORDER.length],
 }));
-
-function Track({ values }) {
-    const a = values?.senatorbot;
-    const b = values?.reformerbot;
-    const has = a !== undefined && b !== undefined;
-    return (
-        <div className="track" aria-hidden="true">
-            <span className="track-rule" />
-            {TICKS.map((t) => (
-                <span key={t} className="track-tick" style={{ left: `${t * 100}%` }} />
-            ))}
-            {has && (
-                <>
-                    <span
-                        className="track-gap"
-                        style={{ left: `${Math.min(a, b) * 100}%`, width: `${Math.abs(a - b) * 100}%` }}
-                    />
-                    <span className="track-dot dot-a" style={{ left: `${a * 100}%` }}>
-                        <span className="track-val">{a.toFixed(1)}</span>
-                    </span>
-                    <span className="track-dot dot-b" style={{ left: `${b * 100}%` }}>
-                        <span className="track-val">{b.toFixed(1)}</span>
-                    </span>
-                </>
-            )}
-        </div>
-    );
-}
 
 function BigTrack({ values }) {
     const a = values?.senatorbot;
