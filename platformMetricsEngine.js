@@ -566,11 +566,11 @@ class PlatformMetricsEngine {
     async storeContestMetrics(metrics) {
         try {
             // Store current metrics
-            await this.client.json.set('contest:current_metrics', '.', metrics);
+            await this.client.json.set('contest:current_metrics', '$', metrics);
             
             // Store in history
             const historyKey = `contest:metrics:${Date.now()}`;
-            await this.client.json.set(historyKey, '.', {
+            await this.client.json.set(historyKey, '$', {
                 timestamp: metrics.timestamp,
                 scores: metrics.contestScores,
                 performance: metrics.performance?.performanceScore,

@@ -21,7 +21,7 @@ async function clearCache() {
         }
 
         // Reset cache metrics
-        await client.json.set('cache:metrics', '.', {
+        await client.json.set('cache:metrics', '$', {
             total_requests: 0,
             cache_hits: 0,
             cache_misses: 0,

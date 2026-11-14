@@ -2,6 +2,10 @@
 // Caches AI responses based on prompt similarity using OpenAI embeddings
 import "dotenv/config";
 import redisManager from "./redisManager.js";
+import {
+  disableIfUnsupported,
+  isFeatureDisabled,
+} from "./src/utils/unsupportedFeatures.js";
 import OpenAI from "openai";
 import crypto from "crypto";
 import { CACHE_CONFIG } from "./cacheConfig.js";
@@ -105,6 +109,13 @@ class SemanticCache {
   async findSimilarCachedResponse(prompt, topic = "general") {
     const start = Date.now();
 
+    // Vector search unsupported on this server (e.g. Upstash): skip quietly.
+    if (isFeatureDisabled("RediSearch (FT.*)")) {
+      trackCacheOperation(false, 0, "unknown", topic, 0);
+      await this.updateMetrics(false, 0);
+      return null;
+    }
+
     try {
       // Include topic in embedding generation for better context
       const contextualPrompt = `Topic: ${topic}. ${prompt}`;
@@ -175,7 +186,9 @@ class SemanticCache {
       return null;
     } catch (error) {
       const duration = (Date.now() - start) / 1000;
-      console.error("Error searching cache:", error);
+      if (!disableIfUnsupported("RediSearch (FT.*)", error)) {
+        console.error("Error searching cache:", error);
+      }
 
       cacheResponseTime.observe({ hit: "false" }, duration);
 
@@ -272,7 +285,7 @@ class SemanticCache {
 
       // Store updated metrics
       await redisManager.execute(async (client) => {
-        await client.json.set(this.metricsKey, ".", metrics);
+        await client.json.set(this.metricsKey, "$", metrics);
       });
 
       console.log(

@@ -5,6 +5,7 @@ import 'dotenv/config';
 import { createClient } from 'redis';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import OpenAI from 'openai';
+import { OPENAI_MODEL } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const embeddings = new OpenAIEmbeddings();
@@ -261,7 +262,7 @@ Provide a brief analysis (max 150 words) covering:
 Be precise, objective, and indicate uncertainty where appropriate.`;
 
             const completion = await openai.chat.completions.create({
-                model: 'gpt-4o-mini',
+                model: OPENAI_MODEL,
                 messages: [{ role: 'user', content: prompt }],
                 max_tokens: 200,
                 temperature: 0.3
@@ -272,7 +273,7 @@ Be precise, objective, and indicate uncertainty where appropriate.`;
             return {
                 summary: analysis,
                 hasAIAnalysis: true,
-                modelUsed: 'gpt-4o-mini',
+                modelUsed: OPENAI_MODEL,
                 analysisConfidence: this.extractAnalysisConfidence(analysis)
             };
             
@@ -360,7 +361,7 @@ Be precise, objective, and indicate uncertainty where appropriate.`;
                 }
             };
             
-            await this.client.json.set(factCheckKey, '.', factCheckRecord);
+            await this.client.json.set(factCheckKey, '$', factCheckRecord);
             
             // Also store in a summary list for analytics
             const summaryKey = 'fact_check_summary';
@@ -374,7 +375,7 @@ Be precise, objective, and indicate uncertainty where appropriate.`;
                     sources: verification.sources
                 }].slice(-100); // Keep last 100
                 
-                await this.client.json.set(summaryKey, '.', updated);
+                await this.client.json.set(summaryKey, '$', updated);
             } catch (summaryError) {
                 console.log('⚠️ Failed to update fact check summary');
             }

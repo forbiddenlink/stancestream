@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { createClient } from 'redis';
 import OpenAI from 'openai';
+import { OPENAI_MODEL } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -71,7 +72,7 @@ Keep the summary concise but informative (200-400 words).
 `;
 
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4',
+            model: OPENAI_MODEL,
             messages: [
                 { role: 'system', content: 'You are an expert political analyst specializing in debate analysis and summarization.' },
                 { role: 'user', content: summaryPrompt }
@@ -90,7 +91,7 @@ Keep the summary concise but informative (200-400 words).
             messageCount: messages.length,
             agents: uniqueAgents,
             generatedAt: new Date().toISOString(),
-            model: 'gpt-4'
+            model: OPENAI_MODEL
         });
 
         console.log(`✅ Summary generated and stored at: ${summaryKey}`);

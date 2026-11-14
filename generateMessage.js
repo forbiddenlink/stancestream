@@ -7,6 +7,7 @@ import {
     trackOpenAICall,
     debateMessagesTotal
 } from './metrics.js';
+import { OPENAI_MODEL } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -220,9 +221,9 @@ Seed: ${randomSeed}
         } else {
             // Generate AI message (cache miss)
             console.log('🤖 Generating new AI response...');
-            const chatResponse = await trackOpenAICall('gpt-4', async () => {
+            const chatResponse = await trackOpenAICall(OPENAI_MODEL, async () => {
                 return await openai.chat.completions.create({
-                    model: 'gpt-4',
+                    model: OPENAI_MODEL,
                     messages: [
                         { role: 'system', content: prompt },
                         { role: 'user', content: `What's your perspective on "${topic}"? Keep it brief and in character. ${randomCue}` },
@@ -318,9 +319,9 @@ ${recentMessages}
 
 Respond as ${profile.name} with your unique perspective on this topic. Stay true to your political positions and personality.`;
 
-        const completion = await trackOpenAICall('gpt-4', async () => {
+        const completion = await trackOpenAICall(OPENAI_MODEL, async () => {
             return await openai.chat.completions.create({
-                model: 'gpt-4',
+                model: OPENAI_MODEL,
                 messages: [
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }

@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { OPENAI_MODEL } from '../../openaiModel.js';
 
 /**
  * Server Configuration
@@ -25,7 +26,7 @@ export const config = {
   // OpenAI configuration
   openai: {
     apiKey: process.env.OPENAI_API_KEY,
-    model: 'gpt-4',
+    model: OPENAI_MODEL,
     maxTokens: 300,
     temperature: 0.7,
     timeout: 30000, // 30 seconds

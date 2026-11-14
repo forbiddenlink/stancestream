@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 import redisManager from './redisManager.js';
 import { getCachedResponse, cacheNewResponse } from './semanticCache.js';
 import { trackOpenAICall } from './metrics.js';
+import { OPENAI_MODEL } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -121,9 +122,9 @@ export async function generateMessageCore({
         }
         
         // Generate new response
-        const completion = await trackOpenAICall('gpt-4', async () => {
+        const completion = await trackOpenAICall(OPENAI_MODEL, async () => {
             return await openai.chat.completions.create({
-                model: 'gpt-4',
+                model: OPENAI_MODEL,
                 messages: [
                     { role: 'system', content: prompt },
                     { role: 'user', content: `Continue the debate on "${topic}" considering the recent discussion.` }
