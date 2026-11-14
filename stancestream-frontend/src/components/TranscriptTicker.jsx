@@ -30,7 +30,7 @@ const sideOf = (agentId) => (agentId === 'reformerbot' ? 'b' : 'a');
 const Item = ({ item }) => (
     <span className="inline-flex items-center gap-2 px-5">
         <span
-            className={`font-mono text-[11px] font-semibold tracking-widest ${
+            className={`font-mono text-[11px] font-semibold ${
                 item.side === 'b' ? 'text-arena-b' : 'text-arena-a'
             }`}
         >
@@ -39,7 +39,7 @@ const Item = ({ item }) => (
         <span className="text-stage-line" aria-hidden="true">
             ▸
         </span>
-        <span className="font-mono text-[12px] text-slate-300/90">{item.text}</span>
+        <span className="font-mono text-[12px] text-slate-300">{item.text}</span>
     </span>
 );
 
@@ -57,7 +57,7 @@ const TranscriptTicker = ({ messages = [] }) => {
         return messages.slice(-14).map((m, i) => ({
             key: m.id ?? i,
             side: sideOf(m.agentId),
-            name: (m.sender || m.agentId || 'agent').toString().toUpperCase(),
+            name: (m.sender || m.agentId || 'agent').toString(),
             text: (m.text || '').replace(/\s+/g, ' ').trim(),
         }));
     }, [messages]);
@@ -72,14 +72,14 @@ const TranscriptTicker = ({ messages = [] }) => {
         >
             <span className="flex-shrink-0 flex items-center gap-2 pr-3 border-r border-stage-line">
                 <span className="w-2 h-2 rounded-full bg-arena-b animate-pulse" aria-hidden="true" />
-                <span className="font-mono text-[10px] font-bold tracking-[0.2em] text-slate-400">
-                    LIVE
+                <span className="font-mono text-[10px] font-bold text-slate-400">
+                    Live
                 </span>
             </span>
 
             {!hasItems ? (
-                <span className="font-mono text-[12px] text-slate-500 tracking-wide">
-                    AWAITING TRANSCRIPT…
+                <span className="font-mono text-[12px] text-slate-500">
+                    Awaiting transcript…
                 </span>
             ) : reduced ? (
                 // Static fallback: newest snippet only, no marquee.

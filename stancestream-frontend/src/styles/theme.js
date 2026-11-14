@@ -99,7 +99,7 @@ export const viewModes = {
         label: 'Business Intelligence',
         icon: 'trending-up',
         gradient: 'from-blue-600 to-cyan-600',
-        description: 'ROI and business value metrics'
+        description: 'Cache hit measurements'
     },
     showcase: {
         key: 'showcase',

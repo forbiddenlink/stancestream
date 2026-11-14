@@ -30,7 +30,7 @@ const ViewModeSelector = ({ viewMode, setViewMode, className = '' }) => {
             key: 'business',
             label: 'Business',
             icon: 'trending-up',
-            description: 'ROI & value metrics',
+            description: 'Cache hit measurements',
             gradient: 'from-cyan-600 to-blue-600'
         },
         {

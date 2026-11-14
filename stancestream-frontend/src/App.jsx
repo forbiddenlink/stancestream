@@ -17,11 +17,12 @@ const LivePerformanceOverlay = lazy(() => import('./components/LivePerformanceOv
 const RedisMatrixModal = lazy(() => import('./components/RedisMatrixModal'));
 const IntroModule = lazy(() => import('./components/IntroModule'));
 import ErrorBoundary from './components/ErrorBoundary';
-import Icon from './components/Icon';
-import { ViewModeSelector, ToastProvider, Container, Stack, Grid } from './components/ui';
+import { ToastProvider } from './components/ui';
 import wsManager from './services/websocketManager';
 import api from './services/api';
 import { getWebSocketUrl } from './utils/url';
+import { connectionSentence, messageFromEvent } from './utils/record';
+import './pages/arena.css';
 
 export default function App() {
   const [debateMessages, setDebateMessages] = useState([]);
@@ -43,6 +44,8 @@ export default function App() {
     }
   }); // Intro module state
   const [connectionStatus, setConnectionStatus] = useState('Disconnected');
+  const [roundMeta, setRoundMeta] = useState(null); // { round, totalRounds } from debate:stance_update metadata
+  const messageSeq = useRef(0);
   const webSocketMessageHandlerRef = useRef(() => {});
 
   // WebSocket connection using centralized manager
@@ -100,16 +103,8 @@ export default function App() {
 
     switch (type) {
       case 'new_message': {
-        const newMessage = {
-          id: Date.now(),
-          sender: messageData.agentName,
-          agentId: messageData.agentId,
-          text: messageData.message,
-          timestamp: messageData.timestamp,
-          debateId: messageData.debateId,
-          factCheck: messageData.factCheck,
-          sentiment: messageData.sentiment
-        };
+        // Raw 0..1 stance is kept on the message; the record reads this, not the -1..1 chart state.
+        const newMessage = messageFromEvent(messageData, `${Date.now()}-${messageSeq.current++}`);
 
         // Keep last 100 messages to prevent memory issues
         setDebateMessages(prev => {
@@ -117,41 +112,14 @@ export default function App() {
             return messages.slice(-100); // FIFO with 100 message cap
         });
 
-        // Extract stance data from new_message and create stance update
+        // Keep the -1..1 current stances for the chart state. The chart's points come from
+        // debate:stance_update (both bots' values each turn), so new_message does not add a
+        // second point per turn.
         if (messageData.stance && messageData.agentId && messageData.debateId) {
-          console.log('📊 Extracting stance from new_message:', messageData.stance);
-
-          // Update current stances state
-          setCurrentStances(prev => {
-            const updated = {
-              ...prev,
-              [messageData.agentId]: (messageData.stance.value - 0.5) * 2 // Convert 0-1 to -1 to 1
-            };
-
-            // Create new stance entry with both agents' current values
-            const newStanceEntry = {
-              timestamp: messageData.timestamp,
-              turn: Date.now(), // Use timestamp as unique turn identifier
-              debateId: messageData.debateId,
-              topic: messageData.stance.topic,
-              senatorbot: updated.senatorbot,
-              reformerbot: updated.reformerbot
-            };
-
-            console.log('📊 Created stance entry from message:', newStanceEntry);
-
-            // Add to stance data with memory management
-            setStanceData(prev => {
-              // Filter to current debate in standard mode
-              if (viewMode === 'standard' && currentDebateId) {
-                return [...prev.filter(entry => entry.debateId === currentDebateId), newStanceEntry];
-              }
-              // In multi-debate mode, keep last 100 entries to prevent memory bloat
-              return [...prev, newStanceEntry].slice(-100);
-            });
-
-            return updated;
-          });
+          setCurrentStances(prev => ({
+            ...prev,
+            [messageData.agentId]: (messageData.stance.value - 0.5) * 2 // Convert 0-1 to -1 to 1
+          }));
         }
 
         // Track active debates
@@ -202,6 +170,7 @@ export default function App() {
           if (viewMode === 'standard') {
             setCurrentDebateId(messageData.debateId);
             setStanceData([]); // Clear previous stance data for new debate
+            setRoundMeta(null);
             setCurrentStances({ senatorbot: 0, reformerbot: 0 }); // Reset current stances
           }
         }
@@ -348,6 +317,10 @@ export default function App() {
             break;
           }
 
+          if (messageData.metadata?.round) {
+            setRoundMeta({ round: messageData.metadata.round, totalRounds: messageData.metadata.totalRounds });
+          }
+
           const newStanceEntry = {
             senatorbot: messageData.senatorbot,
             reformerbot: messageData.reformerbot,
@@ -483,337 +456,177 @@ export default function App() {
   return (
     <ToastProvider>
       <ErrorBoundary componentName="StanceStream Main Application">
-        <div className="min-h-screen bg-stage text-slate-100 flex flex-col animate-fade-in-up overflow-x-hidden font-sans">
-        <Header
-          connectionStatus={connectionStatus}
-          backendHealth={connectionHealth}
-          onShowIntro={() => {
-            console.log('Opening intro module...');
-            try {
-              localStorage.removeItem('stancestream-intro-seen');
-            } catch {
-              // localStorage unavailable - continue anyway
-            }
-            setShowIntro(true);
-          }}
-        />
+        <div className="arena flex flex-col animate-fade-in-up">
+        <Header />
 
-        {/* Enhanced Controls Bar - Matrix Style */}
-        <div className="flex-shrink-0 border-b border-green-500/20 bg-surface-elevated backdrop-blur-md overflow-x-hidden relative z-10">
-          <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4 py-3">
-            <Stack spacing="space-y-4">
-              {/* Top Row: Enhanced Controls - Full Width */}
-              <div className="w-full animate-slide-in-left">
-                <EnhancedControls
-                  viewMode={viewMode}
-                  activeDebates={activeDebates}
-                  currentDebateId={currentDebateId}
-                  debateMessages={debateMessages}
-                  isDebating={currentDebateId && activeDebates.has(currentDebateId)}
-                  onMetricsUpdate={handleMetricsUpdate}
-                  onStopCurrentDebate={handleStopCurrentDebate}
-                  onClearConversation={() => {
-                    setDebateMessages([]);
-                    setCurrentDebateId(null);
-                    console.log('🧹 Conversation cleared from Enhanced Controls');
-                  }}
-                  onDebateStarted={(debateId) => {
-                    if (viewMode === 'standard') {
-                      // Clear previous messages when starting a new debate
-                      setDebateMessages([]);
-                      setCurrentDebateId(debateId);
-                      console.log(`🚀 Started new debate ${debateId} - cleared previous messages`);
-                    }
-                  }}
-                />
-              </div>
+        <div className="arena-wrap w-full">
+          <section className="arena-controls" aria-label="Debate controls">
+            <div className="mode-tabs" role="group" aria-label="View">
+              {[
+                ['standard', 'Standard'],
+                ['multi-debate', 'Multi-debate'],
+                ['analytics', 'Analytics'],
+                ['business', 'Business'],
+                ['platform-showcase', 'Platform'],
+              ].map(([mode, label]) => (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setViewMode(mode)}
+                  aria-current={viewMode === mode ? 'true' : undefined}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
 
-              {/* Bottom Row: Mode Toggle + Enhanced Quick Stats */}
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                {/* Left: Enhanced Quick Stats with System Health - Matrix Style */}
-                <div className="flex items-center gap-3 flex-1 w-full lg:w-auto overflow-hidden">
-                  <div className="flex items-center gap-3 text-sm">
-                    <div className="text-center px-3 py-2 bg-green-500/10 rounded-xl border border-green-500/20 flex-shrink-0">
-                      <div className="text-lg font-bold text-green-400 font-mono">{activeDebates.size}</div>
-                      <div className="text-xs text-neutral-400">Sessions</div>
-                    </div>
-                    <div className="text-center px-3 py-2 bg-green-500/10 rounded-xl border border-green-500/20 flex-shrink-0">
-                      <div className="text-lg font-bold text-green-400 font-mono">{debateMessages.length}</div>
-                      <div className="text-xs text-neutral-400">Messages</div>
-                    </div>
-                    <div className="text-center px-3 py-2 bg-accent-500/10 rounded-xl border border-accent-500/20 flex-shrink-0">
-                      <div className="text-lg font-bold text-accent-400 font-mono">{factChecks.length}</div>
-                      <div className="text-xs text-neutral-400">Facts</div>
-                    </div>
-                    {/* System Health Indicator - Matrix Style */}
-                    <div className="flex items-center gap-2 px-3 py-2 bg-surface-card rounded-xl border border-green-500/20 flex-shrink-0">
-                      <div className={`w-2 h-2 rounded-full ${connectionStatus === 'Connected' && connectionHealth === 'healthy'
-                        ? 'bg-green-400 animate-pulse'
-                        : 'bg-red-400'
-                        }`}></div>
-                      <span className="text-xs text-green-300 whitespace-nowrap font-mono">
-                        {connectionStatus === 'Connected' && connectionHealth === 'healthy' ? 'ONLINE' : 'ERROR'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+            <EnhancedControls
+              viewMode={viewMode}
+              activeDebates={activeDebates}
+              currentDebateId={currentDebateId}
+              debateMessages={debateMessages}
+              isDebating={!!currentDebateId && activeDebates.has(currentDebateId)}
+              onMetricsUpdate={handleMetricsUpdate}
+              onStopCurrentDebate={handleStopCurrentDebate}
+              onShowMatrix={() => setShowMatrixModal(true)}
+              onShowIntro={() => setShowIntro(true)}
+              onClearConversation={() => {
+                setDebateMessages([]);
+                setCurrentDebateId(null);
+              }}
+              onDebateStarted={(debateId) => {
+                if (viewMode === 'standard') {
+                  // Clear previous messages when starting a new debate
+                  setDebateMessages([]);
+                  setCurrentDebateId(debateId);
+                }
+              }}
+            />
 
-                {/* Right: Matrix Style Mode Selector */}
-                <div className="flex-shrink-0 w-full lg:w-auto mt-2 lg:mt-0">
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      onClick={() => setViewMode('standard')}
-                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'standard'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
-                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
-                        }`}
-                    >
-                      STANDARD
-                    </button>
-                    <button
-                      onClick={() => setViewMode('multi-debate')}
-                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'multi-debate'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
-                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
-                        }`}
-                    >
-                      MULTI-DEBATE
-                    </button>
-                    <button
-                      onClick={() => setViewMode('analytics')}
-                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'analytics'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
-                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
-                        }`}
-                    >
-                      ANALYTICS
-                    </button>
-                    <button
-                      onClick={() => setViewMode('business')}
-                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'business'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
-                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
-                        }`}
-                    >
-                      BUSINESS
-                    </button>
-                    <button
-                      onClick={() => setViewMode('platform-showcase')}
-                      className={`px-4 py-2 text-sm rounded-xl border transition-all duration-150 hover:scale-[1.01] font-mono ${viewMode === 'platform-showcase'
-                          ? 'bg-green-500/20 border-green-500/50 text-green-300 shadow-glow'
-                          : 'bg-surface-card border-green-500/20 text-green-300 hover:bg-green-500/10 hover:border-green-500/40'
-                        }`}
-                    >
-                      PLATFORM
-                    </button>
-                    <button
-                      onClick={() => setShowMatrixModal(true)}
-                      className="px-4 py-2 text-sm rounded-xl border bg-green-500/10 border-green-500/30 text-green-300 hover:bg-green-500/20 hover:border-green-500/50 transition-all duration-150 hover:scale-[1.01] shadow-glow font-mono"
-                      title="Redis Operations Matrix - Live visualization of all 4 modules"
-                    >
-                      <Icon name="activity" className="w-4 h-4 inline mr-1" />
-                      MATRIX
-                    </button>
-                    <button
-                      onClick={() => setShowIntro(true)}
-                      className="px-4 py-2 text-sm rounded-xl border bg-accent-500/10 border-accent-500/30 text-accent-300 hover:bg-accent-500/20 hover:border-accent-500/50 transition-all duration-150 hover:scale-[1.01] shadow-glow-info font-mono"
-                      title="Platform Introduction & Feature Tour"
-                    >
-                      <Icon name="help-circle" className="w-4 h-4 inline mr-1" />
-                      INTRO
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Stack>
-          </Container>
+            <p className="conn-line" role="status">
+              {connectionSentence(connectionStatus, connectionHealth)}
+            </p>
+          </section>
         </div>
 
         {/* Dynamic Main Content Based on View Mode */}
-        <main className="flex-1 overflow-x-hidden relative z-10">
-          <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4 py-4" className="h-full">
+        <main id="main" className="flex-1 arena-wrap w-full">
             {viewMode === 'standard' ? (
-              /* Standard Single-Debate Layout - Matrix Style */
-              <div className="flex flex-col gap-4 h-full pb-32 animate-fade-in-up">
-                {/* Main content row: 2-column layout with Matrix styling */}
-                <div className="flex flex-col lg:flex-row gap-4 flex-1 min-h-0">
-                  {/* Left Column: Debate Panel (70% width) - Matrix Style */}
-                  <div className="flex-1 lg:flex-[7] min-w-0 min-h-[500px] bg-stage border border-stage-line rounded-xl backdrop-blur-sm">
-                    <DebatePanel messages={getFilteredMessages()} />
-                  </div>
+              <>
+                <DebatePanel
+                  messages={getFilteredMessages()}
+                  topicText={activeDebates.get(currentDebateId)?.topic}
+                  roundMeta={roundMeta}
+                  factCheckCount={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId).length}
+                />
 
-                  {/* Right Column: Semantic Cache Engine + Key Moments + Fact Checker (30% width) */}
-                  <div className="w-full lg:w-[30%] lg:flex-[3] flex-shrink-0 min-h-[800px] flex flex-col">
-                    {/* Semantic Cache Engine - Business Value Showcase */}
-                    <div className="flex-shrink-0 mb-4 animate-slide-in-right stagger-1">
-                      <Suspense fallback={<OverlayLoader />}>
-                        <LivePerformanceOverlay 
-                          position="embedded" 
-                          size="small"
-                          className="relative w-full"
-                        />
-                      </Suspense>
-                    </div>
-
-                    {/* Key Moments - Matrix Style */}
-                    <div className="flex-1 mb-4 min-h-[400px] max-h-[500px] animate-slide-in-right stagger-2">
-                      <Suspense fallback={<PanelLoader />}>
-                        <KeyMomentsPanel debateId={currentDebateId} viewMode="standard" />
-                      </Suspense>
-                    </div>
-
-                    {/* Fact Checker - Matrix Style */}
-                    <div className="flex-1 min-h-[300px] max-h-[350px] animate-slide-in-right stagger-3">
-                      <FactChecker factChecks={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId)} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Bottom row: Stance Evolution Chart - Matrix Style */}
-                <div className="h-96 flex-shrink-0 mt-6 animate-fade-in-up stagger-3 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <StanceEvolutionChart
-                    stanceData={currentDebateId ?
-                      stanceData.filter(entry => entry.debateId === currentDebateId) :
-                      stanceData
-                    }
-                  />
-                </div>
-              </div>
-            ) : viewMode === 'multi-debate' ? (
-              /* Multi-Debate Layout - Matrix Style */
-              <div className="space-y-6 p-6 pb-32">
-                {/* Top row: Key Moments - Matrix Container */}
-                <div className="min-h-[400px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <KeyMomentsPanel viewMode="multi-debate" />
-                </div>
-
-                {/* Middle row: Multi-debate viewer and fact checker - Matrix Containers */}
-                <div className="flex flex-col lg:flex-row space-y-6 lg:space-y-0 lg:space-x-6">
-                  {/* Main: Multi-Debate Viewer - Matrix Container */}
-                  <div className="flex-1 lg:flex-[7] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-left">
-                    <TrueMultiDebateViewer
-                      messages={debateMessages}
-                      activeDebates={activeDebates}
-                      onMetricsUpdate={handleMetricsUpdate}
+                <div className="arena-sections">
+                  <section className="arena-section" aria-labelledby="km-title">
+                    <h2 id="km-title">Key moments</h2>
+                    <Suspense fallback={<PanelLoader />}>
+                      <KeyMomentsPanel debateId={currentDebateId} viewMode="standard" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="fc-title">
+                    <h2 id="fc-title">Fact checks</h2>
+                    <FactChecker
+                      connected={connectionStatus === 'Connected'}
+                      factChecks={factChecks.filter(fc => !currentDebateId || fc.debateId === currentDebateId)}
                     />
-                  </div>
-
-                  {/* Side Panel: Fact Checker - Matrix Container */}
-                  <div className="w-full lg:w-[450px] lg:flex-[3] min-h-[600px] bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4 animate-slide-in-right">
-                    <FactChecker factChecks={factChecks} />
-                  </div>
+                  </section>
+                  <section className="arena-section" aria-labelledby="st-title">
+                    <h2 id="st-title">Stance over time</h2>
+                    <Suspense fallback={<ChartLoader />}>
+                      <StanceEvolutionChart
+                        stanceData={currentDebateId ?
+                          stanceData.filter(entry => entry.debateId === currentDebateId) :
+                          stanceData
+                        }
+                      />
+                    </Suspense>
+                  </section>
                 </div>
-
-                {/* Bottom row: Stance Evolution Chart - Matrix Container */}
-                <div className="h-96 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <StanceEvolutionChart stanceData={stanceData} />
+              </>
+            ) : viewMode === 'multi-debate' ? (
+              <>
+                <Suspense fallback={<PanelLoader />}>
+                  <TrueMultiDebateViewer
+                    messages={debateMessages}
+                    activeDebates={activeDebates}
+                    onMetricsUpdate={handleMetricsUpdate}
+                  />
+                </Suspense>
+                <div className="arena-sections">
+                  <section className="arena-section" aria-labelledby="km-title">
+                    <h2 id="km-title">Key moments</h2>
+                    <Suspense fallback={<PanelLoader />}>
+                      <KeyMomentsPanel viewMode="multi-debate" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="fc-title">
+                    <h2 id="fc-title">Fact checks</h2>
+                    <FactChecker connected={connectionStatus === 'Connected'} factChecks={factChecks} />
+                  </section>
+                  <section className="arena-section" aria-labelledby="st-title">
+                    <h2 id="st-title">Stance over time</h2>
+                    <Suspense fallback={<ChartLoader />}>
+                      <StanceEvolutionChart stanceData={stanceData} />
+                    </Suspense>
+                  </section>
                 </div>
-              </div>
+              </>
             ) : viewMode === 'platform-showcase' ? (
               /* Platform Showcase - Premium Full Screen Experience */
-              <div className="animate-fade-in-up">
+              <Suspense fallback={<PanelLoader />}>
                 <PlatformShowcaseDashboard />
-              </div>
+              </Suspense>
             ) : viewMode === 'business' ? (
               /* Business Intelligence Dashboard */
-              <div className="space-y-6">
+              <Suspense fallback={<PanelLoader />}>
                 <BusinessValueDashboard />
-              </div>
+              </Suspense>
             ) : (
-              /* Analytics Dashboard Layout - Matrix Style */
-              <Stack spacing="space-y-6" className="animate-fade-in-up">
-                {/* Top Row: Key Moments Analytics - Matrix Style */}
-                <div className="w-full animate-slide-in-down stagger-1 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <KeyMomentsPanel viewMode="analytics" />
+              <section className="view-pane" aria-labelledby="an-title">
+                <h2 id="an-title" className="pane-title">Analytics</h2>
+                <dl className="stat-list">
+                  <div className="stat"><dt>Active debates</dt><dd>{activeDebates.size}</dd></div>
+                  <div className="stat"><dt>Messages this session</dt><dd>{debateMessages.length}</dd></div>
+                  <div className="stat"><dt>Fact checks this session</dt><dd>{factChecks.length}</dd></div>
+                </dl>
+                <p className="ctl-actions">
+                  <button type="button" className="btn-plain" onClick={handleMetricsUpdate}>Refresh</button>
+                  <button type="button" className="btn-plain" onClick={() => setViewMode('standard')}>Back to the record</button>
+                </p>
+                <div className="arena-sections">
+                  <section className="arena-section" aria-labelledby="an-cache">
+                    <h2 id="an-cache">Cache engine</h2>
+                    <Suspense fallback={<OverlayLoader />}>
+                      <LivePerformanceOverlay position="embedded" size="small" className="relative w-full" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="an-km">
+                    <h2 id="an-km">Key moments</h2>
+                    <Suspense fallback={<PanelLoader />}>
+                      <KeyMomentsPanel viewMode="analytics" />
+                    </Suspense>
+                  </section>
+                  <section className="arena-section" aria-labelledby="an-sys">
+                    <h2 id="an-sys">System</h2>
+                    <Suspense fallback={<DashboardLoader />}>
+                      <EnhancedPerformanceDashboard key={metricsUpdateTrigger} />
+                    </Suspense>
+                  </section>
                 </div>
-
-                {/* Middle Row: Performance Dashboard - Matrix Style */}
-                <div className="w-full animate-scale-in stagger-2 bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                  <EnhancedPerformanceDashboard key={metricsUpdateTrigger} />
-                </div>
-
-                {/* Bottom Row: Quick Actions and Stats - Matrix Grid */}
-                <Grid columns={2} gap="gap-6" className="animate-fade-in-up stagger-3">
-                  {/* Quick Actions - Matrix Style */}
-                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                    <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
-                      <Icon name="analytics" size={20} className="text-green-400" />
-                      QUICK ACTIONS
-                    </h3>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <button
-                        onClick={() => setViewMode('multi-debate')}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="multi-debate" size={16} className="mr-1" />
-                        MULTI-DEBATE
-                      </button>
-                      <button
-                        onClick={() => setViewMode('standard')}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="target" size={16} className="mr-1" />
-                        STANDARD
-                      </button>
-                      <button
-                        onClick={handleMetricsUpdate}
-                        className="px-4 py-2 bg-green-500/10 hover:bg-green-500/20 border border-green-500/20 hover:border-green-500/40 rounded-xl text-sm text-green-300 transition-all duration-150 font-mono"
-                      >
-                        <Icon name="refresh" size={16} className="mr-1" />
-                        REFRESH
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Live Stats - Matrix Style */}
-                  <div className="bg-surface-elevated border border-green-500/20 rounded-xl backdrop-blur-sm p-4">
-                    <h3 className="text-lg font-semibold text-green-300 flex items-center gap-2 mb-4 font-mono">
-                      <Icon name="bar-chart" size={20} className="text-green-400" />
-                      LIVE STATISTICS
-                    </h3>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-400 font-mono">{activeDebates.size}</div>
-                        <div className="text-xs text-neutral-400">Active Debates</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-400 font-mono">{debateMessages.length}</div>
-                        <div className="text-xs text-neutral-400">Total Messages</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-accent-400 font-mono">{factChecks.length}</div>
-                        <div className="text-xs text-neutral-400">Fact Checks</div>
-                      </div>
-                    </div>
-                  </div>
-                </Grid>
-              </Stack>
+              </section>
             )}
-          </Container>
         </main>
 
-        <footer className="relative z-10 border-t border-green-500/20 bg-surface-elevated px-4 py-4 text-sm text-green-300">
-          <Container maxWidth="max-w-7xl" padding="px-2 sm:px-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <a className="hover:text-green-100 underline" href="/about">
-                About
-              </a>
-              <a className="hover:text-green-100 underline" href="/contact">
-                Contact
-              </a>
-              <a className="hover:text-green-100 underline" href="/privacy-policy">
-                Privacy Policy
-              </a>
-              <a
-                className="hover:text-green-100 underline"
-                href="https://docs.squirrelscan.com"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Audit Docs
-              </a>
-            </div>
-          </Container>
+        <footer className="arena-wrap w-full">
+          <div className="arena-foot">
+            <a href="/about">About</a>
+            <a href="/contact">Contact</a>
+            <a href="/privacy-policy">Privacy policy</a>
+          </div>
         </footer>
 
         {/* Redis Matrix Modal - wrapped in Suspense since it's lazy-loaded */}

@@ -72,11 +72,11 @@ const TopicSelector = ({ onTopicChange, currentTopic, disabled }) => {
     return (
         <div className="space-y-4">
             <div>
-                <label className="block text-sm font-bold text-green-300 mb-3 flex items-center space-x-2 font-mono tracking-wide">
+                <label className="block text-sm font-bold text-green-300 mb-3 flex items-center space-x-2 font-mono">
                     <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                     </svg>
-                    <span>SELECT DEBATE TOPIC</span>
+                    <span>Select debate topic</span>
                 </label>
 
                 {/* Predefined Topics */}
@@ -87,17 +87,17 @@ const TopicSelector = ({ onTopicChange, currentTopic, disabled }) => {
                             onClick={() => handleTopicSelect(topic)}
                             disabled={disabled}
                             className={`p-4 rounded-xl border text-left transition-all duration-200 transform hover:scale-[1.02] shadow-lg ${currentTopic === topic.name
-                                    ? 'bg-gradient-to-r from-green-600/80 to-green-500/80 border-green-400 text-black shadow-green-500/30'
+                                    ? 'bg-slate-100 border-slate-100 text-black'
                                     : 'bg-black/80 border-green-500/30 text-green-300 hover:bg-green-900/20 hover:border-green-400'
                                 } ${disabled ? 'opacity-50 cursor-not-allowed transform-none' : ''}`}
                         >
                             <div className="flex items-center space-x-3 mb-2">
                                 <Icon name={topic.icon} size={32} className={currentTopic === topic.name ? "text-black" : "text-green-400"} />
-                                <span className={`font-bold text-sm font-mono tracking-wide ${currentTopic === topic.name ? "text-black" : "text-green-300"}`}>
-                                    {topic.name.toUpperCase()}
+                                <span className={`font-bold text-sm font-mono ${currentTopic === topic.name ? "text-black" : "text-green-300"}`}>
+                                    {topic.name}
                                 </span>
                             </div>
-                            <div className={`text-xs font-mono ${currentTopic === topic.name ? "text-black/80" : "text-green-200/80"}`}>
+                            <div className={`text-xs font-mono ${currentTopic === topic.name ? "text-black" : "text-slate-400"}`}>
                                 {topic.description}
                             </div>
                         </button>
@@ -114,15 +114,15 @@ const TopicSelector = ({ onTopicChange, currentTopic, disabled }) => {
                         >
                             <div className="flex items-center space-x-3 mb-2">
                                 <Icon name="enhance" size={20} className="text-green-400" />
-                                <span className="font-bold text-sm font-mono tracking-wide">CUSTOM TOPIC</span>
+                                <span className="font-bold text-sm font-mono">Custom topic</span>
                             </div>
-                            <div className="text-xs text-green-200/80 font-mono">ENTER YOUR OWN DEBATE TOPIC FOR AI AGENTS TO DISCUSS</div>
+                            <div className="text-xs text-green-200 font-mono">Enter your own debate topic for AI agents to discuss</div>
                         </button>
                     ) : (
                         <div className="space-y-3">
                             <div className="flex items-center space-x-3 mb-3">
                                 <Icon name="enhance" size={20} className="text-green-400" />
-                                <span className="font-bold text-green-300 font-mono tracking-wide">CREATE CUSTOM TOPIC</span>
+                                <span className="font-bold text-green-300 font-mono">Create custom topic</span>
                             </div>
                             <input
                                 type="text"
@@ -137,19 +137,19 @@ const TopicSelector = ({ onTopicChange, currentTopic, disabled }) => {
                                 <button
                                     onClick={handleCustomSubmit}
                                     disabled={!customTopic.trim()}
-                                    className="flex-1 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg shadow-green-500/30 font-mono tracking-wide"
+                                    className="flex-1 bg-arena-b hover:bg-arena-b-deep disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-black font-bold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] shadow-lg shadow-green-500/30 font-mono"
                                 >
                                     <Icon name="play" size={16} className="mr-2" />
-                                    START CUSTOM DEBATE
+                                    Start custom debate
                                 </button>
                                 <button
                                     onClick={() => {
                                         setShowCustom(false);
                                         setCustomTopic('');
                                     }}
-                                    className="px-6 bg-black/80 border border-green-500/30 hover:bg-green-900/20 text-green-300 font-bold py-3 rounded-xl transition-colors font-mono tracking-wide"
+                                    className="px-6 bg-black/80 border border-green-500/30 hover:bg-green-900/20 text-green-300 font-bold py-3 rounded-xl transition-colors font-mono"
                                 >
-                                    CANCEL
+                                    Cancel
                                 </button>
                             </div>
                         </div>
