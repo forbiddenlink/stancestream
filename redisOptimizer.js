@@ -450,7 +450,7 @@ class RedisPerformanceOptimizer {
         try {
             const optimizationKey = `optimization:results:${Date.now()}`;
             await redisManager.execute(async (client) => {
-                return await client.json.set(optimizationKey, '.', results);
+                return await client.json.set(optimizationKey, '$', results);
             });
 
             // Keep only last 50 optimization results
@@ -483,7 +483,7 @@ class RedisPerformanceOptimizer {
 
             // Store live optimization metrics
             await redisManager.execute(async (client) => {
-                return await client.json.set('optimization:live_metrics', '.', {
+                return await client.json.set('optimization:live_metrics', '$', {
                     last_optimization: results.endTime,
                     total_optimizations: this.optimizationHistory.length,
                     average_improvement: this.calculateAverageImprovement(),

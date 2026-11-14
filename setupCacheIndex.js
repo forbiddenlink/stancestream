@@ -127,7 +127,7 @@ async function createCacheIndex() {
                 created_at: new Date().toISOString(),
             };
 
-            await client.json.set(metricsKey, '.', initialMetrics);
+            await client.json.set(metricsKey, '$', initialMetrics);
             console.log('📈 Cache metrics initialized');
         } else {
             console.log('📈 Existing cache metrics found');
