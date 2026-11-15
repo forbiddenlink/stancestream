@@ -77,7 +77,7 @@ const Turn = ({ row, newest }) => {
                     {row.sentiment && (
                         <SentimentBadge
                             sentiment={row.sentiment.sentiment || row.sentiment}
-                            confidence={row.sentiment.confidence || 0}
+                            confidence={row.sentiment.confidence}
                             debateId={row.debateId}
                             agentId={row.agentId}
                             timestamp={row.timestamp}
