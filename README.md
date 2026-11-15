@@ -5,6 +5,10 @@ for live intelligent applications. Node/Express + WebSocket backend, React 19/Vi
 AI agents with persistent personalities and memory debate policy topics, fact-check each
 other in real time, and track stance evolution over the course of a debate.
 
+**Live site:** [stancestream.vercel.app](https://stancestream.vercel.app) (frontend). Backend deployment options, including Render, are in [DEPLOYMENT.md](DEPLOYMENT.md)
+
+StanceStream is for developers who want a worked example of Redis JSON, Streams, TimeSeries and Vector Search driving a live app.
+
 ## Documentation
 
 | Document | Purpose |
@@ -16,6 +20,8 @@ other in real time, and track stance evolution over the course of a debate.
 | [Developer guide](.github/copilot-instructions.md) | Development workflow and patterns |
 
 ## Quick start
+
+Prerequisites: Node.js 20 or newer, pnpm (`pnpm@10.34.8` in `packageManager`), and Redis Stack (all four modules). For local Redis use `docker compose up -d redis` (`docker-compose.yml`).
 
 ### Automated setup
 
@@ -44,6 +50,18 @@ node addReformer.js       # create the ReformerBot profile
 pnpm dev                              # backend, port 3001
 cd stancestream-frontend && pnpm dev  # frontend, port 5173
 ```
+
+Other commands:
+
+```bash
+pnpm test             # Mocha, all tests under tests/
+pnpm test:unit        # unit tests only
+pnpm typecheck        # tsc --noEmit for the TypeScript parts
+pnpm biome:check      # lint and format check
+pnpm build            # frontend production build
+```
+
+`pnpm lint` runs ESLint, but the repo has no ESLint flat config, so use `pnpm biome:check` instead.
 
 Verify: backend at `http://localhost:3001/api/health`, frontend at `http://localhost:5173`.
 
@@ -128,9 +146,8 @@ four agent prompts in `lib/agents/{pro,con,moderator,scorer}.ts`.
 ## Environment variables
 
 Required: `REDIS_URL` (valid URL), `OPENAI_API_KEY` (starts with `sk-`, at least 20 chars).
-See `.env.example` for these plus a few optional integrations, and `CLAUDE.md` for the
-Zod-validated optional vars with their defaults.
+`.env.example` lists these plus optional integrations (`GNEWS_API_KEY`, `USE_LANGGRAPH`, and LangChain tracing variables). The code also reads `SENTRY_DSN` (backend) and `VITE_SENTRY_DSN` and `VITE_API_URL` (frontend), which are not in `.env.example`. See `CLAUDE.md` for the Zod-validated optional variables and their defaults.
 
 ## License
 
-See [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
