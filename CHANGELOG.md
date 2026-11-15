@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.3.0](https://github.com/forbiddenlink/stancestream/compare/v1.2.2...v1.3.0) (2026-11-14)
+
+
+### Features
+
+* **home:** debate record home, live app moves to /arena ([#172](https://github.com/forbiddenlink/stancestream/issues/172)) ([4cb1c55](https://github.com/forbiddenlink/stancestream/commit/4cb1c552bfdd20b618ffb3de1b1e80ab584777ec))
+
+
+### Bug Fixes
+
+* broadcast a stance update every turn (undeclared 'turn' dropped them) ([#183](https://github.com/forbiddenlink/stancestream/issues/183)) ([c3f44f1](https://github.com/forbiddenlink/stancestream/commit/c3f44f1378a45d0f60197548cd1b0e1d356a3e65))
+* **cache:** require 0.85 similarity for a semantic cache hit ([#171](https://github.com/forbiddenlink/stancestream/issues/171)) ([fec6157](https://github.com/forbiddenlink/stancestream/commit/fec615799e51459cc5aff340d97853c03fc70099))
+* **deps:** raise @hono/node-server, hono override floors to patched versions ([#174](https://github.com/forbiddenlink/stancestream/issues/174)) ([0b1f086](https://github.com/forbiddenlink/stancestream/commit/0b1f0861f764c9d11f9330a307fc327d28c6b25b))
+* **deps:** raise basic-ftp override floor to 6.2.4 ([#175](https://github.com/forbiddenlink/stancestream/issues/175)) ([ce0c328](https://github.com/forbiddenlink/stancestream/commit/ce0c32883e059030b0f45de45620fb63c2c54867))
+* **deps:** raise fast-xml-parser and node-forge override floors ([#168](https://github.com/forbiddenlink/stancestream/issues/168)) ([1ceaf4e](https://github.com/forbiddenlink/stancestream/commit/1ceaf4e2c619d0a039e54cbb9d4679f5fd9f0089))
+* **home:** remove hardcoded marketing numbers ([#170](https://github.com/forbiddenlink/stancestream/issues/170)) ([6da4d93](https://github.com/forbiddenlink/stancestream/commit/6da4d939e5c535c8026645aacf5ef17adbf4308a))
+* honest feature state (stance history fallback, fact checks off copy) ([#182](https://github.com/forbiddenlink/stancestream/issues/182)) ([1690265](https://github.com/forbiddenlink/stancestream/commit/1690265a96f2ec46674f2e0207c00c45f7ffe900))
+* key moments load, cache hit rate percent, platform API host ([#179](https://github.com/forbiddenlink/stancestream/issues/179)) ([cbf7c47](https://github.com/forbiddenlink/stancestream/commit/cbf7c47464e7570cab4339324180b9cd55c06a29))
+* prod fallback turns (deprecated gpt-4, Socket already opened, Upstash FT/TS/JSON paths) ([#180](https://github.com/forbiddenlink/stancestream/issues/180)) ([a2ebc45](https://github.com/forbiddenlink/stancestream/commit/a2ebc453bfff974d4b9dc8b4ef9860c3994e34c4))
+* **spend:** cap concurrent debate loops and namespace spend counter keys ([#178](https://github.com/forbiddenlink/stancestream/issues/178)) ([c6be4f6](https://github.com/forbiddenlink/stancestream/commit/c6be4f6d4725196105f672ec8bd18531d23031f1))
+* surface AI model failures instead of storing a fallback turn ([#181](https://github.com/forbiddenlink/stancestream/issues/181)) ([168aa4e](https://github.com/forbiddenlink/stancestream/commit/168aa4eea2025e3fcee77bfaab5bf78f6b6dcc4f))
+
 ## [1.2.2](https://github.com/forbiddenlink/stancestream/compare/v1.2.1...v1.2.2) (2026-11-11)
 
 
