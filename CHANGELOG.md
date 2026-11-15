@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/forbiddenlink/stancestream/compare/v1.3.0...v1.3.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* **frontend:** show missing sentiment confidence as unavailable, not 0.00 ([#184](https://github.com/forbiddenlink/stancestream/issues/184)) ([3ee5e5d](https://github.com/forbiddenlink/stancestream/commit/3ee5e5df5e459e37667946006772372a802d34bb))
+
 ## [1.3.0](https://github.com/forbiddenlink/stancestream/compare/v1.2.2...v1.3.0) (2026-11-14)
 
 
