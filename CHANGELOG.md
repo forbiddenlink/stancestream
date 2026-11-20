@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.2](https://github.com/forbiddenlink/stancestream/compare/v1.3.1...v1.3.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* deliver debate summaries safely and surface rejection ([#190](https://github.com/forbiddenlink/stancestream/issues/190)) ([73d6096](https://github.com/forbiddenlink/stancestream/commit/73d6096f5f6c208494c605695770f39ee7803ae5))
+* **deps:** resolve the minimatch advisory findings ([#188](https://github.com/forbiddenlink/stancestream/issues/188)) ([641bff1](https://github.com/forbiddenlink/stancestream/commit/641bff1258752b609a921439ceb171b9342dfdb8))
+
 ## [1.3.1](https://github.com/forbiddenlink/stancestream/compare/v1.3.0...v1.3.1) (2026-11-15)
 
 
