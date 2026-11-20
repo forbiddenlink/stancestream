@@ -17,6 +17,10 @@ export function getResend() {
 
 const FROM = process.env.RESEND_FROM_EMAIL || "noreply@stancestream.app";
 
+function escapeHtml(text) {
+  return text.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+}
+
 /**
  * Send a debate summary email.
  * @param {Object} opts
@@ -28,10 +32,13 @@ export async function sendDebateSummary({ to, topic, summary }) {
   const client = getResend();
   if (!client) return null;
 
-  return client.emails.send({
+  const result = await client.emails.send({
     from: FROM,
     to,
     subject: `Debate Summary: ${topic}`,
-    html: `<h2>${topic}</h2><p>${summary}</p>`,
+    html: `<h2>${escapeHtml(topic)}</h2><p>${escapeHtml(summary)}</p>`,
+    text: `${topic}\n\n${summary}`,
   });
+  if (result.error) throw new Error("Resend rejected the debate summary");
+  return result;
 }
