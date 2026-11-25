@@ -15,7 +15,7 @@ import {
 } from "@langchain/core/messages";
 import redisManager from "../../redisManager.js";
 import { getLangfuse, flushLangfuse } from "../utils/langfuse.js";
-import { OPENAI_MODEL } from '../../openaiModel.js';
+import { OPENAI_MODEL, chatParams } from '../../openaiModel.js';
 
 // Lazy imports to avoid circular dependencies
 let findClosestFact;
@@ -120,7 +120,11 @@ function createLLM(temperature = 0.7) {
   return new ChatOpenAI({
     modelName: OPENAI_MODEL,
     temperature,
-    maxTokens: 200,
+    // @langchain/openai 1.5.5 only treats o-series and gpt-5 as reasoning models,
+    // so it would send max_tokens to gpt-6. maxTokens -1 drops that field and
+    // modelKwargs sends the params gpt-6 accepts.
+    maxTokens: -1,
+    modelKwargs: chatParams({ maxTokens: 200 }),
   });
 }
 

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { createClient } from 'redis';
 import OpenAI from 'openai';
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -77,8 +77,7 @@ Keep the summary concise but informative (200-400 words).
                 { role: 'system', content: 'You are an expert political analyst specializing in debate analysis and summarization.' },
                 { role: 'user', content: summaryPrompt }
             ],
-            max_tokens: 600,
-            temperature: 0.3
+            ...chatParams({ maxTokens: 600, temperature: 0.3 })
         });
 
         const summary = completion.choices[0].message.content;

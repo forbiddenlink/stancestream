@@ -8,7 +8,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 import redisManager from './redisManager.js';
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 
 class KeyMomentsDetector {
     constructor() {
@@ -173,8 +173,7 @@ class KeyMomentsDetector {
                         content: summaryPrompt
                     }
                 ],
-                max_tokens: 150,
-                temperature: 0.7
+                ...chatParams({ maxTokens: 150, temperature: 0.7 })
             });
             
             return response.choices[0].message.content.trim();

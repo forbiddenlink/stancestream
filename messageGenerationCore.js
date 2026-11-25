@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 import redisManager from './redisManager.js';
 import { getCachedResponse, cacheNewResponse } from './semanticCache.js';
 import { trackOpenAICall } from './metrics.js';
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 import { buildAiFailure } from './aiFailure.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -130,8 +130,7 @@ export async function generateMessageCore({
                     { role: 'system', content: prompt },
                     { role: 'user', content: `Continue the debate on "${topic}" considering the recent discussion.` }
                 ],
-                temperature,
-                max_tokens: maxTokens
+                ...chatParams({ maxTokens, temperature })
             });
         });
 

@@ -5,7 +5,7 @@ import 'dotenv/config';
 import { createClient } from 'redis';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import OpenAI from 'openai';
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const embeddings = new OpenAIEmbeddings();
@@ -264,8 +264,7 @@ Be precise, objective, and indicate uncertainty where appropriate.`;
             const completion = await openai.chat.completions.create({
                 model: OPENAI_MODEL,
                 messages: [{ role: 'user', content: prompt }],
-                max_tokens: 200,
-                temperature: 0.3
+                ...chatParams({ maxTokens: 200, temperature: 0.3 })
             });
             
             const analysis = completion.choices[0].message.content.trim();
