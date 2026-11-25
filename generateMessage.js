@@ -7,7 +7,7 @@ import {
     trackOpenAICall,
     debateMessagesTotal
 } from './metrics.js';
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 import { buildAiFailure } from './aiFailure.js';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -222,7 +222,7 @@ Seed: ${randomSeed}
                         { role: 'system', content: prompt },
                         { role: 'user', content: `What's your perspective on "${topic}"? Keep it brief and in character. ${randomCue}` },
                     ],
-                    temperature: 0.8,
+                    ...chatParams({ temperature: 0.8 }),
                 });
             });
 
@@ -314,8 +314,7 @@ Respond as ${profile.name} with your unique perspective on this topic. Stay true
                     { role: 'system', content: systemPrompt },
                     { role: 'user', content: userPrompt }
                 ],
-                max_tokens: 300,
-                temperature: 0.8
+                ...chatParams({ maxTokens: 300, temperature: 0.8 })
             });
         });
 

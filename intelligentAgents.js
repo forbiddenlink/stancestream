@@ -6,7 +6,7 @@ import { createClient } from "redis";
 import OpenAI from "openai";
 import { getCachedResponse, cacheNewResponse } from "./semanticCache.js";
 import { trackOpenAICall } from "./metrics.js";
-import { OPENAI_MODEL } from './openaiModel.js';
+import { OPENAI_MODEL, chatParams } from './openaiModel.js';
 import { disableIfUnsupported, isFeatureDisabled } from "./src/utils/unsupportedFeatures.js";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -84,8 +84,7 @@ class IntelligentAgentSystem {
           return await openai.chat.completions.create({
             model: OPENAI_MODEL,
             messages: [{ role: "user", content: enhancedPrompt }],
-            max_tokens: 300,
-            temperature: 0.7 + emotionalState.intensity * 0.3, // Emotional variation
+            ...chatParams({ maxTokens: 300, temperature: 0.7 + emotionalState.intensity * 0.3 }), // Emotional variation
           });
         });
 
