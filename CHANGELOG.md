@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.3](https://github.com/forbiddenlink/stancestream/compare/v1.3.2...v1.3.3) (2026-11-25)
+
+
+### Bug Fixes
+
+* **openai:** move off gpt-4o-mini before its 2027-01-14 shutdown ([#191](https://github.com/forbiddenlink/stancestream/issues/191)) ([8f6d2a9](https://github.com/forbiddenlink/stancestream/commit/8f6d2a9142fca62f7d17c89af694a92f541474cf))
+* **render:** stop pinning OPENAI_MODEL to retired gpt-4 ([#193](https://github.com/forbiddenlink/stancestream/issues/193)) ([7b39945](https://github.com/forbiddenlink/stancestream/commit/7b3994509c739813fbbff20528879d51b1a0437f))
+
 ## [1.3.2](https://github.com/forbiddenlink/stancestream/compare/v1.3.1...v1.3.2) (2026-11-20)
 
 
