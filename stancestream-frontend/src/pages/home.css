@@ -162,8 +162,7 @@ html.home-route #root::before { display: none; }
 .who-name.side-b { color: var(--b); }
 .who-role { display: block; font-family: var(--sans); font-size: 12.5px; color: var(--muted); margin-top: 2px; }
 .mark { padding-top: 8px; display: flex; justify-content: center; }
-.para { position: relative; padding-left: 34px; max-width: 64ch; }
-.para-n { position: absolute; left: 0; top: 0; font-variant-numeric: tabular-nums; color: var(--muted); }
+.para { position: relative; max-width: 64ch; }
 .para-text { margin: 0; font-size: 19px; }
 .para-text.is-empty { font-style: italic; color: var(--muted); font-size: 16.5px; }
 .para-note { font-family: var(--sans); font-size: 13px; color: var(--muted); margin: 6px 0 0; }
@@ -212,7 +211,11 @@ html.home-route #root::before { display: none; }
     .who-name, .who-role { display: inline; }
     .who-role { margin-left: 8px; }
     .mark { display: none; }
-    .para { padding-left: 26px; margin-top: 6px; }
+    .para { margin-top: 6px; }
+    .para-text { font-size: 17px; }
+    .para-text.is-empty { font-size: 15.5px; }
+    .who-name { font-size: 17px; }
+    .home-lede { font-size: 16px; }
     .meter { margin-top: 8px; padding-top: 4px; }
     .turn .round { margin-left: 0; }
     .record-foot { margin-left: 0; }

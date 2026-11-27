@@ -65,7 +65,6 @@ const Turn = ({ row, newest }) => {
                 )}
             </div>
             <div className="para">
-                <span className="para-n" data-testid="turn-n">{row.n}.</span>
                 <p className="para-text" data-testid="turn-text">
                     <StreamingText text={row.text} animate={newest} />
                 </p>
@@ -112,7 +111,6 @@ const EmptySlots = () => (
                     </div>
                     <div className="mark"><span className="shift-slot" aria-hidden="true" /></div>
                     <div className="para">
-                        <span className="para-n">{n}.</span>
                         <p className="para-text is-empty">
                             Empty slot. {agent.name}&rsquo;s turn {n} is recorded here when a debate runs.
                         </p>

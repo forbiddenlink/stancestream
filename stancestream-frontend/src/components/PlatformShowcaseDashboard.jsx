@@ -11,33 +11,22 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
     const [demoResults, setDemoResults] = useState({});
     const [activeDemo, setActiveDemo] = useState(null);
 
-    // Fetch showcase data every 5 seconds
+    // Fetch showcase data once on mount
     const fetchShowcaseData = useCallback(async () => {
-        try {
-            // Get Redis modules showcase
-            const showcaseResponse = await fetch(buildApiUrl('/showcase/redis-modules'));
-            if (showcaseResponse.ok) {
-                const data = await showcaseResponse.json();
-                setShowcaseData(data);
+        // Each panel reads its own endpoint; a missing or failing one leaves that panel at "-".
+        const load = async (path, apply) => {
+            try {
+                const response = await fetch(buildApiUrl(path));
+                if (response.ok) apply(await response.json());
+            } catch (error) {
+                console.error(`Failed to fetch ${path}:`, error);
             }
-
-            // Get platform metrics
-            const metricsResponse = await fetch(buildApiUrl('/analytics/platform-metrics'));
-            if (metricsResponse.ok) {
-                const metrics = await metricsResponse.json();
-                setPlatformMetrics(metrics);
-            }
-
-            // Get optimization metrics
-            const optimizationResponse = await fetch(buildApiUrl('/optimization/metrics'));
-            if (optimizationResponse.ok) {
-                const optimization = await optimizationResponse.json();
-                setOptimizationMetrics(optimization);
-            }
-
-        } catch (error) {
-            console.error('Failed to fetch showcase data:', error);
-        }
+        };
+        await Promise.all([
+            load('/showcase/redis-modules', setShowcaseData),
+            load('/analytics/contest-metrics', setPlatformMetrics),
+            load('/optimization/metrics', setOptimizationMetrics),
+        ]);
     }, []);
 
     useEffect(() => {
@@ -88,7 +77,7 @@ const PlatformShowcaseDashboard = memo(function PlatformShowcaseDashboard() {
         { key: 'redisVector', count: 'vector', label: 'Vector search', holds: 'Fact store and semantic cache', fallback: null },
     ];
     const dash = (v) => (v === undefined || v === null ? '-' : v);
-    const stats = platformMetrics?.platformMetrics;
+    const stats = platformMetrics?.contestMetrics;
     const opt = optimizationMetrics?.optimization;
     const DEMOS = [
         { id: 'multi-modal-showcase', title: 'Multi-modal showcase', description: 'Uses all 4 Redis models in sequence.' },

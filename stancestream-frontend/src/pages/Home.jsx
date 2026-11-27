@@ -175,7 +175,6 @@ export default function Home() {
                                         <span className="shift-slot" aria-hidden="true" />
                                     </div>
                                     <div className="para">
-                                        <span className="para-n">{t.n}.</span>
                                         {filled ? (
                                             <>
                                                 <p className="para-text">{SEED_LINE}</p>

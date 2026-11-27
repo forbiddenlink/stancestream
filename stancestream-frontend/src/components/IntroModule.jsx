@@ -39,8 +39,8 @@ const IntroModule = ({ onComplete, showIntro = false, factCheckOn = true }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="arena-modal" role="dialog" aria-modal="true" aria-labelledby="intro-title">
-      <div className="arena-modal-body">
+    <div className="arena-modal" role="dialog" aria-modal="true" aria-labelledby="intro-title" onClick={(e) => { if (e.target === e.currentTarget) handleComplete(); }}>
+      <div className="arena-modal-body" onClick={(e) => { if (e.target === e.currentTarget) handleComplete(); }}>
         <h2 id="intro-title" className="pane-title">How StanceStream works</h2>
         <ol className="how-list">
           {STEPS.filter(([head]) => factCheckOn || head !== 'Check the facts.').map(([head, body]) => (
