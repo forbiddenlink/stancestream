@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.3.4](https://github.com/forbiddenlink/stancestream/compare/v1.3.3...v1.3.4) (2026-11-27)
+
+
+### Bug Fixes
+
+* **frontend:** platform panels, intro dismiss, turn labels, phone type scale ([#194](https://github.com/forbiddenlink/stancestream/issues/194)) ([6744cc7](https://github.com/forbiddenlink/stancestream/commit/6744cc792768faf313f47d6dce980792567685d5))
+* **server:** register 404 and error handlers after every route ([#196](https://github.com/forbiddenlink/stancestream/issues/196)) ([f88a61f](https://github.com/forbiddenlink/stancestream/commit/f88a61fb5e4a0309004d477cb5f17a017ff5f19e))
+
 ## [1.3.3](https://github.com/forbiddenlink/stancestream/compare/v1.3.2...v1.3.3) (2026-11-25)
 
 
