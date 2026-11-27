@@ -220,6 +220,7 @@
 .how-body { margin: 4px 0 0; font-size: 16px; color: var(--muted); max-width: 64ch; }
 @media (max-width: 760px) {
     .arena-modal-body { padding: 20px 16px 48px; }
+    .how-body { font-size: 15px; }
     .ledger { font-size: 14px; }
     .ledger th, .ledger td { padding-right: 8px; }
 }
