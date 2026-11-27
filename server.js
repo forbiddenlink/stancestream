@@ -3007,28 +3007,6 @@ app.get("/api/contest/live-metrics", async (req, res) => {
   }
 });
 
-// Global error handler
-app.use((err, req, res, next) => {
-  console.error("❌ Unhandled error:", err);
-  res.status(500).json({
-    error: "Internal server error",
-    message:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Something went wrong",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Handle 404 routes
-app.use((req, res) => {
-  res.status(404).json({
-    error: "Not Found",
-    message: `Route ${req.originalUrl} not found`,
-    timestamp: new Date().toISOString(),
-  });
-});
-
 server.listen(PORT, () => {
   console.log(`🚀 StanceStream API server running on http://localhost:${PORT}`);
   console.log(`🔌 WebSocket server ready for connections`);
@@ -4144,3 +4122,28 @@ async function runCacheEfficiencyDemo(agents, duration) {
 
   return results;
 }
+
+// Registered last on purpose: Express runs handlers in order, so the 404
+// fallback and error handler must come after every route, including the
+// ones defined below server.listen().
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error("❌ Unhandled error:", err);
+  res.status(500).json({
+    error: "Internal server error",
+    message:
+      process.env.NODE_ENV === "development"
+        ? err.message
+        : "Something went wrong",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Handle 404 routes
+app.use((req, res) => {
+  res.status(404).json({
+    error: "Not Found",
+    message: `Route ${req.originalUrl} not found`,
+    timestamp: new Date().toISOString(),
+  });
+});
